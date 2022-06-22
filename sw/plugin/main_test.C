@@ -27,10 +27,15 @@
 #include <TSystem.h>
 #include <TApplication.h>
 #include <TRandom3.h>
+#include <TDirectory.h>
 
 #include "../lib/fillMAPS.h"
 #include "../lib/getChannel.h"
 #include "../lib/MAPMTposition.h"
+#include "../lib/handleFile.h"
+#include "../lib/integrate.h"
+#include "../lib/dRICH.h"
+
 
 using namespace std;
 
@@ -59,6 +64,16 @@ int main(int argc, char *argv[]){
   getRunNumbers(&m1, &m2, &m3);
   getMapMAPMT(&m4,&m5);
 
+  TFile *fOut = new TFile("out.root","RECREATE");
+  //TDirectory *dir = gDirectory();
+  TTree *T = new TTree("dRICH","dRICH");
+  TTreeIntegration(144,948,T);
+  cout <<"Integration done\n";
+  fOut->cd();
+  T->Write();
+  fOut->Close();
+  return 0;
+  
   
   //RANDOM FILL THE TH2D h
   TRandom3 rnd;
@@ -86,6 +101,6 @@ int main(int argc, char *argv[]){
   }
   h->Draw("colz");
   c->Update();
-  theApp.Run();
+  //theApp.Run();
   return 0;
 }
