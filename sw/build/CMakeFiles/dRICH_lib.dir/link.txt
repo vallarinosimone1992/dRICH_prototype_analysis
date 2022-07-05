@@ -1,2 +1,0 @@
-/usr/bin/ar qc libdRICH_lib.a CMakeFiles/dRICH_lib.dir/lib/fillMAPS.C.o CMakeFiles/dRICH_lib.dir/lib/getChannel.C.o CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.C.o CMakeFiles/dRICH_lib.dir/lib/handleFile.C.o CMakeFiles/dRICH_lib.dir/lib/integrate.C.o CMakeFiles/dRICH_lib.dir/lib/dRICH.C.o
-/usr/bin/ranlib libdRICH_lib.a
