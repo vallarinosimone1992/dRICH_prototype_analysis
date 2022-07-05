@@ -1,0 +1,1 @@
+/usr/bin/c++ CMakeFiles/reco.dir/plugin/main_test.C.o -o reco  libdRICH_lib.a 
