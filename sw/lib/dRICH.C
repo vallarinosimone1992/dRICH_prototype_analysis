@@ -14,10 +14,10 @@ dRICH::dRICH(){
   float y0;
   float cx0;
   float cy0;
-  float x0;
-  float y0;
-  float cx0;
-  float cy0;
+  float x1;
+  float y1;
+  float cx1;
+  float cy1;
  
 }
 
@@ -25,7 +25,7 @@ dRICH::~dRICH(){};
 
 //Std method: write and read each member.
 void dRICH::setEventdRICH(unsigned int Event){evtdRICH=Event;}
-unsigned int dRICH::getEventdRICH(){return evtDRICH;}
+unsigned int dRICH::getEventdRICH(){return evtdRICH;}
 
 void dRICH::setNedge(unsigned int Nedge){nedge=Nedge;}
 unsigned int dRICH::getNedge() {return nedge;}

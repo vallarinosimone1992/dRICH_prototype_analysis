@@ -93,6 +93,26 @@ reco_EXTERNAL_OBJECTS =
 reco: CMakeFiles/reco.dir/plugin/main_test.C.o
 reco: CMakeFiles/reco.dir/build.make
 reco: libdRICH_lib.a
+reco: /usr/lib64/root/libCore.so
+reco: /usr/lib64/root/libImt.so
+reco: /usr/lib64/root/libRIO.so
+reco: /usr/lib64/root/libNet.so
+reco: /usr/lib64/root/libHist.so
+reco: /usr/lib64/root/libGraf.so
+reco: /usr/lib64/root/libGraf3d.so
+reco: /usr/lib64/root/libGpad.so
+reco: /usr/lib64/root/libROOTDataFrame.so
+reco: /usr/lib64/root/libTree.so
+reco: /usr/lib64/root/libTreePlayer.so
+reco: /usr/lib64/root/libRint.so
+reco: /usr/lib64/root/libPostscript.so
+reco: /usr/lib64/root/libMatrix.so
+reco: /usr/lib64/root/libPhysics.so
+reco: /usr/lib64/root/libMathCore.so
+reco: /usr/lib64/root/libThread.so
+reco: /usr/lib64/root/libMultiProc.so
+reco: /usr/lib64/root/libROOTVecOps.so
+reco: ~
 reco: CMakeFiles/reco.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable reco"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/reco.dir/link.txt --verbose=$(VERBOSE)

@@ -282,7 +282,7 @@ ROOT_hadd_CMD:FILEPATH=/usr/bin/hadd
 ROOT_root_CMD:FILEPATH=/usr/bin/root
 
 //Path to a program.
-ROOT_rootbrowse_CMD:FILEPATH=/home/simone/.conda/envs/schoolStat/bin/rootbrowse
+ROOT_rootbrowse_CMD:FILEPATH=ROOT_rootbrowse_CMD-NOTFOUND
 
 //Path to a program.
 ROOT_rootcint_CMD:FILEPATH=/usr/bin/rootcint
@@ -291,22 +291,22 @@ ROOT_rootcint_CMD:FILEPATH=/usr/bin/rootcint
 ROOT_rootcling_CMD:FILEPATH=/usr/bin/rootcling
 
 //Path to a program.
-ROOT_rootcp_CMD:FILEPATH=/home/simone/.conda/envs/schoolStat/bin/rootcp
+ROOT_rootcp_CMD:FILEPATH=ROOT_rootcp_CMD-NOTFOUND
 
 //Path to a program.
 ROOT_rootdraw_CMD:FILEPATH=ROOT_rootdraw_CMD-NOTFOUND
 
 //Path to a program.
-ROOT_rootls_CMD:FILEPATH=/home/simone/.conda/envs/schoolStat/bin/rootls
+ROOT_rootls_CMD:FILEPATH=ROOT_rootls_CMD-NOTFOUND
 
 //Path to a program.
-ROOT_rootmkdir_CMD:FILEPATH=/home/simone/.conda/envs/schoolStat/bin/rootmkdir
+ROOT_rootmkdir_CMD:FILEPATH=ROOT_rootmkdir_CMD-NOTFOUND
 
 //Path to a program.
-ROOT_rootmv_CMD:FILEPATH=/home/simone/.conda/envs/schoolStat/bin/rootmv
+ROOT_rootmv_CMD:FILEPATH=ROOT_rootmv_CMD-NOTFOUND
 
 //Path to a program.
-ROOT_rootrm_CMD:FILEPATH=/home/simone/.conda/envs/schoolStat/bin/rootrm
+ROOT_rootrm_CMD:FILEPATH=ROOT_rootrm_CMD-NOTFOUND
 
 //Value Computed by CMake
 dRICH_reco_BINARY_DIR:STATIC=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build
@@ -514,20 +514,8 @@ ROOT_genreflex_CMD-ADVANCED:INTERNAL=1
 ROOT_hadd_CMD-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ROOT_root_CMD
 ROOT_root_CMD-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: ROOT_rootbrowse_CMD
-ROOT_rootbrowse_CMD-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ROOT_rootcint_CMD
 ROOT_rootcint_CMD-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ROOT_rootcling_CMD
 ROOT_rootcling_CMD-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: ROOT_rootcp_CMD
-ROOT_rootcp_CMD-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: ROOT_rootls_CMD
-ROOT_rootls_CMD-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: ROOT_rootmkdir_CMD
-ROOT_rootmkdir_CMD-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: ROOT_rootmv_CMD
-ROOT_rootmv_CMD-ADVANCED:INTERNAL=1
-//ADVANCED property for variable: ROOT_rootrm_CMD
-ROOT_rootrm_CMD-ADVANCED:INTERNAL=1
 

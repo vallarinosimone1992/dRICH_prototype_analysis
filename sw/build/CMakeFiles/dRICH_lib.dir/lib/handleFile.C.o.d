@@ -1,5 +1,5 @@
-CMakeFiles/dRICH_lib.dir/lib/fillMAPS.C.o: \
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/fillMAPS.C \
+CMakeFiles/dRICH_lib.dir/lib/handleFile.C.o: \
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/handleFile.C \
  /usr/include/stdc-predef.h /usr/include/c++/11/iostream \
  /usr/include/c++/11/x86_64-redhat-linux/bits/c++config.h \
  /usr/include/bits/wordsize.h \
@@ -125,23 +125,114 @@ CMakeFiles/dRICH_lib.dir/lib/fillMAPS.C.o: \
  /usr/include/c++/11/bits/locale_facets.tcc \
  /usr/include/c++/11/bits/basic_ios.tcc \
  /usr/include/c++/11/bits/ostream.tcc /usr/include/c++/11/istream \
- /usr/include/c++/11/bits/istream.tcc /usr/include/c++/11/fstream \
- /usr/include/c++/11/bits/codecvt.h \
- /usr/include/c++/11/x86_64-redhat-linux/bits/basic_file.h \
- /usr/include/c++/11/x86_64-redhat-linux/bits/c++io.h \
- /usr/include/c++/11/bits/fstream.tcc /usr/include/c++/11/map \
- /usr/include/c++/11/bits/stl_tree.h \
- /usr/include/c++/11/ext/aligned_buffer.h \
- /usr/include/c++/11/bits/node_handle.h \
- /usr/include/c++/11/bits/stl_map.h /usr/include/c++/11/tuple \
- /usr/include/c++/11/utility /usr/include/c++/11/bits/stl_relops.h \
- /usr/include/c++/11/array /usr/include/c++/11/bits/uses_allocator.h \
- /usr/include/c++/11/bits/invoke.h \
- /usr/include/c++/11/bits/stl_multimap.h \
- /usr/include/c++/11/bits/erase_if.h /usr/include/c++/11/iterator \
- /usr/include/c++/11/bits/stream_iterator.h /usr/include/c++/11/vector \
- /usr/include/c++/11/bits/stl_uninitialized.h \
+ /usr/include/c++/11/bits/istream.tcc /usr/include/root/TFile.h \
+ /usr/include/c++/11/atomic /usr/include/c++/11/bits/atomic_base.h \
+ /usr/include/c++/11/bits/atomic_lockfree_defines.h \
+ /usr/include/root/Compression.h /usr/include/root/RtypesCore.h \
+ /usr/include/root/ROOT/RConfig.hxx /usr/include/root/ROOT/../RVersion.h \
+ /usr/include/root/RConfigure.h /usr/include/root/DllImport.h \
+ /usr/include/c++/11/cstddef /usr/include/root/TDirectoryFile.h \
+ /usr/include/root/TDirectory.h /usr/include/root/TNamed.h \
+ /usr/include/root/TObject.h /usr/include/root/Rtypes.h \
+ /usr/include/root/strtok.h /usr/include/c++/11/cstring \
+ /usr/include/string.h /usr/include/strings.h \
+ /usr/include/bits/strings_fortified.h \
+ /usr/include/bits/string_fortified.h /usr/include/root/strlcpy.h \
+ /usr/include/unistd.h /usr/include/bits/posix_opt.h \
+ /usr/include/bits/environments.h /usr/include/bits/confname.h \
+ /usr/include/bits/getopt_posix.h /usr/include/bits/getopt_core.h \
+ /usr/include/bits/unistd.h /usr/include/bits/unistd_ext.h \
+ /usr/include/linux/close_range.h /usr/include/root/snprintf.h \
+ /usr/include/root/TGenericClassInfo.h /usr/include/root/TSchemaHelper.h \
+ /usr/include/c++/11/vector /usr/include/c++/11/bits/stl_uninitialized.h \
  /usr/include/c++/11/bits/stl_vector.h \
  /usr/include/c++/11/bits/stl_bvector.h \
- /usr/include/c++/11/bits/vector.tcc \
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/fillMAPS.h
+ /usr/include/c++/11/bits/vector.tcc /usr/include/root/TIsAProxy.h \
+ /usr/include/root/TVirtualIsAProxy.h /usr/include/root/TStorage.h \
+ /usr/include/root/TVersionCheck.h /usr/include/root/RVersion.h \
+ /usr/include/root/TString.h /usr/include/root/TMathBase.h \
+ /usr/include/c++/11/cmath /usr/include/math.h \
+ /usr/include/bits/math-vector.h /usr/include/bits/libm-simd-decl-stubs.h \
+ /usr/include/bits/flt-eval-method.h /usr/include/bits/fp-logb.h \
+ /usr/include/bits/fp-fast.h \
+ /usr/include/bits/mathcalls-helper-functions.h \
+ /usr/include/bits/mathcalls.h /usr/include/bits/mathcalls-narrow.h \
+ /usr/include/bits/iscanonical.h /usr/include/c++/11/bits/specfun.h \
+ /usr/include/c++/11/limits /usr/include/c++/11/tr1/gamma.tcc \
+ /usr/include/c++/11/tr1/special_function_util.h \
+ /usr/include/c++/11/tr1/bessel_function.tcc \
+ /usr/include/c++/11/tr1/beta_function.tcc \
+ /usr/include/c++/11/tr1/ell_integral.tcc \
+ /usr/include/c++/11/tr1/exp_integral.tcc \
+ /usr/include/c++/11/tr1/hypergeometric.tcc \
+ /usr/include/c++/11/tr1/legendre_function.tcc \
+ /usr/include/c++/11/tr1/modified_bessel_func.tcc \
+ /usr/include/c++/11/tr1/poly_hermite.tcc \
+ /usr/include/c++/11/tr1/poly_laguerre.tcc \
+ /usr/include/c++/11/tr1/riemann_zeta.tcc /usr/include/c++/11/algorithm \
+ /usr/include/c++/11/utility /usr/include/c++/11/bits/stl_relops.h \
+ /usr/include/c++/11/bits/stl_algo.h \
+ /usr/include/c++/11/bits/algorithmfwd.h \
+ /usr/include/c++/11/bits/stl_heap.h \
+ /usr/include/c++/11/bits/stl_tempbuf.h \
+ /usr/include/c++/11/bits/uniform_int_dist.h \
+ /usr/include/c++/11/pstl/glue_algorithm_defs.h \
+ /usr/include/c++/11/functional /usr/include/c++/11/tuple \
+ /usr/include/c++/11/array /usr/include/c++/11/bits/uses_allocator.h \
+ /usr/include/c++/11/bits/invoke.h /usr/include/c++/11/bits/refwrap.h \
+ /usr/include/c++/11/bits/std_function.h \
+ /usr/include/c++/11/unordered_map \
+ /usr/include/c++/11/ext/aligned_buffer.h \
+ /usr/include/c++/11/bits/hashtable.h \
+ /usr/include/c++/11/bits/hashtable_policy.h \
+ /usr/include/c++/11/bits/enable_special_members.h \
+ /usr/include/c++/11/bits/node_handle.h \
+ /usr/include/c++/11/bits/unordered_map.h \
+ /usr/include/c++/11/bits/erase_if.h \
+ /usr/include/c++/11/pstl/execution_defs.h \
+ /usr/include/root/ROOT/RStringView.hxx \
+ /usr/include/root/ROOT/TypeTraits.hxx /usr/include/c++/11/memory \
+ /usr/include/c++/11/bits/stl_raw_storage_iter.h \
+ /usr/include/c++/11/bits/align.h /usr/include/c++/11/bit \
+ /usr/include/c++/11/bits/unique_ptr.h \
+ /usr/include/c++/11/bits/shared_ptr.h \
+ /usr/include/c++/11/bits/shared_ptr_base.h \
+ /usr/include/c++/11/bits/allocated_ptr.h \
+ /usr/include/c++/11/ext/concurrence.h \
+ /usr/include/c++/11/bits/shared_ptr_atomic.h \
+ /usr/include/c++/11/backward/auto_ptr.h \
+ /usr/include/c++/11/pstl/glue_memory_defs.h /usr/include/c++/11/cstdarg \
+ /usr/include/root/TClass.h /usr/include/root/TDictionary.h \
+ /usr/include/root/ESTLType.h /usr/include/root/TObjArray.h \
+ /usr/include/root/TSeqCollection.h /usr/include/root/TCollection.h \
+ /usr/include/root/TIterator.h /usr/include/root/TVirtualRWMutex.h \
+ /usr/include/root/TVirtualMutex.h /usr/include/root/ROOT/RRangeCast.hxx \
+ /usr/include/root/ROOT/RSpan.hxx /usr/include/root/ROOT/span.hxx \
+ /usr/include/c++/11/iterator /usr/include/c++/11/bits/stream_iterator.h \
+ /usr/include/c++/11/cassert /usr/include/assert.h \
+ /usr/include/c++/11/map /usr/include/c++/11/bits/stl_tree.h \
+ /usr/include/c++/11/bits/stl_map.h \
+ /usr/include/c++/11/bits/stl_multimap.h \
+ /usr/include/c++/11/unordered_set \
+ /usr/include/c++/11/bits/unordered_set.h /usr/include/root/TUUID.h \
+ /usr/include/root/TList.h /usr/include/root/TBuffer.h \
+ /usr/include/root/TDataType.h /usr/include/root/Bytes.h \
+ /usr/include/root/Byteswap.h /usr/include/root/TDatime.h \
+ /usr/include/root/TUrl.h /usr/include/root/ROOT/RConcurrentHashColl.hxx \
+ /usr/include/root/Rtypes.h /usr/include/root/ROOT/TRWSpinLock.hxx \
+ /usr/include/root/ROOT/TSpinMutex.hxx \
+ /usr/include/c++/11/condition_variable /usr/include/c++/11/chrono \
+ /usr/include/c++/11/ratio /usr/include/c++/11/ctime \
+ /usr/include/c++/11/bits/parse_numbers.h \
+ /usr/include/c++/11/bits/std_mutex.h \
+ /usr/include/c++/11/bits/unique_lock.h /usr/include/c++/11/mutex \
+ /usr/include/root/TString.h /usr/include/root/TSystem.h \
+ /usr/include/fcntl.h /usr/include/bits/fcntl.h \
+ /usr/include/bits/fcntl-linux.h /usr/include/bits/types/struct_iovec.h \
+ /usr/include/linux/falloc.h /usr/include/bits/stat.h \
+ /usr/include/bits/struct_stat.h /usr/include/bits/fcntl2.h \
+ /usr/include/root/TInetAddress.h /usr/include/root/TTimer.h \
+ /usr/include/root/TSysEvtHandler.h /usr/include/root/TQObject.h \
+ /usr/include/root/TVirtualQConnection.h /usr/include/root/TInterpreter.h \
+ /usr/include/root/TInterpreterValue.h /usr/include/root/TTime.h \
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/handleFile.h
