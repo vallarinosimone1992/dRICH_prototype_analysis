@@ -1,4 +1,4 @@
-CMakeFiles/reco_test.dir/plugin/main_test.C.o: \
+CMakeFiles/recoTest.dir/plugin/main_test.C.o: \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/main_test.C \
  /usr/include/stdc-predef.h /usr/include/c++/11/iostream \
  /usr/include/c++/11/x86_64-redhat-linux/bits/c++config.h \
@@ -288,7 +288,4 @@ CMakeFiles/reco_test.dir/plugin/main_test.C.o: \
  /usr/include/c++/11/bits/fstream.tcc \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/getChannel.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/MAPMTposition.h \
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/handleFile.h \
- /usr/include/root/TString.h \
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/integrate.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/dRICH.h

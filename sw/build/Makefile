@@ -130,17 +130,17 @@ dRICH_lib/fast:
 .PHONY : dRICH_lib/fast
 
 #=============================================================================
-# Target rules for targets named reco_test
+# Target rules for targets named recoTest
 
 # Build rule for target.
-reco_test: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 reco_test
-.PHONY : reco_test
+recoTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 recoTest
+.PHONY : recoTest
 
 # fast build rule for target.
-reco_test/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco_test.dir/build.make CMakeFiles/reco_test.dir/build
-.PHONY : reco_test/fast
+recoTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/build
+.PHONY : recoTest/fast
 
 lib/MAPMTposition.o: lib/MAPMTposition.cxx.o
 .PHONY : lib/MAPMTposition.o
@@ -238,30 +238,6 @@ lib/getChannel.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.s
 .PHONY : lib/getChannel.cxx.s
 
-lib/handleFile.o: lib/handleFile.cxx.o
-.PHONY : lib/handleFile.o
-
-# target to build an object file
-lib/handleFile.cxx.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/handleFile.cxx.o
-.PHONY : lib/handleFile.cxx.o
-
-lib/handleFile.i: lib/handleFile.cxx.i
-.PHONY : lib/handleFile.i
-
-# target to preprocess a source file
-lib/handleFile.cxx.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/handleFile.cxx.i
-.PHONY : lib/handleFile.cxx.i
-
-lib/handleFile.s: lib/handleFile.cxx.s
-.PHONY : lib/handleFile.s
-
-# target to generate assembly for a file
-lib/handleFile.cxx.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/handleFile.cxx.s
-.PHONY : lib/handleFile.cxx.s
-
 lib/integrate.o: lib/integrate.cxx.o
 .PHONY : lib/integrate.o
 
@@ -291,7 +267,7 @@ plugin/main_test.o: plugin/main_test.C.o
 
 # target to build an object file
 plugin/main_test.C.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco_test.dir/build.make CMakeFiles/reco_test.dir/plugin/main_test.C.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.o
 .PHONY : plugin/main_test.C.o
 
 plugin/main_test.i: plugin/main_test.C.i
@@ -299,7 +275,7 @@ plugin/main_test.i: plugin/main_test.C.i
 
 # target to preprocess a source file
 plugin/main_test.C.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco_test.dir/build.make CMakeFiles/reco_test.dir/plugin/main_test.C.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.i
 .PHONY : plugin/main_test.C.i
 
 plugin/main_test.s: plugin/main_test.C.s
@@ -307,7 +283,7 @@ plugin/main_test.s: plugin/main_test.C.s
 
 # target to generate assembly for a file
 plugin/main_test.C.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco_test.dir/build.make CMakeFiles/reco_test.dir/plugin/main_test.C.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.s
 .PHONY : plugin/main_test.C.s
 
 # Help Target
@@ -319,7 +295,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... dRICH_lib"
-	@echo "... reco_test"
+	@echo "... recoTest"
 	@echo "... lib/MAPMTposition.o"
 	@echo "... lib/MAPMTposition.i"
 	@echo "... lib/MAPMTposition.s"
@@ -332,9 +308,6 @@ help:
 	@echo "... lib/getChannel.o"
 	@echo "... lib/getChannel.i"
 	@echo "... lib/getChannel.s"
-	@echo "... lib/handleFile.o"
-	@echo "... lib/handleFile.i"
-	@echo "... lib/handleFile.s"
 	@echo "... lib/integrate.o"
 	@echo "... lib/integrate.i"
 	@echo "... lib/integrate.s"

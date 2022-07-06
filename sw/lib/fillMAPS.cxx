@@ -39,3 +39,18 @@ void getMapMAPMT(map<string,int> *map_MAPMT1, map<string,int> *map_MAPMT2){
   fclose(file);
 }
 
+void readHeaders(int run, header *runHeader){
+  FILE *file;
+  file=fopen("../../../DATA/header_csv/logbook.csv","r");
+  char line[10000];
+  int tRunNum, tEnergyGeV, tExpEvents, tPowerHV, tRunNumGEM, tPedestalGEM;
+  char tDay[200], tStartTime[200],tEndTime[200],tBeam[200], tSensor[200], tTrigger[200],tRunType[200],tNote[2000];
+  float tFirstMirrorPosition, tSecondMirrorPosition, tTemperature;
+  while(fgets(line,10000,file)!=NULL){
+    sscanf(line,"%d,%s,%s,%s,%s,%d,%d,%s,%f,%f,%f,%d,%s,%s,%d,%d,%s",&tRunNum,tDay,tStartTime,tEndTime,tBeam,&tEnergyGeV,&tExpEvents,tSensor,&tFirstMirrorPosition,&tSecondMirrorPosition,&tTemperature,&tPowerHV,tTrigger,tRunType,&tRunNumGEM,&tPedestalGEM,tNote);
+    if(run == tRunNum){
+      cout <<line;
+      break;
+      }
+    }
+}

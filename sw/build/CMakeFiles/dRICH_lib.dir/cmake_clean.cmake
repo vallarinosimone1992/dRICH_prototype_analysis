@@ -7,8 +7,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o"
   "CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o.d"
-  "CMakeFiles/dRICH_lib.dir/lib/handleFile.cxx.o"
-  "CMakeFiles/dRICH_lib.dir/lib/handleFile.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o"
   "CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o.d"
   "libdRICH_lib.a"
