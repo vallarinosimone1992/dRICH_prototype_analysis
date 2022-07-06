@@ -44,6 +44,14 @@ class dRICH{
   int getPol(int i);
   int getTime(int i);
 
-
+  void setGEMs(float _x0, float _y0,float _cx0, float _cy0,float _x1, float _y1,float _cx1, float _cy1);
+  float getX0();
+  float getY0();
+  float getCX0();
+  float getCY0();
+  float getX1();
+  float getY1();
+  float getCX1();
+  float getCY1();
 };
 
