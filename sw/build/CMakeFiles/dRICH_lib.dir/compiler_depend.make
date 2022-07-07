@@ -333,7 +333,7 @@ CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o: ../lib/MAPMTposition.cxx \
   /usr/include/root/TTime.h \
   ../lib/MAPMTposition.h
 
-CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o: ../lib/dRICH.cxx \
+CMakeFiles/dRICH_lib.dir/lib/event.cxx.o: ../lib/event.cxx \
   /usr/include/stdc-predef.h \
   /usr/include/c++/11/vector \
   /usr/include/c++/11/bits/stl_algobase.h \
@@ -382,7 +382,7 @@ CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o: ../lib/dRICH.cxx \
   /usr/include/c++/11/bits/hash_bytes.h \
   /usr/include/c++/11/bits/range_access.h \
   /usr/include/c++/11/bits/vector.tcc \
-  ../lib/dRICH.h \
+  ../lib/event.h \
   /usr/include/c++/11/iostream \
   /usr/include/c++/11/ostream \
   /usr/include/c++/11/ios \
@@ -1442,7 +1442,9 @@ CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o: ../lib/integrate.cxx \
   /usr/include/c++/11/bits/std_mutex.h \
   /usr/include/c++/11/bits/unique_lock.h \
   /usr/include/c++/11/mutex \
-  ../lib/integrate.h
+  ../lib/integrate.h \
+  ../lib/getChannel.h \
+  ../lib/MAPMTposition.h
 
 
 /usr/include/c++/11/mutex:
@@ -1508,6 +1510,10 @@ CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o: ../lib/integrate.cxx \
 /usr/include/c++/11/bits/fstream.tcc:
 
 /usr/include/c++/11/x86_64-redhat-linux/bits/c++io.h:
+
+../lib/event.h:
+
+../lib/event.cxx:
 
 ../lib/MAPMTposition.h:
 
@@ -2063,13 +2069,9 @@ CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o: ../lib/integrate.cxx \
 
 /usr/include/c++/11/bits/basic_ios.h:
 
-../lib/dRICH.h:
-
 /usr/include/c++/11/bits/exception.h:
 
 /usr/include/c++/11/bits/locale_facets.h:
-
-../lib/dRICH.cxx:
 
 /usr/include/c++/11/cwctype:
 

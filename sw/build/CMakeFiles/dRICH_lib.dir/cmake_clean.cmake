@@ -1,8 +1,8 @@
 file(REMOVE_RECURSE
   "CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o"
   "CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o.d"
-  "CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o"
-  "CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o.d"
+  "CMakeFiles/dRICH_lib.dir/lib/event.cxx.o"
+  "CMakeFiles/dRICH_lib.dir/lib/event.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o"
   "CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o"

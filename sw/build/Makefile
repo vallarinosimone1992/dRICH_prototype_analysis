@@ -166,29 +166,29 @@ lib/MAPMTposition.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.s
 .PHONY : lib/MAPMTposition.cxx.s
 
-lib/dRICH.o: lib/dRICH.cxx.o
-.PHONY : lib/dRICH.o
+lib/event.o: lib/event.cxx.o
+.PHONY : lib/event.o
 
 # target to build an object file
-lib/dRICH.cxx.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o
-.PHONY : lib/dRICH.cxx.o
+lib/event.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/event.cxx.o
+.PHONY : lib/event.cxx.o
 
-lib/dRICH.i: lib/dRICH.cxx.i
-.PHONY : lib/dRICH.i
+lib/event.i: lib/event.cxx.i
+.PHONY : lib/event.i
 
 # target to preprocess a source file
-lib/dRICH.cxx.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.i
-.PHONY : lib/dRICH.cxx.i
+lib/event.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/event.cxx.i
+.PHONY : lib/event.cxx.i
 
-lib/dRICH.s: lib/dRICH.cxx.s
-.PHONY : lib/dRICH.s
+lib/event.s: lib/event.cxx.s
+.PHONY : lib/event.s
 
 # target to generate assembly for a file
-lib/dRICH.cxx.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.s
-.PHONY : lib/dRICH.cxx.s
+lib/event.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/event.cxx.s
+.PHONY : lib/event.cxx.s
 
 lib/fillMAPS.o: lib/fillMAPS.cxx.o
 .PHONY : lib/fillMAPS.o
@@ -299,9 +299,9 @@ help:
 	@echo "... lib/MAPMTposition.o"
 	@echo "... lib/MAPMTposition.i"
 	@echo "... lib/MAPMTposition.s"
-	@echo "... lib/dRICH.o"
-	@echo "... lib/dRICH.i"
-	@echo "... lib/dRICH.s"
+	@echo "... lib/event.o"
+	@echo "... lib/event.i"
+	@echo "... lib/event.s"
 	@echo "... lib/fillMAPS.o"
 	@echo "... lib/fillMAPS.i"
 	@echo "... lib/fillMAPS.s"

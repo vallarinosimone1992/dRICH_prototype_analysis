@@ -3,7 +3,16 @@
 
 using namespace std;
 
-class dRICH{
+class event{
+  private:
+  const float x0_inOffset=51.2; //[mm]
+  const float y0_inOffset=51.2;
+  const float x1_inOffset=51.2;
+  const float y1_inOffset=51.2;
+  const float pitchGEM=0.4;
+
+
+
   public:
   unsigned int evtdRICH;
   unsigned int nedge;
@@ -24,11 +33,20 @@ class dRICH{
   float y1;
   float cx1;
   float cy1;
+  float gx0;
+  float gy0;
+  float gx1;
+  float gy1;
+  float thetaX;
+  float thetaY;
+  float aeroX;
+  float aeroY;
+
 
 
   //Default contructor and destructor;
-  dRICH();
-  virtual ~dRICH();
+  event();
+  virtual ~event();
 
   //Std method: write and read each member.
   void setEventdRICH(unsigned int Event);
@@ -53,5 +71,15 @@ class dRICH{
   float getY1();
   float getCX1();
   float getCY1();
+
+  void setGEMsDerived();
+  float getGX0();
+  float getGY0();
+  float getGX1();
+  float getGY1();
+  float getThetaX();
+  float getThetaY();
+  float getAeroX();
+  float getAeroY();
 };
 

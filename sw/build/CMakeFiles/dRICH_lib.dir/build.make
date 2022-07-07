@@ -97,19 +97,19 @@ CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/MAPMTposition.cxx -o CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.s
 
-CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o: CMakeFiles/dRICH_lib.dir/flags.make
-CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o: ../lib/dRICH.cxx
-CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o: CMakeFiles/dRICH_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o -MF CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o.d -o CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o -c /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/dRICH.cxx
+CMakeFiles/dRICH_lib.dir/lib/event.cxx.o: CMakeFiles/dRICH_lib.dir/flags.make
+CMakeFiles/dRICH_lib.dir/lib/event.cxx.o: ../lib/event.cxx
+CMakeFiles/dRICH_lib.dir/lib/event.cxx.o: CMakeFiles/dRICH_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/dRICH_lib.dir/lib/event.cxx.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/dRICH_lib.dir/lib/event.cxx.o -MF CMakeFiles/dRICH_lib.dir/lib/event.cxx.o.d -o CMakeFiles/dRICH_lib.dir/lib/event.cxx.o -c /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/event.cxx
 
-CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/dRICH.cxx > CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.i
+CMakeFiles/dRICH_lib.dir/lib/event.cxx.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dRICH_lib.dir/lib/event.cxx.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/event.cxx > CMakeFiles/dRICH_lib.dir/lib/event.cxx.i
 
-CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/dRICH.cxx -o CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.s
+CMakeFiles/dRICH_lib.dir/lib/event.cxx.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dRICH_lib.dir/lib/event.cxx.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/event.cxx -o CMakeFiles/dRICH_lib.dir/lib/event.cxx.s
 
 CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o: CMakeFiles/dRICH_lib.dir/flags.make
 CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o: ../lib/fillMAPS.cxx
@@ -143,7 +143,7 @@ CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.s: cmake_force
 dRICH_lib_OBJECTS = \
 "CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o" \
 "CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o" \
-"CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o" \
+"CMakeFiles/dRICH_lib.dir/lib/event.cxx.o" \
 "CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o" \
 "CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o"
 
@@ -152,7 +152,7 @@ dRICH_lib_EXTERNAL_OBJECTS =
 
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o
-libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o
+libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/event.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/build.make

@@ -12,7 +12,7 @@ add_library(dRICH_lib
       STATIC
       lib/getChannel.cxx
       lib/MAPMTposition.cxx
-      lib/dRICH.cxx
+      lib/event.cxx
       lib/fillMAPS.cxx
       lib/integrate.cxx
 )

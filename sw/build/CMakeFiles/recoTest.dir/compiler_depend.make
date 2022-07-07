@@ -453,8 +453,11 @@ CMakeFiles/recoTest.dir/plugin/main_test.C.o: ../plugin/main_test.C \
   /usr/include/c++/11/bits/fstream.tcc \
   ../lib/getChannel.h \
   ../lib/MAPMTposition.h \
-  ../lib/dRICH.h
+  ../lib/event.h \
+  ../lib/integrate.h
 
+
+../lib/event.h:
 
 ../lib/MAPMTposition.h:
 
@@ -1172,8 +1175,6 @@ CMakeFiles/recoTest.dir/plugin/main_test.C.o: ../plugin/main_test.C \
 
 /usr/include/c++/11/bits/basic_ios.h:
 
-../lib/dRICH.h:
-
 /usr/include/c++/11/bits/exception.h:
 
 /usr/include/c++/11/bits/locale_facets.h:
@@ -1221,6 +1222,8 @@ CMakeFiles/recoTest.dir/plugin/main_test.C.o: ../plugin/main_test.C \
 /usr/include/bits/confname.h:
 
 /usr/include/c++/11/vector:
+
+../lib/integrate.h:
 
 /usr/include/c++/11/bits/stl_uninitialized.h:
 

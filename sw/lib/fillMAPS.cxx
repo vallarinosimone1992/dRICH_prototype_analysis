@@ -50,7 +50,27 @@ void readHeaders(int run, header *runHeader){
     sscanf(line,"%d,%s,%s,%s,%s,%d,%d,%s,%f,%f,%f,%d,%s,%s,%d,%d,%s",&tRunNum,tDay,tStartTime,tEndTime,tBeam,&tEnergyGeV,&tExpEvents,tSensor,&tFirstMirrorPosition,&tSecondMirrorPosition,&tTemperature,&tPowerHV,tTrigger,tRunType,&tRunNumGEM,&tPedestalGEM,tNote);
     if(run == tRunNum){
       cout <<line;
+      runHeader->runNum = tRunNum;
+      runHeader->day=tDay;
+      runHeader->startTime=tStartTime;
+      runHeader->endTime=tEndTime;
+      runHeader->beam=&tBeam[0];
+      runHeader->energyGeV=tEnergyGeV;
+      runHeader->expEvents=tExpEvents;
+      runHeader->sensor=tSensor;
+      runHeader->firstMirrorPosition=tFirstMirrorPosition;
+      runHeader->secomdMirrorPosition=tSecondMirrorPosition;
+      runHeader->temperature=tTemperature;
+      runHeader->powerHV=tPowerHV;
+      runHeader->trigger=tTrigger;
+      runHeader->runType=tRunType;
+      runHeader->runNumGEM=tRunNumGEM;
+      runHeader->pedestalGEM=tPedestalGEM;
+      runHeader->note=tNote;
+
+      
+      cout <<"QUI: " <<runHeader->beam <<endl <<"CMP: " <<tBeam;
       break;
-      }
     }
+  }
 }

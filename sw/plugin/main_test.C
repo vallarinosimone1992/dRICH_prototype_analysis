@@ -32,7 +32,8 @@
 #include "../lib/fillMAPS.h"
 #include "../lib/getChannel.h"
 #include "../lib/MAPMTposition.h"
-#include "../lib/dRICH.h"
+#include "../lib/event.h"
+#include "../lib/integrate.h"
 
 
 using namespace std;
@@ -62,47 +63,21 @@ int main(int argc, char *argv[]){
   getRunNumbers(&m1, &m2, &m3);
   getMapMAPMT(&m4,&m5);
 
-  header runHeader;
+/*  header runHeader;
   readHeaders(144,&runHeader);
-  return 0;
+  cout <<" number from header: "<<runHeader.runNum <<endl;
+  cout <<Form("Reading some info from run %d header file\n",runHeader.runNum);
+  cout <<Form("The GEM run is %d\n",runHeader.runNumGEM);
+  cout <<Form("There was a %s beam of %d GeV\n",(runHeader.beam).c_str(),runHeader.energyGeV);
+*/
 
-
-  TFile *fOut = new TFile("out.root","RECREATE");
+  //TFile *fOut = new TFile("out.root","RECREATE");
   //TDirectory *dir = gDirectory();
-  TTree *T = new TTree("dRICH","dRICH");
+  //TTree *T = new TTree("dRICH","dRICH");
   //TTreeIntegration(144,948,T);
+  TTreeIntegration(144,948);
   cout <<"Integration done\n";
-  fOut->cd();
-  T->Write();
-  fOut->Close();
-  
-  
-  //RANDOM FILL THE TH2D h
-  TRandom3 rnd;
-  rnd.SetSeed(01234567);
-  for(int i = 0; i < 1e5; i++){
-    int fiber = 4+rnd.Integer(8);
-    int mCh = rnd.Integer(192);
-    int channel=-1;
-    string label = getMAPMT_ch(fiber, mCh);
-    cout <<Form("Tentativo %d-esimo:\nFiber %d mCh %d\n",i+1,fiber,mCh);
-    cout <<label <<endl <<endl;
-    if(label.compare("N/A")==0) continue;
-    if(fiber == 4 || fiber == 5 || fiber == 6 || fiber == 7){
-      channel = m4.at(label);
-    }else if(fiber == 8 || fiber == 9 || fiber == 10 || fiber == 11){
-      channel = m5.at(label);
-    }
-    cout <<"channel: " <<channel <<endl;
-    double x=0,y=0;
-    int place = FiberToPlace(fiber);
-    MAPMTposition(channel, place,&x, &y);
-    cout <<Form("MAPMT ch position: %f,%f\n",x,y);
-    h->Fill(x,y);
-    //cin.get();
-  }
-  h->Draw("colz");
-  c->Update();
+
   //theApp.Run();
   return 0;
 }

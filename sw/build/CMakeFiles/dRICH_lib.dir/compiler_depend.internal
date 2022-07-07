@@ -334,8 +334,8 @@ CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o
  /usr/include/root/TTime.h
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/MAPMTposition.h
 
-CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/dRICH.cxx
+CMakeFiles/dRICH_lib.dir/lib/event.cxx.o
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/event.cxx
  /usr/include/stdc-predef.h
  /usr/include/c++/11/vector
  /usr/include/c++/11/bits/stl_algobase.h
@@ -384,7 +384,7 @@ CMakeFiles/dRICH_lib.dir/lib/dRICH.cxx.o
  /usr/include/c++/11/bits/hash_bytes.h
  /usr/include/c++/11/bits/range_access.h
  /usr/include/c++/11/bits/vector.tcc
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/dRICH.h
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/event.h
  /usr/include/c++/11/iostream
  /usr/include/c++/11/ostream
  /usr/include/c++/11/ios
@@ -1448,4 +1448,6 @@ CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o
  /usr/include/c++/11/bits/unique_lock.h
  /usr/include/c++/11/mutex
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/integrate.h
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/getChannel.h
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/MAPMTposition.h
 
