@@ -13,4 +13,6 @@ mkdir -p $DRICH_SUITE/DATA/header_csv
 mkdir -p $DRICH_SUITE/processed_data/integrated_dRICH_GEM_data
 mkdir -p $DRICH_SUITE/output
 
+echo "Environment set completed"
+
 
