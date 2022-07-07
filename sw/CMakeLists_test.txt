@@ -8,6 +8,7 @@ include("${ROOT_USE_FILE}")
 
 separate_arguments(ROOT_EXE_LINKER_FLAGS)
 
+
 add_library(dRICH_lib
       STATIC
       lib/getChannel.cxx
