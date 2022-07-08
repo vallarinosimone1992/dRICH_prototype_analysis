@@ -7,7 +7,7 @@
 
 #include <TSystem.h>
 
-#include "MAPMTposition.h"
+#include "photoDetPosition.h"
 
 using namespace std;
 
@@ -64,3 +64,24 @@ void MAPMTposition(int channel, int place, double *x, double *y){
   }
 
 }
+
+/*void MPPCposition(int CHANNEL, int place,  double *x, double *y){
+  int dX = (CHANNEL-1)/16;
+  int dY = (CHANNEL-1)%16;
+  if(place == 0 || place == 1){
+    double iX=8.5*passoMPPC, iY=-7.5*passoMPPC;
+    *x=iX+dX*passoMPPC;
+    *y=iY+dY*passoMPPC;
+  }
+  if(place == 4 || place == 6){
+    double iX=-7.5*passoMPPC, iY=-8.5*passoMPPC;
+    *x=iX+dY*passoMPPC;
+    *y=iY-dX*passoMPPC;
+  }
+  if(place == 5 || place == 7){
+    double iX=-7.5*passoMPPC, iY=23.5*passoMPPC;
+    *x=iX+dY*passoMPPC;
+    *y=iY-dX*passoMPPC;
+  }
+}
+*/

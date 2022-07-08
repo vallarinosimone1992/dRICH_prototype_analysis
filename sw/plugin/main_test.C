@@ -29,9 +29,10 @@
 #include <TRandom3.h>
 #include <TDirectory.h>
 
+#include "../lib/definition.h"
 #include "../lib/fillMAPS.h"
 #include "../lib/getChannel.h"
-#include "../lib/MAPMTposition.h"
+#include "../lib/photoDetPosition.h"
 #include "../lib/event.h"
 #include "../lib/integrate.h"
 
@@ -69,13 +70,9 @@ int main(int argc, char *argv[]){
   cout <<Form("Reading some info from run %d header file\n",runHeader.runNum);
   cout <<Form("The GEM run is %d\n",runHeader.runNumGEM);
   cout <<Form("There was a %s beam of %d GeV\n",(runHeader.beam).c_str(),runHeader.energyGeV);
-  return 0;
 
-  //TFile *fOut = new TFile("out.root","RECREATE");
-  //TDirectory *dir = gDirectory();
-  //TTree *T = new TTree("dRICH","dRICH");
-  //TTreeIntegration(144,948,T);
-  TTreeIntegration(144,948);
+  //TTreeIntegration(runHeader.runNum,runHeader.runNumGEM);
+  TTreeIntegration(&runHeader);
   cout <<"Integration done\n";
 
   //theApp.Run();

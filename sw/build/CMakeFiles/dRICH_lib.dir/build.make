@@ -83,19 +83,19 @@ CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/getChannel.cxx -o CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.s
 
-CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o: CMakeFiles/dRICH_lib.dir/flags.make
-CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o: ../lib/MAPMTposition.cxx
-CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o: CMakeFiles/dRICH_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o -MF CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o.d -o CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o -c /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/MAPMTposition.cxx
+CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o: CMakeFiles/dRICH_lib.dir/flags.make
+CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o: ../lib/photoDetPosition.cxx
+CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o: CMakeFiles/dRICH_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o -MF CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o.d -o CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o -c /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/photoDetPosition.cxx
 
-CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/MAPMTposition.cxx > CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.i
+CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/photoDetPosition.cxx > CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.i
 
-CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/MAPMTposition.cxx -o CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.s
+CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/photoDetPosition.cxx -o CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.s
 
 CMakeFiles/dRICH_lib.dir/lib/event.cxx.o: CMakeFiles/dRICH_lib.dir/flags.make
 CMakeFiles/dRICH_lib.dir/lib/event.cxx.o: ../lib/event.cxx
@@ -142,7 +142,7 @@ CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.s: cmake_force
 # Object files for target dRICH_lib
 dRICH_lib_OBJECTS = \
 "CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o" \
-"CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o" \
+"CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o" \
 "CMakeFiles/dRICH_lib.dir/lib/event.cxx.o" \
 "CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o" \
 "CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o"
@@ -151,7 +151,7 @@ dRICH_lib_OBJECTS = \
 dRICH_lib_EXTERNAL_OBJECTS =
 
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o
-libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o
+libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/event.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o

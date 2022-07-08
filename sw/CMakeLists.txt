@@ -1,1 +1,1 @@
-CMakeLists_std.txt
+CMakeLists_test.txt

@@ -9,12 +9,14 @@
 #include <TMath.h>
 #include <TSystem.h>
 
+#include "definition.h"
 
 using namespace std;
 
 void step1(TTree *t, TTree *tGEM, TTree *tout);
 void TTreeIntegration(int runDRICH, int runGEM, TTree *tout);
 void TTreeIntegration(int runDRICH, int runGEM);
+void TTreeIntegration(header *runHead);
 
 /*int MAPMT_channel_three(int fpga, int mChannel){
   string label;

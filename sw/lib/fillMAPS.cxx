@@ -45,17 +45,18 @@ void getMapMAPMT(map<string,int> *map_MAPMT1, map<string,int> *map_MAPMT2){
 void readHeaders(int run, header *runHeader){
   FILE *file;
   file=fopen("../../../DATA/header/logbook.tsv","r");
+  char line0[10000];
   char line[10000];
   int tRunNum, tEnergyGeV, tExpEvents, tPowerHV, tRunNumGEM, tPedestalGEM;
   char tDay[200], tStartTime[200],tEndTime[200],tBeam[200], tSensor[200], tTrigger[200],tRunType[200],tNote[2000];
   float tFirstMirrorPosition, tSecondMirrorPosition, tTemperature;
-  fgets(line,10000,file);
-  cout <<"The header includes the following info\n";
-  cout <<line;
+  auto n =fgets(line0,10000,file);
   while(fgets(line,10000,file)!=NULL){
     sscanf(line,"%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s",&tRunNum,tDay,tStartTime,tEndTime,tBeam,&tEnergyGeV,&tExpEvents,tSensor,&tFirstMirrorPosition,&tSecondMirrorPosition,&tTemperature,&tPowerHV,tTrigger,tRunType,&tRunNumGEM,&tPedestalGEM,tNote);
     if(run == tRunNum){
-      //cout <<line;
+      cout <<"The header includes the following info\n";
+      cout <<line0;
+      cout <<line;
       //cout <<Form("%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s\n",tRunNum,&tDay[0],&tStartTime[0],&tEndTime[0],&tBeam[0],tEnergyGeV,tExpEvents,&tSensor[0],tFirstMirrorPosition,tSecondMirrorPosition,tTemperature,tPowerHV,&tTrigger[0],&tRunType[0],tRunNumGEM,tPedestalGEM,&tNote[0]);
       runHeader->runNum = tRunNum;
       runHeader->day=tDay;

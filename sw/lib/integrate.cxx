@@ -12,13 +12,23 @@
 
 #include "integrate.h"
 #include "getChannel.h"
-#include "MAPMTposition.h"
+#include "photoDetPosition.h"
+#include "fillMAPS.h"
 
 using namespace std;
 
-//void step1(TTree *t, TTree *tGEM, TTree *tout){
-void TTreeIntegration(int runDRICH, int runGEM){
+map<string,int> map_MAPMT1;
+map<string,int> map_MAPMT2;
+
+map<string,int>::iterator it_map_MAPMT1;
+map<string,int>::iterator it_map_MAPMT2;
+
+
+void TTreeIntegration(header *runHead){
+  int runDRICH=runHead->runNum;
+  int runGEM=runHead->runNumGEM; 
   const char  *tmp = getenv("DRICH_SUITE");
+  getMapMAPMT(&map_MAPMT1,&map_MAPMT2);
   string env_var(tmp ? tmp : "");
   if(env_var.empty()){
     cerr <<"[ERROR] No such variable found! You should define the variable DRICH_SUITE!" <<endl;
@@ -56,7 +66,7 @@ void TTreeIntegration(int runDRICH, int runGEM){
   TTree *tGEM = (TTree*) fGEM->Get("gtr");
 
   cout <<Form("TTrees has %lld & %lld entries\n",t->GetEntries(), tGEM->GetEntries());
-  
+
   TFile *fOut = new TFile(fOutName,"RECREATE"); 
   TTree *tout = new TTree("dRICH","dRICH integrated data");
 
@@ -95,6 +105,25 @@ void TTreeIntegration(int runDRICH, int runGEM){
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA];
   int pmt[MAXDATA], channel[MAXDATA];
   cout <<"GEM entries setted\n";
+
+  //Add header
+  auto tHeader=tout->Branch("header",&runHead);
+  (void) tHeader; 
+  auto tRunNum=tout->Branch("runNum",&runHead->runNum,"runNum/I");
+  (void) tRunNum;
+  auto tEnergyGeV=tout->Branch("energyGeV",&runHead->energyGeV,"energyGeV/I");
+  (void) tEnergyGeV;
+  auto tExpEvents=tout->Branch("expEvents",&runHead->expEvents,"expEvents/I");
+  (void) tExpEvents;
+  auto tPowerHV=tout->Branch("powerHV",&runHead->powerHV,"powerHV/I");
+  (void) tPowerHV;
+  auto tRunGEM=tout->Branch("runNumGEM",&runHead->runNumGEM,"runNumGEM/I");
+  (void) tRunGEM;
+  auto tPedestalGEM=tout->Branch("pedestalGEM",&runHead->pedestalGEM,"pedestalGEM/I");
+  (void) tPedestalGEM;
+  
+  auto tDay=tout->Branch("day",&runHead->day,"day/C");
+  (void) tDay;
 
   auto evento=tout->Branch("evt",&evt,"evt/I");
   (void)evento;
@@ -154,13 +183,11 @@ void TTreeIntegration(int runDRICH, int runGEM){
       //if(pol[j]==0) hTime->Fill(time[j]);
       //Producing the position, radius, pmt and channel info
       if(phDet.compare("MAPMT")==0){
-        if(fiber[j] == 4 || fiber[j] == 5 || fiber[j] == 6 || fiber[j] == 7 ){ //To be defined
-                                                                               //channel[j]=MAPMT_channel_two(fiber[j],chM[j]);
-          channel[j]= 10;
-        }else{
-          //channel[j]=MAPMT_channel_three(fiber[j],chM[j]);
-          channel[j]=20;
-        }
+        if(fiber[j] == 4 || fiber[j] == 5 || fiber[j] == 6 || fiber[j] == 7 ){ 
+          channel[j]= map_MAPMT1.at(getMAPMT_ch(fiber[j],chM[j]));
+        }else if(fiber[j] == 8 || fiber[j] == 9 || fiber[j] == 10 || fiber[j] == 11 ){
+          channel[j]= map_MAPMT2.at(getMAPMT_ch(fiber[j],chM[j]));
+        }else{continue;}
       }
       pmt[j]=FiberToPlace(fiber[j]);
       //if(phDet.compare("MPPC")==0)MPPCposition(channel[j],pmt[j],&x[j],&y[j]);

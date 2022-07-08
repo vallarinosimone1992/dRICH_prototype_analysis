@@ -130,41 +130,17 @@ dRICH_lib/fast:
 .PHONY : dRICH_lib/fast
 
 #=============================================================================
-# Target rules for targets named reco
+# Target rules for targets named recoTest
 
 # Build rule for target.
-reco: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 reco
-.PHONY : reco
+recoTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 recoTest
+.PHONY : recoTest
 
 # fast build rule for target.
-reco/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/build
-.PHONY : reco/fast
-
-lib/MAPMTposition.o: lib/MAPMTposition.cxx.o
-.PHONY : lib/MAPMTposition.o
-
-# target to build an object file
-lib/MAPMTposition.cxx.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.o
-.PHONY : lib/MAPMTposition.cxx.o
-
-lib/MAPMTposition.i: lib/MAPMTposition.cxx.i
-.PHONY : lib/MAPMTposition.i
-
-# target to preprocess a source file
-lib/MAPMTposition.cxx.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.i
-.PHONY : lib/MAPMTposition.cxx.i
-
-lib/MAPMTposition.s: lib/MAPMTposition.cxx.s
-.PHONY : lib/MAPMTposition.s
-
-# target to generate assembly for a file
-lib/MAPMTposition.cxx.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/MAPMTposition.cxx.s
-.PHONY : lib/MAPMTposition.cxx.s
+recoTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/build
+.PHONY : recoTest/fast
 
 lib/event.o: lib/event.cxx.o
 .PHONY : lib/event.o
@@ -262,29 +238,53 @@ lib/integrate.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.s
 .PHONY : lib/integrate.cxx.s
 
-plugin/dRICH_GEM_integration.o: plugin/dRICH_GEM_integration.C.o
-.PHONY : plugin/dRICH_GEM_integration.o
+lib/photoDetPosition.o: lib/photoDetPosition.cxx.o
+.PHONY : lib/photoDetPosition.o
 
 # target to build an object file
-plugin/dRICH_GEM_integration.C.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_GEM_integration.C.o
-.PHONY : plugin/dRICH_GEM_integration.C.o
+lib/photoDetPosition.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o
+.PHONY : lib/photoDetPosition.cxx.o
 
-plugin/dRICH_GEM_integration.i: plugin/dRICH_GEM_integration.C.i
-.PHONY : plugin/dRICH_GEM_integration.i
+lib/photoDetPosition.i: lib/photoDetPosition.cxx.i
+.PHONY : lib/photoDetPosition.i
 
 # target to preprocess a source file
-plugin/dRICH_GEM_integration.C.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_GEM_integration.C.i
-.PHONY : plugin/dRICH_GEM_integration.C.i
+lib/photoDetPosition.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.i
+.PHONY : lib/photoDetPosition.cxx.i
 
-plugin/dRICH_GEM_integration.s: plugin/dRICH_GEM_integration.C.s
-.PHONY : plugin/dRICH_GEM_integration.s
+lib/photoDetPosition.s: lib/photoDetPosition.cxx.s
+.PHONY : lib/photoDetPosition.s
 
 # target to generate assembly for a file
-plugin/dRICH_GEM_integration.C.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_GEM_integration.C.s
-.PHONY : plugin/dRICH_GEM_integration.C.s
+lib/photoDetPosition.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.s
+.PHONY : lib/photoDetPosition.cxx.s
+
+plugin/main_test.o: plugin/main_test.C.o
+.PHONY : plugin/main_test.o
+
+# target to build an object file
+plugin/main_test.C.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.o
+.PHONY : plugin/main_test.C.o
+
+plugin/main_test.i: plugin/main_test.C.i
+.PHONY : plugin/main_test.i
+
+# target to preprocess a source file
+plugin/main_test.C.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.i
+.PHONY : plugin/main_test.C.i
+
+plugin/main_test.s: plugin/main_test.C.s
+.PHONY : plugin/main_test.s
+
+# target to generate assembly for a file
+plugin/main_test.C.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.s
+.PHONY : plugin/main_test.C.s
 
 # Help Target
 help:
@@ -295,10 +295,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... dRICH_lib"
-	@echo "... reco"
-	@echo "... lib/MAPMTposition.o"
-	@echo "... lib/MAPMTposition.i"
-	@echo "... lib/MAPMTposition.s"
+	@echo "... recoTest"
 	@echo "... lib/event.o"
 	@echo "... lib/event.i"
 	@echo "... lib/event.s"
@@ -311,9 +308,12 @@ help:
 	@echo "... lib/integrate.o"
 	@echo "... lib/integrate.i"
 	@echo "... lib/integrate.s"
-	@echo "... plugin/dRICH_GEM_integration.o"
-	@echo "... plugin/dRICH_GEM_integration.i"
-	@echo "... plugin/dRICH_GEM_integration.s"
+	@echo "... lib/photoDetPosition.o"
+	@echo "... lib/photoDetPosition.i"
+	@echo "... lib/photoDetPosition.s"
+	@echo "... plugin/main_test.o"
+	@echo "... plugin/main_test.i"
+	@echo "... plugin/main_test.s"
 .PHONY : help
 
 
