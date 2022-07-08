@@ -55,12 +55,16 @@ int main(int argc, char *argv[]){
 
   char *dRICHDir = getenv("DRICH_SUITE");
   cout <<"DRICH_SUITE PATH: "<<dRICHDir <<"\n";
+  
+  header runHeader;
+  readHeaders(dRICHRun,&runHeader);
+  int GEMRun = runHeader.runNumGEM;
 
   if(gSystem->AccessPathName(Form("%s/DATA/dRICH_DATA/run_%04d.root",&dRICHDir[0],dRICHRun))){
     cout <<"[ERROR] dRICH run not found\n";
     return 0;
   }
-  int GEMRun = map_GEM_rNumber.at(dRICHRun);
+  //int GEMRun = map_GEM_rNumber.at(dRICHRun);
   if(GEMRun == 0){
     cout <<"[ERROR] GEM data was not taken for this run\n";
     return 0;
@@ -80,6 +84,8 @@ int main(int argc, char *argv[]){
     cout <<"[ERROR] fGEM is zombie! Something was wrong\n";
     return 0;
   }
+
+
 
   //theApp.Run();
   return 0;

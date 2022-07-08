@@ -1,2 +1,2 @@
-# Empty dependencies file for recoTest.
+# Empty dependencies file for reco.
 # This may be replaced when dependencies are built.

@@ -1,4 +1,4 @@
-CMakeFiles/recoTest.dir/plugin/main_test.C.o: \
+CMakeFiles/reco.dir/plugin/main_test.C.o: \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/main_test.C \
  /usr/include/stdc-predef.h /usr/include/c++/11/iostream \
  /usr/include/c++/11/x86_64-redhat-linux/bits/c++config.h \

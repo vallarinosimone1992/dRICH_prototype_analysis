@@ -142,7 +142,6 @@ void TTreeIntegration(int runDRICH, int runGEM){
       }
     } 
     if(flagEvt == false) continue;
-    else cout <<Form("Event %ld selected\n",evtDRICH);
     //Copy the dRich data
     tTrigTime=trigtime;
     tNedge=nedge;

@@ -8,14 +8,14 @@ include("${ROOT_USE_FILE}")
 
 separate_arguments(ROOT_EXE_LINKER_FLAGS)
 
+
 add_library(dRICH_lib
       STATIC
       lib/getChannel.cxx
       lib/MAPMTposition.cxx
-      lib/handleFile.cxx
-      lib/integrate.cxx
-      lib/dRICH.cxx
+      lib/event.cxx
       lib/fillMAPS.cxx
+      lib/integrate.cxx
 )
 
 target_include_directories(dRICH_lib

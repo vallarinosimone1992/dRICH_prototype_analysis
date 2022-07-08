@@ -130,17 +130,17 @@ dRICH_lib/fast:
 .PHONY : dRICH_lib/fast
 
 #=============================================================================
-# Target rules for targets named recoTest
+# Target rules for targets named reco
 
 # Build rule for target.
-recoTest: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 recoTest
-.PHONY : recoTest
+reco: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 reco
+.PHONY : reco
 
 # fast build rule for target.
-recoTest/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/build
-.PHONY : recoTest/fast
+reco/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/build
+.PHONY : reco/fast
 
 lib/MAPMTposition.o: lib/MAPMTposition.cxx.o
 .PHONY : lib/MAPMTposition.o
@@ -262,29 +262,29 @@ lib/integrate.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.s
 .PHONY : lib/integrate.cxx.s
 
-plugin/main_test.o: plugin/main_test.C.o
-.PHONY : plugin/main_test.o
+plugin/dRICH_GEM_integration.o: plugin/dRICH_GEM_integration.C.o
+.PHONY : plugin/dRICH_GEM_integration.o
 
 # target to build an object file
-plugin/main_test.C.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.o
-.PHONY : plugin/main_test.C.o
+plugin/dRICH_GEM_integration.C.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_GEM_integration.C.o
+.PHONY : plugin/dRICH_GEM_integration.C.o
 
-plugin/main_test.i: plugin/main_test.C.i
-.PHONY : plugin/main_test.i
+plugin/dRICH_GEM_integration.i: plugin/dRICH_GEM_integration.C.i
+.PHONY : plugin/dRICH_GEM_integration.i
 
 # target to preprocess a source file
-plugin/main_test.C.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.i
-.PHONY : plugin/main_test.C.i
+plugin/dRICH_GEM_integration.C.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_GEM_integration.C.i
+.PHONY : plugin/dRICH_GEM_integration.C.i
 
-plugin/main_test.s: plugin/main_test.C.s
-.PHONY : plugin/main_test.s
+plugin/dRICH_GEM_integration.s: plugin/dRICH_GEM_integration.C.s
+.PHONY : plugin/dRICH_GEM_integration.s
 
 # target to generate assembly for a file
-plugin/main_test.C.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.s
-.PHONY : plugin/main_test.C.s
+plugin/dRICH_GEM_integration.C.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_GEM_integration.C.s
+.PHONY : plugin/dRICH_GEM_integration.C.s
 
 # Help Target
 help:
@@ -295,7 +295,7 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... dRICH_lib"
-	@echo "... recoTest"
+	@echo "... reco"
 	@echo "... lib/MAPMTposition.o"
 	@echo "... lib/MAPMTposition.i"
 	@echo "... lib/MAPMTposition.s"
@@ -311,9 +311,9 @@ help:
 	@echo "... lib/integrate.o"
 	@echo "... lib/integrate.i"
 	@echo "... lib/integrate.s"
-	@echo "... plugin/main_test.o"
-	@echo "... plugin/main_test.i"
-	@echo "... plugin/main_test.s"
+	@echo "... plugin/dRICH_GEM_integration.o"
+	@echo "... plugin/dRICH_GEM_integration.i"
+	@echo "... plugin/dRICH_GEM_integration.s"
 .PHONY : help
 
 
