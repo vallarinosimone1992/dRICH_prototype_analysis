@@ -14,6 +14,7 @@
 #include "getChannel.h"
 #include "photoDetPosition.h"
 #include "fillMAPS.h"
+#include "definition.h"
 
 using namespace std;
 
@@ -24,9 +25,10 @@ map<string,int>::iterator it_map_MAPMT1;
 map<string,int>::iterator it_map_MAPMT2;
 
 
-void TTreeIntegration(header *runHead){
+void TTreeIntegration(THeader *runHead){
   int runDRICH=runHead->runNum;
   int runGEM=runHead->runNumGEM; 
+  string phDet=runHead->sensor;
   const char  *tmp = getenv("DRICH_SUITE");
   getMapMAPMT(&map_MAPMT1,&map_MAPMT2);
   string env_var(tmp ? tmp : "");
@@ -57,10 +59,6 @@ void TTreeIntegration(header *runHead){
     cout <<"[ERROR] fGEM is zombie! Something was wrong\n";
     exit(EXIT_FAILURE);
   }
-
-  //SOME USEFUL DECLARATION, BEFORE FINISH TO IMPLEMENT THE HEADER READING
-  string phDet="MAPMT";
-
 
   TTree *t = (TTree*) fdRICH->Get("data");
   TTree *tGEM = (TTree*) fGEM->Get("gtr");
@@ -104,11 +102,11 @@ void TTreeIntegration(header *runHead){
   double tTrigTime;
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA];
   int pmt[MAXDATA], channel[MAXDATA];
-  cout <<"GEM entries setted\n";
+  cout <<"GEM variables setted\n";
 
   //Add header
-  auto tHeader=tout->Branch("header",&runHead);
-  (void) tHeader; 
+ /* auto tHeader=tout->Branch("header",THeader,&runHead);
+ (void) tHeader; 
   auto tRunNum=tout->Branch("runNum",&runHead->runNum,"runNum/I");
   (void) tRunNum;
   auto tEnergyGeV=tout->Branch("energyGeV",&runHead->energyGeV,"energyGeV/I");
@@ -122,8 +120,9 @@ void TTreeIntegration(header *runHead){
   auto tPedestalGEM=tout->Branch("pedestalGEM",&runHead->pedestalGEM,"pedestalGEM/I");
   (void) tPedestalGEM;
   
-  auto tDay=tout->Branch("day",&runHead->day,"day/C");
+   auto tDay=tout->Branch("day",&runHead->day,"day/C");
   (void) tDay;
+*/
 
   auto evento=tout->Branch("evt",&evt,"evt/I");
   (void)evento;
@@ -209,7 +208,6 @@ void TTreeIntegration(header *runHead){
   }
   cout <<endl;
   tout->Write();
-  cout <<"Entries before save: "<<tout->GetEntries() <<endl;
   fOut->Close();
   cout <<"End of the function\n";
 }

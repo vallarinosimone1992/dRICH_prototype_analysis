@@ -64,7 +64,6 @@ int main(int argc, char *argv[]){
     cout <<"[ERROR] dRICH run not found\n";
     return 0;
   }
-  //int GEMRun = map_GEM_rNumber.at(dRICHRun);
   if(GEMRun == 0){
     cout <<"[ERROR] GEM data was not taken for this run\n";
     return 0;

@@ -42,7 +42,7 @@ void getMapMAPMT(map<string,int> *map_MAPMT1, map<string,int> *map_MAPMT2){
 }
 
 
-void readHeaders(int run, header *runHeader){
+void readHeaders(int run, THeader *runHeader){
   FILE *file;
   file=fopen("../../../DATA/header/logbook.tsv","r");
   char line0[10000];

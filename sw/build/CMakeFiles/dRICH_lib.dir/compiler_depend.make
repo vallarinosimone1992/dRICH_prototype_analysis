@@ -529,7 +529,8 @@ CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o: ../lib/fillMAPS.cxx \
   /usr/include/root/TInterpreterValue.h \
   /usr/include/root/TTime.h \
   ../lib/fillMAPS.h \
-  ../lib/definition.h
+  ../lib/definition.h \
+  /usr/include/root/TString.h
 
 CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o: ../lib/getChannel.cxx \
   /usr/include/stdc-predef.h \
@@ -1238,6 +1239,7 @@ CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o: ../lib/integrate.cxx \
   /usr/include/c++/11/mutex \
   ../lib/integrate.h \
   ../lib/definition.h \
+  /usr/include/root/TString.h \
   ../lib/getChannel.h \
   ../lib/photoDetPosition.h \
   ../lib/fillMAPS.h \

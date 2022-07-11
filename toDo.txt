@@ -1,4 +1,6 @@
 Not-orderd to do list:
+-> Insert a time calibration data reading like CLAS12 rich.
+-> 
 -> Set DAQ to create a setup file, introduce a setup reading.
 -> Plan to introduce the setup file reading.
 -> Write the MPPC position function

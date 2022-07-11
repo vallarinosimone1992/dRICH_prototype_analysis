@@ -282,6 +282,7 @@ CMakeFiles/recoTest.dir/plugin/main_test.C.o: \
  /usr/include/root/TRandom.h /usr/include/root/Math/TRandomEngine.h \
  /usr/include/root/TDirectory.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/definition.h \
+ /usr/include/root/TString.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/fillMAPS.h \
  /usr/include/c++/11/fstream /usr/include/c++/11/bits/codecvt.h \
  /usr/include/c++/11/x86_64-redhat-linux/bits/basic_file.h \

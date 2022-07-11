@@ -2,11 +2,12 @@
 #define DEFINITION_H
 
 #include <string>
+#include <TString.h>
 using namespace std;
 
-struct header{
+struct THeader{
   int runNum;
-  string day;
+  TString day;
   string startTime;
   string endTime;
   string beam;
