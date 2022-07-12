@@ -35,6 +35,7 @@
 #include "../lib/photoDetPosition.h"
 #include "../lib/event.h"
 #include "../lib/integrate.h"
+#include "../lib/readData.h"
 
 
 using namespace std;
@@ -65,15 +66,26 @@ int main(int argc, char *argv[]){
   getMapMAPMT(&m4,&m5);
 
   THeader runHeader;
-  readHeaders(214,&runHeader);
+  readHeaders(35,&runHeader);
+  //readHeaders(214,&runHeader);
   cout <<" number from header: "<<runHeader.runNum <<endl;
   cout <<Form("Reading some info from run %d header file\n",runHeader.runNum);
   cout <<Form("The GEM run is %d\n",runHeader.runNumGEM);
   cout <<Form("There was a %s beam of %d GeV\n",(runHeader.beam).c_str(),runHeader.energyGeV);
 
+  cout <<"Fiber ref: \n";
+  cout <<runHeader.fiberRef[0] <<" " <<runHeader.fiberRef[1] <<endl;
+  cout <<runHeader.fiberRef[2] <<" " <<runHeader.fiberRef[3] <<endl;
+  cout <<runHeader.fiberRef[4] <<" " <<runHeader.fiberRef[5] <<endl;
+  cout <<runHeader.fiberRef[6] <<" " <<runHeader.fiberRef[7] <<endl;
+
+  getMAPMT(&runHeader);
+
+
+
   //TTreeIntegration(runHeader.runNum,runHeader.runNumGEM);
-  TTreeIntegration(&runHeader);
-  cout <<"Integration done\n";
+  //TTreeIntegration(&runHeader);
+  //cout <<"Integration done\n";
 
   //theApp.Run();
   return 0;

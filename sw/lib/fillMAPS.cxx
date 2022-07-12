@@ -79,4 +79,15 @@ void readHeaders(int run, THeader *runHeader){
       break;
     }
   }
+  fclose(file);
+  file=fopen(Form("../map/%s_setup.map",(runHeader->sensor).c_str()),"r");
+  for(int i = 0; i < 8; i++){
+    if(fgets(line,10000,file)!=NULL){
+      int tmp1, tmp2;
+      auto prz = sscanf(line,"%d %d",&tmp1,&tmp2);
+      runHeader->fiberRef[i]=tmp1;
+      runHeader->marocBoard[i]=tmp2;
+    }
+  }
+  cout <<"Header and setup file read\n";
 }

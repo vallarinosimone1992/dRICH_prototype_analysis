@@ -262,6 +262,30 @@ lib/photoDetPosition.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.s
 .PHONY : lib/photoDetPosition.cxx.s
 
+lib/readData.o: lib/readData.cxx.o
+.PHONY : lib/readData.o
+
+# target to build an object file
+lib/readData.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/readData.cxx.o
+.PHONY : lib/readData.cxx.o
+
+lib/readData.i: lib/readData.cxx.i
+.PHONY : lib/readData.i
+
+# target to preprocess a source file
+lib/readData.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/readData.cxx.i
+.PHONY : lib/readData.cxx.i
+
+lib/readData.s: lib/readData.cxx.s
+.PHONY : lib/readData.s
+
+# target to generate assembly for a file
+lib/readData.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/readData.cxx.s
+.PHONY : lib/readData.cxx.s
+
 plugin/main_test.o: plugin/main_test.C.o
 .PHONY : plugin/main_test.o
 
@@ -311,6 +335,9 @@ help:
 	@echo "... lib/photoDetPosition.o"
 	@echo "... lib/photoDetPosition.i"
 	@echo "... lib/photoDetPosition.s"
+	@echo "... lib/readData.o"
+	@echo "... lib/readData.i"
+	@echo "... lib/readData.s"
 	@echo "... plugin/main_test.o"
 	@echo "... plugin/main_test.i"
 	@echo "... plugin/main_test.s"

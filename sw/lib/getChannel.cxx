@@ -69,3 +69,38 @@ string getMAPMT_ch(int fiber, int mChannel){
   return label;
 }
 
+string getMPPC_ch(int fiber, int mCh, int marocBoard){
+  string label="N/A";
+  if(marocBoard==2){}
+  if(marocBoard==3){}
+}
+
+
+/*
+string label;
+  int channel=300;
+  if(fpga == 0 || fpga == 4 || fpga == 5){
+    if(mChannel < 64){
+      label=Form("IN1_%d",mChannel);
+      channel=map_MPPC1.at(label.c_str());
+
+    }
+    if(mChannel>127){
+      label=Form("IN3_%d",mChannel-128);
+      channel=map_MPPC1.at(label.c_str());
+    }
+  }
+  if(fpga == 1 || fpga == 6 || fpga == 7){
+    if(mChannel < 64){
+      label=Form("IN1_%d",mChannel);
+      channel=map_MPPC2.at(label.c_str());
+    }
+    if(mChannel>127){
+      label=Form("IN3_%d",mChannel-128);
+      channel=map_MPPC2.at(label.c_str());
+    }
+  }
+  return channel;
+
+*/
+

@@ -457,7 +457,9 @@ CMakeFiles/recoTest.dir/plugin/main_test.C.o: ../plugin/main_test.C \
   ../lib/getChannel.h \
   ../lib/photoDetPosition.h \
   ../lib/event.h \
-  ../lib/integrate.h
+  ../lib/integrate.h \
+  ../lib/readData.h \
+  ../lib/fillMAPS.h
 
 
 ../lib/event.h:
@@ -1189,6 +1191,8 @@ CMakeFiles/recoTest.dir/plugin/main_test.C.o: ../plugin/main_test.C \
 /usr/include/root/TArrayD.h:
 
 /usr/include/c++/11/bits/locale_facets.tcc:
+
+../lib/readData.h:
 
 /usr/include/root/TGraphErrors.h:
 

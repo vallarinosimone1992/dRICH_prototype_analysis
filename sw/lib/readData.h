@@ -1,7 +1,7 @@
 #include "fillMAPS.h"
 #include "definition.h"
 
-void getMAPMT(THeader *run);
-void getMPPC(THeader *run);
-void getSIMULATION(THeader *run);
-void getSIPM(THeader *run);
+void getMAPMT(THeader *runHead);
+void getMPPC(THeader *runHead);
+void getSIMULATION(THeader *runHead);
+void getSIPM(THeader *runHead);

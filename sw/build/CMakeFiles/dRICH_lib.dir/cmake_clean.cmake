@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o"
   "CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o.d"
+  "CMakeFiles/dRICH_lib.dir/lib/readData.cxx.o"
+  "CMakeFiles/dRICH_lib.dir/lib/readData.cxx.o.d"
   "libdRICH_lib.a"
   "libdRICH_lib.pdb"
 )

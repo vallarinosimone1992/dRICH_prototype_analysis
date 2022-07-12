@@ -1,2 +1,2 @@
-/usr/bin/ar qc libdRICH_lib.a CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o CMakeFiles/dRICH_lib.dir/lib/event.cxx.o CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o
+/usr/bin/ar qc libdRICH_lib.a CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o CMakeFiles/dRICH_lib.dir/lib/event.cxx.o CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o CMakeFiles/dRICH_lib.dir/lib/readData.cxx.o
 /usr/bin/ranlib libdRICH_lib.a

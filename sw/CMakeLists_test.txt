@@ -17,6 +17,7 @@ add_library(dRICH_lib
       lib/event.cxx
       lib/fillMAPS.cxx
       lib/integrate.cxx
+      lib/readData.cxx
 )
 
 target_include_directories(dRICH_lib
