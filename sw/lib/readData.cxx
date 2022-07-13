@@ -20,6 +20,7 @@ void getMAPMT(THeader *runHead){
   int runDRICH=runHead->runNum;
   string phDet=runHead->sensor;
   if(phDet!="MAPMT"){
+    cout <<phDet.c_str() <<endl;
     cout <<"[ERROR] Inconsistency between the selected data type and logbook [SENSOR]\n";
     exit(EXIT_FAILURE);
   }
@@ -61,7 +62,7 @@ void getMAPMT(THeader *runHead){
 
   cout <<"dRICH variables setted\n";
 
-  int evt, tPol[MAXDATA],tTime[MAXDATA];
+  int evt, tPol[MAXDATA],tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
   uint tNedge;
   double tTrigTime;
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA];
@@ -76,6 +77,10 @@ void getMAPMT(THeader *runHead){
   (void)tnedge;
   auto tpol=tout->Branch("pol",&tPol[0],"pol[nedge]/I");
   (void)tpol;
+  auto tboard=tout->Branch("board",&board[0],"board[nedge]/I");
+  (void)tboard;
+  auto tchip=tout->Branch("chip",&chip[0],"chip[nedge]/I");
+  (void)tchip;
   auto ttime=tout->Branch("time",&tTime,"time[nedge]/I");
   (void)ttime;
   auto tpmt=tout->Branch("pmt",&pmt,"pmt[nedge]/I");
@@ -90,7 +95,7 @@ void getMAPMT(THeader *runHead){
   (void)tradius;
 
   for(int i = 0; i < t->GetEntries(); i++){
-    if((i)%(t->GetEntries()/10)==0)cout <<Form("\rSynchronizing the dRich and GEM data: %lld%% completed    ",(1+(i/(t->GetEntries()/10)))*10) <<flush;
+    if((i)%(t->GetEntries()/10)==0)cout <<Form("\rTaking the dRICH data: %lld%% completed    ",(1+(i/(t->GetEntries()/10)))*10) <<flush;
     t->GetEntry(i);
     tTrigTime=trigtime;
     tNedge=nedge;
@@ -98,10 +103,17 @@ void getMAPMT(THeader *runHead){
     for(uint j = 0; j < nedge; j++){
       tPol[j]=pol[j];
       tTime[j]=time[j];
-      if(fiber[j] == 4 || fiber[j] == 5 || fiber[j] == 6 || fiber[j] == 7 ){
-        channel[j]= map_MAPMT1.at(getMAPMT_ch(fiber[j],chM[j]));
-      }else if(fiber[j] == 8 || fiber[j] == 9 || fiber[j] == 10 || fiber[j] == 11 ){
-        channel[j]= map_MAPMT2.at(getMAPMT_ch(fiber[j],chM[j]));
+      board[j]=getMarocBoard(fiber[j],runHead);
+      chip[j]=getMarocChip(chM[j]);
+      //cout <<getMPPC_ch(fiber[j],chM[j],board[j],chip[j]) <<endl;
+      if(chip[j]<2){
+        channel[j]= map_MAPMT1.at(getMAPMT_ch(fiber[j],chM[j],board[j],chip[j]));
+      }else if(chip[j]==2){
+        channel[j]= map_MAPMT2.at(getMAPMT_ch(fiber[j],chM[j],board[j],chip[j]));
+        /*if(fiber[j] == runHead->fiberRef[0] || fiber[j] == runHead->fiberRef[2] || fiber[j] == runHead->fiberRef[4] || fiber[j] == runHead->fiberRef[6] ){
+          channel[j]= map_MAPMT1.at(getMAPMT_ch(fiber[j],chM[j]));
+          }else if(fiber[j] == runHead->fiberRef[1] || fiber[j] == runHead->fiberRef[3] || fiber[j] == runHead->fiberRef[5] || fiber[j] == runHead->fiberRef[7] ){
+          channel[j]= map_MAPMT2.at(getMAPMT_ch(fiber[j],chM[j]));}*/
       }else{
         wrongEvent=true;
         cout <<"[ERROR] Event with a wrong \"fiber\" value; Analysis will continue without this event\n";
@@ -117,25 +129,27 @@ void getMAPMT(THeader *runHead){
   tout->Write();
   fOut->Close();
   cout <<"MAPMTs data wrote\n";
-
 }
 
 
 // ####################################################### //
 
-void getMPPC(THeader *run){
+void getMPPC(THeader *runHead){
+  cout <<"Inside\n";
   int runDRICH=runHead->runNum;
   string phDet=runHead->sensor;
   if(phDet!="MPPC"){
     cout <<"[ERROR] Inconsistency between the selected data type and logbook [SENSOR]\n";
     exit(EXIT_FAILURE);
   }
+  cout <<"Sensor checked\n";
   //Take the MAPMT maps
-  map<string,int> map_MAPMT1;
-  map<string,int> map_MAPMT2;
-  map<string,int>::iterator it_map_MAPMT1;
-  map<string,int>::iterator it_map_MAPMT2;
-  getMapMAPMT(&map_MAPMT1,&map_MAPMT2);
+  map<string,int> map_MPPC1;
+  map<string,int> map_MPPC2;
+  map<string,int>::iterator it_map_MPPC1;
+  map<string,int>::iterator it_map_MPPC2;
+  getMapMPPC(&map_MPPC1,&map_MPPC2);
+  cout <<"Mappe prese\n";
 
   //Find DRICH_SUITE environment variable
   const char  *tmp = getenv("DRICH_SUITE");
@@ -144,6 +158,7 @@ void getMPPC(THeader *run){
     cerr <<"[ERROR] No such variable found! You should define the variable DRICH_SUITE!" <<endl;
     exit(EXIT_FAILURE);
   }
+  cout <<"DRICH_SUITE trovata\n";
 
   TString fNamedRICH=Form("%s/DATA/dRICH_DATA/run_%04d.root",&env_var[0],runDRICH);
   TString fOutName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_processed.root",&env_var[0],runDRICH);
@@ -168,7 +183,7 @@ void getMPPC(THeader *run){
 
   cout <<"dRICH variables setted\n";
 
-  int evt, tPol[MAXDATA],tTime[MAXDATA];
+  int evt, tPol[MAXDATA],tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
   uint tNedge;
   double tTrigTime;
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA];
@@ -183,6 +198,10 @@ void getMPPC(THeader *run){
   (void)tnedge;
   auto tpol=tout->Branch("pol",&tPol[0],"pol[nedge]/I");
   (void)tpol;
+  auto tboard=tout->Branch("board",&board[0],"board[nedge]/I");
+  (void)tboard;
+  auto tchip=tout->Branch("chip",&chip[0],"chip[nedge]/I");
+  (void)tchip;
   auto ttime=tout->Branch("time",&tTime,"time[nedge]/I");
   (void)ttime;
   auto tpmt=tout->Branch("pmt",&pmt,"pmt[nedge]/I");
@@ -196,8 +215,10 @@ void getMPPC(THeader *run){
   auto tradius=tout->Branch("radius",&radius,"radius[nedge]/D");
   (void)tradius;
 
+  cout <<"TTree presi\n";
+
   for(int i = 0; i < t->GetEntries(); i++){
-    if((i)%(t->GetEntries()/10)==0)cout <<Form("\rSynchronizing the dRich and GEM data: %lld%% completed    ",(1+(i/(t->GetEntries()/10)))*10) <<flush;
+    if((i)%(t->GetEntries()/10)==0)cout <<Form("\rTaking the dRICH data: %lld%% completed    ",(1+(i/(t->GetEntries()/10)))*10) <<flush;
     t->GetEntry(i);
     tTrigTime=trigtime;
     tNedge=nedge;
@@ -205,17 +226,20 @@ void getMPPC(THeader *run){
     for(uint j = 0; j < nedge; j++){
       tPol[j]=pol[j];
       tTime[j]=time[j];
-      if(fiber[j] == 4 || fiber[j] == 5 || fiber[j] == 6 || fiber[j] == 7 ){
-        channel[j]= map_MAPMT1.at(getMAPMT_ch(fiber[j],chM[j]));
-      }else if(fiber[j] == 8 || fiber[j] == 9 || fiber[j] == 10 || fiber[j] == 11 ){
-        channel[j]= map_MAPMT2.at(getMAPMT_ch(fiber[j],chM[j]));
+      board[j]=getMarocBoard(fiber[j],runHead);
+      chip[j]=getMarocChip(chM[j]);
+      if(chip[j]==0){
+        channel[j]= map_MPPC1.at(getMPPC_ch(fiber[j],chM[j],board[j],chip[j]));
+      }else if(chip[j]==2){
+        channel[j]= map_MPPC2.at(getMPPC_ch(fiber[j],chM[j],board[j],chip[j]));
+        //channel[j]= map_MPPC2.at(getMPPC_ch(fiber[j],chM[j],board[j],getMarocChip(chM[j])));
       }else{
         wrongEvent=true;
         cout <<"[ERROR] Event with a wrong \"fiber\" value; Analysis will continue without this event\n";
         break;
       }
-      pmt[j]=FiberToMAPMT(fiber[j]);
-      MAPMTposition(channel[j],pmt[j],&x[j],&y[j],&radius[j]);
+      pmt[j]=FiberToPhDet(fiber[j],&(runHead->fiberRef)[0]);
+      MPPCposition(channel[j],pmt[j],&x[j],&y[j],&radius[j]);
     }
     if(wrongEvent==true)continue;
     tout->Fill();
@@ -223,11 +247,11 @@ void getMPPC(THeader *run){
   cout <<endl;
   tout->Write();
   fOut->Close();
-  cout <<"MAPMTs data wrote\n";
+  cout <<Form("MPPCs data wrote in %s\n",&fOutName[0]);
 
 
 }
-*/
+
 
 //void getSIMULATION(THeader *run);
 //void getSIPM(THeader *run);

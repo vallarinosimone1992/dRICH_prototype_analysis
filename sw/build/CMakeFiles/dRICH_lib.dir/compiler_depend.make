@@ -862,7 +862,9 @@ CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o: ../lib/getChannel.cxx \
   /usr/include/root/ESTLType.h \
   /usr/include/root/TInterpreterValue.h \
   /usr/include/root/TTime.h \
-  ../lib/getChannel.h
+  ../lib/getChannel.h \
+  ../lib/definition.h \
+  /usr/include/root/TString.h
 
 CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o: ../lib/integrate.cxx \
   /usr/include/stdc-predef.h \

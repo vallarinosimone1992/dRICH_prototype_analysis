@@ -29,7 +29,7 @@ void getRunNumbers(map<int,int> *map_GEM_run, map<int,double> *map_AeroMirrorPos
 
 void getMapMAPMT(map<string,int> *map_MAPMT1, map<string,int> *map_MAPMT2){
   FILE *file;
-  file=fopen("../map/MAPMT.map","r");
+  file=fopen("../map/MAPMT_mapping_data.map","r");
   char line[2000];
   char key[2000];
   int value;
@@ -37,6 +37,22 @@ void getMapMAPMT(map<string,int> *map_MAPMT1, map<string,int> *map_MAPMT2){
     sscanf(line,"%d %s",&value,key);
     if( value <= 128)map_MAPMT1->insert(make_pair(key,value));
     if( value > 128)map_MAPMT2->insert(make_pair(key,value));
+  }
+  fclose(file);
+}
+
+void getMapMPPC(map<string,int> *map_MPPC1, map<string,int> *map_MPPC2){
+  FILE *file;
+  file=fopen("../map/MPPC_mapping_data.dat","r");
+  if(file == NULL) cout <<"File not opened\n";
+  char line[2000];
+  char key[2000];
+  int value;
+  while(fgets(line,2000,file)!=NULL){
+    cout <<line;
+    sscanf(line,"%d %s",&value,key);
+    if(value<=128)map_MPPC1->insert(make_pair(key,value));
+    if(value>128)map_MPPC2->insert(make_pair(key,value));
   }
   fclose(file);
 }

@@ -14,6 +14,7 @@ using namespace std;
 double min1=29.25;
 double min2=24.25;
 double passoMAPMT = 3.03125;
+double passoMPPC = 3.2;
 
 int FiberToPhDet(int fiber, int cmp[8]){
   //PLACE LEGEND:

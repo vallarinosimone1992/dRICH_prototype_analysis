@@ -7,7 +7,12 @@
 
 #include <TSystem.h>
 
+#include "definition.h"
 
 using namespace std;
 
+int getMarocBoard(int fiber, THeader *run);
+int getMarocChip(int mCh);
 string getMAPMT_ch(int fiber, int mChannel);
+string getMAPMT_ch(int fiber, int mCh, int marocBoard, int chip);
+string getMPPC_ch(int fiber, int mCh, int marocBoard, int chip);

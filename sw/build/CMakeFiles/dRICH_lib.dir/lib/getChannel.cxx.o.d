@@ -220,4 +220,6 @@ CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o: \
  /usr/include/root/TInterpreter.h /usr/include/root/TDataType.h \
  /usr/include/root/TDictionary.h /usr/include/root/ESTLType.h \
  /usr/include/root/TInterpreterValue.h /usr/include/root/TTime.h \
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/getChannel.h
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/getChannel.h \
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/definition.h \
+ /usr/include/root/TString.h
