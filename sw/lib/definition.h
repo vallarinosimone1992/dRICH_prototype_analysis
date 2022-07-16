@@ -25,6 +25,8 @@ struct THeader{
   string note;
   int fiberRef[8]={-1,-1,-1,-1,-1,-1,-1,-1};
   int marocBoard[8]={-1,-1,-1,-1,-1,-1,-1,-1};
+  float firstPath;
+  float secondPath;
 };
 
 #endif

@@ -1,0 +1,10 @@
+NorthUpstreamFiber MarocType(2 or 3)
+NorthDownstreamFiber MarocType(2 or 3)
+EstUpstreamFiber MarocType(2 or 3)
+EstDownstreamFiber MarocType(2 or 3)
+SouthUpstreamFiber MarocType(2 or 3)
+SouthDownstreamFiber MarocType(2 or 3)
+WestUpstreamFiber MarocType(2 or 3) //These two lines are necessary also for the 3 detectors box.
+WestDownstreamFiber MarocType(2 or 3) //-1 -1 for MPPC West, which is not present.
+FirstMirrorPathLenght
+SecondMirrorPathLenght

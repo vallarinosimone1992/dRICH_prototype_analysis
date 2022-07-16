@@ -105,5 +105,16 @@ void readHeaders(int run, THeader *runHeader){
       runHeader->marocBoard[i]=tmp2;
     }
   }
+  if(fgets(line,10000,file)!=NULL){
+      float tmp1;
+      auto prz = sscanf(line,"%f",&tmp1);
+      runHeader->firstPath=tmp1;
+    }
+  if(fgets(line,10000,file)!=NULL){
+      float tmp1;
+      auto prz = sscanf(line,"%f",&tmp1);
+      runHeader->secondPath=tmp1;
+    }
+
   cout <<"Header and setup file read\n";
 }

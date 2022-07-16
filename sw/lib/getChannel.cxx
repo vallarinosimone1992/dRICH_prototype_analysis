@@ -12,6 +12,40 @@
 
 using namespace std;
 
+static map<int,int> m1;
+static map<int,int>::iterator it_m1;
+
+static map<int,double> m2;
+static map<int,double> m3;
+static map<int,double>::iterator it_m2;
+static map<int,double>::iterator it_m3;
+
+static map<string,int> m4;
+static map<string,int> m5;
+static map<string,int>::iterator it_m4;
+static map<string,int>::iterator it_m5;
+
+static map<string,int> m6;
+static map<string,int> m7;
+static map<string,int>::iterator it_m6;
+static map<string,int>::iterator it_m7;
+
+
+void getMaps(){
+  cout <<"Filling the static maps\n";
+  getRunNumbers(&m1,&m2,&m3);
+  getMapMAPMT(&m4,&m5);
+  getMapMPPC(&m6,&m7);
+}
+
+bool upstreamMaroc(int fiber, THeader *run){
+  for(int i = 0; i < 8; i++){
+    if(fiber == run->fiberRef[i]){
+      break;
+    }
+  }
+}
+
 int getMarocBoard(int fiber, THeader *run){
   int board = -1;
   for(int i = 0; i < 8; i++){
@@ -62,6 +96,27 @@ cin.get();
 return channel;
 }
 */
+
+
+int getMPAPMT_ch(int fiber, int mCh, int marocBoard, int chip){
+  if(m4.empty())getMaps();
+  string label = "N/A";
+  int nCh=-1;
+  if(chip==0) label=Form("IN1_%02d",mCh);
+  else if(chip==1) label=Form("IN1_%02d",mCh-64);
+  else if(chip==2) label=Form("IN3_%02d",mCh-128);
+  else {
+    cout <<Form("[ERROR] Wrong chip number, marocBoard 2, chip %d\n",chip);
+    exit(EXIT_FAILURE);
+  }
+  if(marocUpstream) nCh = map4.at(label);
+  else  nCh = map5.at(label);
+  if(nCh==-1){
+    cout <<"[ERROR] Something wrong linking setup file and maps. Check it!\n";
+    exit(EXIT_FAILURE);
+  }
+  return nCh;
+}
 
 string getMAPMT_ch(int fiber, int mCh, int marocBoard, int chip){
   string label="N/A";

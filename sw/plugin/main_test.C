@@ -66,8 +66,8 @@ int main(int argc, char *argv[]){
   getMapMAPMT(&m4,&m5);
 
   THeader runHeader;
-  //readHeaders(35,&runHeader);
-  readHeaders(214,&runHeader);
+  readHeaders(35,&runHeader);
+  //readHeaders(214,&runHeader);
   cout <<" number from header: "<<runHeader.runNum <<endl;
   cout <<Form("Reading some info from run %d header file\n",runHeader.runNum);
   cout <<Form("The GEM run is %d\n",runHeader.runNumGEM);
