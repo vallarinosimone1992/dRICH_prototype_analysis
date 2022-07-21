@@ -8,3 +8,11 @@ WestUpstreamFiber MarocType(2 or 3) //These two lines are necessary also for the
 WestDownstreamFiber MarocType(2 or 3) //-1 -1 for MPPC West, which is not present.
 FirstMirrorPathLenght
 SecondMirrorPathLenght
+UpstreamGEM_z
+DownsteamGEM_z
+Aerogel_z
+RingGeometricalCut
+InnerCorrectionX //if 0 it will be computed using run data.
+InnerCorrectionY //if 0 it will be computed using run data.
+OuterCorrectionX //if 0 it will be computed using run data.
+OuterCorrectionY //if 0 it will be computed using run data.

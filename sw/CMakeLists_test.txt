@@ -14,10 +14,12 @@ add_library(dRICH_lib
       lib/definition.h
       lib/getChannel.cxx
       lib/photoDetPosition.cxx
-      lib/event.cxx
+      lib/selection.cxx
+      lib/correction.cxx
       lib/fillMAPS.cxx
       lib/integrate.cxx
       lib/readData.cxx
+      lib/tracking.cxx
 )
 
 target_include_directories(dRICH_lib

@@ -22,11 +22,38 @@ struct THeader{
   string runType;
   int runNumGEM;
   int pedestalGEM;
+  string setupFile;
   string note;
+  string suite;
   int fiberRef[8]={-1,-1,-1,-1,-1,-1,-1,-1};
   int marocBoard[8]={-1,-1,-1,-1,-1,-1,-1,-1};
+  bool upstreamBoard;
   float firstPath;
   float secondPath;
+  float UpGEMz;
+  float DnGEMz;
+  float zAerogel;
+  double geoCut=55.0;
+  double innerCorrectionX=0;
+  double innerCorrectionY=0;
+  double outerCorrectionX=0;
+  double outerCorrectionY=0;
+  float UpGEMxRunOff;
+  float UpGEMyRunOff;
+  float DnGEMxRunOff;
+  float DnGEMyRunOff;
+  double timeMin;
+  double timeMax;
 };
+
+/*void envVarCheck(){
+  //Find DRICH_SUITE environment variable
+  const char  *tmp = getenv("DRICH_SUITE");
+  static string env_varAll(tmp ? tmp : "");
+  if(env_varAll.empty()){
+    cerr <<"[ERROR] No such variable found! You should define the variable DRICH_SUITE!" <<endl;
+    exit(EXIT_FAILURE);
+  }
+}*/
 
 #endif

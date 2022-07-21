@@ -142,29 +142,29 @@ recoTest/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/build
 .PHONY : recoTest/fast
 
-lib/event.o: lib/event.cxx.o
-.PHONY : lib/event.o
+lib/correction.o: lib/correction.cxx.o
+.PHONY : lib/correction.o
 
 # target to build an object file
-lib/event.cxx.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/event.cxx.o
-.PHONY : lib/event.cxx.o
+lib/correction.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/correction.cxx.o
+.PHONY : lib/correction.cxx.o
 
-lib/event.i: lib/event.cxx.i
-.PHONY : lib/event.i
+lib/correction.i: lib/correction.cxx.i
+.PHONY : lib/correction.i
 
 # target to preprocess a source file
-lib/event.cxx.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/event.cxx.i
-.PHONY : lib/event.cxx.i
+lib/correction.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/correction.cxx.i
+.PHONY : lib/correction.cxx.i
 
-lib/event.s: lib/event.cxx.s
-.PHONY : lib/event.s
+lib/correction.s: lib/correction.cxx.s
+.PHONY : lib/correction.s
 
 # target to generate assembly for a file
-lib/event.cxx.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/event.cxx.s
-.PHONY : lib/event.cxx.s
+lib/correction.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/correction.cxx.s
+.PHONY : lib/correction.cxx.s
 
 lib/fillMAPS.o: lib/fillMAPS.cxx.o
 .PHONY : lib/fillMAPS.o
@@ -286,6 +286,54 @@ lib/readData.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/readData.cxx.s
 .PHONY : lib/readData.cxx.s
 
+lib/selection.o: lib/selection.cxx.o
+.PHONY : lib/selection.o
+
+# target to build an object file
+lib/selection.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/selection.cxx.o
+.PHONY : lib/selection.cxx.o
+
+lib/selection.i: lib/selection.cxx.i
+.PHONY : lib/selection.i
+
+# target to preprocess a source file
+lib/selection.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/selection.cxx.i
+.PHONY : lib/selection.cxx.i
+
+lib/selection.s: lib/selection.cxx.s
+.PHONY : lib/selection.s
+
+# target to generate assembly for a file
+lib/selection.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/selection.cxx.s
+.PHONY : lib/selection.cxx.s
+
+lib/tracking.o: lib/tracking.cxx.o
+.PHONY : lib/tracking.o
+
+# target to build an object file
+lib/tracking.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.o
+.PHONY : lib/tracking.cxx.o
+
+lib/tracking.i: lib/tracking.cxx.i
+.PHONY : lib/tracking.i
+
+# target to preprocess a source file
+lib/tracking.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.i
+.PHONY : lib/tracking.cxx.i
+
+lib/tracking.s: lib/tracking.cxx.s
+.PHONY : lib/tracking.s
+
+# target to generate assembly for a file
+lib/tracking.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.s
+.PHONY : lib/tracking.cxx.s
+
 plugin/main_test.o: plugin/main_test.C.o
 .PHONY : plugin/main_test.o
 
@@ -320,9 +368,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... dRICH_lib"
 	@echo "... recoTest"
-	@echo "... lib/event.o"
-	@echo "... lib/event.i"
-	@echo "... lib/event.s"
+	@echo "... lib/correction.o"
+	@echo "... lib/correction.i"
+	@echo "... lib/correction.s"
 	@echo "... lib/fillMAPS.o"
 	@echo "... lib/fillMAPS.i"
 	@echo "... lib/fillMAPS.s"
@@ -338,6 +386,12 @@ help:
 	@echo "... lib/readData.o"
 	@echo "... lib/readData.i"
 	@echo "... lib/readData.s"
+	@echo "... lib/selection.o"
+	@echo "... lib/selection.i"
+	@echo "... lib/selection.s"
+	@echo "... lib/tracking.o"
+	@echo "... lib/tracking.i"
+	@echo "... lib/tracking.s"
 	@echo "... plugin/main_test.o"
 	@echo "... plugin/main_test.i"
 	@echo "... plugin/main_test.s"

@@ -11,10 +11,10 @@
 
 using namespace std;
 
-int getMPAPMT_ch(int fiber, int mCh, int marocBoard, int chip);
+void envVarCheck();
 void getMaps();
-int getMarocBoard(int fiber, THeader *run);
 int getMarocChip(int mCh);
-string getMAPMT_ch(int fiber, int mChannel);
-string getMAPMT_ch(int fiber, int mCh, int marocBoard, int chip);
-string getMPPC_ch(int fiber, int mCh, int marocBoard, int chip);
+int getMarocBoard(int fiber, THeader *run);
+void upstreamMaroc(int fiber, THeader *run);
+int getMPPC_ch(int fiber, int mCh, int marocBoard, int chip, bool marocUpstream);
+int getMAPMT_ch(int fiber, int mCh, int marocBoard, int chip, bool marocUpstream);

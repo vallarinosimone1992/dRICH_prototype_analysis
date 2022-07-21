@@ -49,7 +49,6 @@ void getMapMPPC(map<string,int> *map_MPPC1, map<string,int> *map_MPPC2){
   char key[2000];
   int value;
   while(fgets(line,2000,file)!=NULL){
-    cout <<line;
     sscanf(line,"%d %s",&value,key);
     if(value<=128)map_MPPC1->insert(make_pair(key,value));
     if(value>128)map_MPPC2->insert(make_pair(key,value));
@@ -64,16 +63,16 @@ void readHeaders(int run, THeader *runHeader){
   char line0[10000];
   char line[10000];
   int tRunNum, tEnergyGeV, tExpEvents, tPowerHV, tRunNumGEM, tPedestalGEM;
-  char tDay[200], tStartTime[200],tEndTime[200],tBeam[200], tSensor[200], tTrigger[200],tRunType[200],tNote[2000];
+  char tDay[200], tStartTime[200],tEndTime[200],tBeam[200], tSensor[200], tTrigger[200],tRunType[200], tSetupFile[2000],tNote[2000];
   float tFirstMirrorPosition, tSecondMirrorPosition, tTemperature;
   auto n =fgets(line0,10000,file);
   while(fgets(line,10000,file)!=NULL){
-    sscanf(line,"%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s",&tRunNum,tDay,tStartTime,tEndTime,tBeam,&tEnergyGeV,&tExpEvents,tSensor,&tFirstMirrorPosition,&tSecondMirrorPosition,&tTemperature,&tPowerHV,tTrigger,tRunType,&tRunNumGEM,&tPedestalGEM,tNote);
+    sscanf(line,"%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s %s",&tRunNum,tDay,tStartTime,tEndTime,tBeam,&tEnergyGeV,&tExpEvents,tSensor,&tFirstMirrorPosition,&tSecondMirrorPosition,&tTemperature,&tPowerHV,tTrigger,tRunType,&tRunNumGEM,&tPedestalGEM,tSetupFile,tNote);
     if(run == tRunNum){
       cout <<"The header includes the following info\n";
       cout <<line0;
       cout <<line;
-      //cout <<Form("%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s\n",tRunNum,&tDay[0],&tStartTime[0],&tEndTime[0],&tBeam[0],tEnergyGeV,tExpEvents,&tSensor[0],tFirstMirrorPosition,tSecondMirrorPosition,tTemperature,tPowerHV,&tTrigger[0],&tRunType[0],tRunNumGEM,tPedestalGEM,&tNote[0]);
+      //cout <<Form("%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s %s\n",tRunNum,&tDay[0],&tStartTime[0],&tEndTime[0],&tBeam[0],tEnergyGeV,tExpEvents,&tSensor[0],tFirstMirrorPosition,tSecondMirrorPosition,tTemperature,tPowerHV,&tTrigger[0],&tRunType[0],tRunNumGEM,tPedestalGEM,&tSetupFile[0],&tNote[0]);
       runHeader->runNum = tRunNum;
       runHeader->day=tDay;
       runHeader->startTime=tStartTime;
@@ -90,13 +89,24 @@ void readHeaders(int run, THeader *runHeader){
       runHeader->runType=tRunType;
       runHeader->runNumGEM=tRunNumGEM;
       runHeader->pedestalGEM=tPedestalGEM;
+      runHeader->setupFile=tSetupFile;
       runHeader->note=tNote;
 
       break;
     }
   }
   fclose(file);
-  file=fopen(Form("../map/%s_setup.map",(runHeader->sensor).c_str()),"r");
+
+  const char  *tmp = getenv("DRICH_SUITE");
+  string env_var(tmp ? tmp : "");
+  if(env_var.empty()){
+    cerr <<"[ERROR] No such variable found! You should define the variable DRICH_SUITE!" <<endl;
+    exit(EXIT_FAILURE);
+  }
+  runHeader->suite=env_var;
+
+
+  file=fopen(Form("../map/%s.map",(runHeader->setupFile).c_str()),"r");
   for(int i = 0; i < 8; i++){
     if(fgets(line,10000,file)!=NULL){
       int tmp1, tmp2;
@@ -106,15 +116,56 @@ void readHeaders(int run, THeader *runHeader){
     }
   }
   if(fgets(line,10000,file)!=NULL){
-      float tmp1;
-      auto prz = sscanf(line,"%f",&tmp1);
-      runHeader->firstPath=tmp1;
-    }
+    float tmp1;
+    auto prz = sscanf(line,"%f",&tmp1);
+    runHeader->firstPath=tmp1;
+  }
   if(fgets(line,10000,file)!=NULL){
-      float tmp1;
-      auto prz = sscanf(line,"%f",&tmp1);
-      runHeader->secondPath=tmp1;
-    }
+    float tmp1;
+    auto prz = sscanf(line,"%f",&tmp1);
+    runHeader->secondPath=tmp1;
+  }
+  if(fgets(line,10000,file)!=NULL){
+    float tmp1;
+    auto prz = sscanf(line,"%f",&tmp1);
+    runHeader->UpGEMz=tmp1;
+  }
+  if(fgets(line,10000,file)!=NULL){
+    float tmp1;
+    auto prz = sscanf(line,"%f",&tmp1);
+    runHeader->DnGEMz=tmp1;
+  }
+  if(fgets(line,10000,file)!=NULL){
+    float tmp1;
+    auto prz = sscanf(line,"%f",&tmp1);
+    runHeader->zAerogel=tmp1;
+  }
+  if(fgets(line,10000,file)!=NULL){
+    float tmp1;
+    auto prz = sscanf(line,"%f",&tmp1);
+    runHeader->geoCut=tmp1;
+  }
+  if(fgets(line,10000,file)!=NULL){
+    float tmp1;
+    auto prz = sscanf(line,"%f",&tmp1);
+    runHeader->innerCorrectionX=tmp1;
+  }
+  if(fgets(line,10000,file)!=NULL){
+    float tmp1;
+    auto prz = sscanf(line,"%f",&tmp1);
+    runHeader->innerCorrectionY=tmp1;
+  }
+  if(fgets(line,10000,file)!=NULL){
+    float tmp1;
+    auto prz = sscanf(line,"%f",&tmp1);
+    runHeader->outerCorrectionX=tmp1;
+  }
+  if(fgets(line,10000,file)!=NULL){
+    float tmp1;
+    auto prz = sscanf(line,"%f",&tmp1);
+    runHeader->outerCorrectionY=tmp1;
+  }
+
 
   cout <<"Header and setup file read\n";
 }

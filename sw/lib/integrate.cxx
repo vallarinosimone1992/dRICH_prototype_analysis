@@ -11,6 +11,7 @@
 #include <TFile.h>
 
 #include "integrate.h"
+#include "tracking.h"
 #include "getChannel.h"
 #include "photoDetPosition.h"
 #include "fillMAPS.h"
@@ -35,10 +36,11 @@ void TTreeIntegration(THeader *runHead){
     cerr <<"[ERROR] No such variable found! You should define the variable DRICH_SUITE!" <<endl;
     exit(EXIT_FAILURE);
   }
-  TString fNamedRICH=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_processed.root",&env_var[0],runDRICH);
+  TString fNamedRICH=Form("%s/processed_data/firstStepData/run_%04d_processed.root",&env_var[0],runDRICH);
   TString fNameGEM=Form("%s/DATA/GEM_DATA/run_%04d_gem.root",&env_var[0],runGEM);
-  //TString fOutName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_processed.root",&env_var[0],runDRICH);
+  TString fOutName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",&env_var[0],runDRICH);
   cout <<Form("-->> dRICH run: %s\n",&fNamedRICH[0]);
+  //Checking that files exist
   if(gSystem->AccessPathName(fNamedRICH)){
     cout <<"[ERROR] dRICH run not found\n";
     exit(EXIT_FAILURE);
@@ -48,40 +50,42 @@ void TTreeIntegration(THeader *runHead){
     cout <<"[ERROR] GEM run not found\n";
     exit(EXIT_FAILURE);
   }
-  TFile *fdRICH = new TFile(fNamedRICH,"UPDATE");
+  
+  //Getting the TTrees
+  TFile *fdRICH = new TFile(fNamedRICH,"READ");
   if(fdRICH->IsZombie()){
     cout <<"[ERROR] fdRICH is zombie! Something was wrong\n";
     exit(EXIT_FAILURE);
   }
-  TTree *tout = (TTree*) fdRICH->Get("dRICH");
-  tout->SetTitle("dRICH and GEM data");
+  TTree *t = (TTree*) fdRICH->Get("dRICH");
+  t->SetTitle("dRICH and GEM data");
   TFile *fGEM = new TFile(fNameGEM,"READ");
   if(fGEM->IsZombie()){
     cout <<"[ERROR] fGEM is zombie! Something was wrong\n";
     exit(EXIT_FAILURE);
   }
-
   TTree *tGEM = (TTree*) fGEM->Get("gtr");
 
-  cout <<Form("TTrees has %lld & %lld entries\n",tout->GetEntries(), tGEM->GetEntries());
+
+  cout <<Form("TTrees has %lld & %lld entries\n",t->GetEntries(), tGEM->GetEntries());
 
   uint nedge;
   int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], time[MAXDATA], marocCh[MAXDATA], pmt[MAXDATA];
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA];
   double trigtime;
 
-  tout->SetBranchAddress("evt",&evt);
-  tout->SetBranchAddress("trigtime",&trigtime);
-  tout->SetBranchAddress("nedge",&nedge);
-  tout->SetBranchAddress("pol",&pol);
-  tout->SetBranchAddress("time",&time);
-  tout->SetBranchAddress("board",&board);
-  tout->SetBranchAddress("chip",&chip);
-  tout->SetBranchAddress("pmt",&pmt);
-  tout->SetBranchAddress("marocCh",&marocCh);
-  tout->SetBranchAddress("x",&x);
-  tout->SetBranchAddress("y",&y);
-  tout->SetBranchAddress("radius",&radius);
+  t->SetBranchAddress("evt",&evt);
+  t->SetBranchAddress("trigtime",&trigtime);
+  t->SetBranchAddress("nedge",&nedge);
+  t->SetBranchAddress("pol",&pol);
+  t->SetBranchAddress("time",&time);
+  t->SetBranchAddress("board",&board);
+  t->SetBranchAddress("chip",&chip);
+  t->SetBranchAddress("pmt",&pmt);
+  t->SetBranchAddress("marocCh",&marocCh);
+  t->SetBranchAddress("x",&x);
+  t->SetBranchAddress("y",&y);
+  t->SetBranchAddress("radius",&radius);
 
   cout <<"dRICH variables setted\n";
 
@@ -101,18 +105,106 @@ void TTreeIntegration(THeader *runHead){
 
   cout <<"GEM variables setted\n";
 
-  auto tradius=tout->Branch("radius",&radius,"radius[nedge]/D");
-  (void)tradius;
-
+  //int gRow, gInst;
+  //float gX0, gY0, gCx0, gCy0, gX1, gY1, gCx1, gCy1, gXup, gYup, gXdown, gYdown, gXaero, gYaero, angleX, angleY, gRelXup, gRelYup, gRelXdown, gRelYdown; 
+  float gx0=0, gy0=0, gx1=0, gy1=0, gxa=0, gya=0, gxtheta=0, gytheta=0;
   
-
-  int gRow, gInst;
-  float gX0, gY0, gCx0, gCy0, gX1, gY1, gCx1, gCy1, gXup, gYup, gXdown, gYdown, gXaero, gYaero, angleX, angleY, gRelXup, gRelYup, gRelXdown, gRelYdown;
- 
-
+  TFile *fOut = new TFile(fOutName,"RECREATE"); 
+  TTree *tout = new TTree("dRICH","dRICH integrated data");
+  
+  int tevt, tnedge, tpol[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA];
+  double ttrigtime, tx[MAXDATA],ty[MAXDATA],tr[MAXDATA];
   bool dataGEM;
-  auto tDataGEM=tout->Branch("dataGEM",&dataGEM,"dataGEM/O");
-/*  auto tGX0=tout->Branch("gx0",&gx0,"gx0/F");
+
+  auto tEvt=tout->Branch("evt",&tevt,"evt/I");
+  auto tTrigtime=tout->Branch("trigtime",&ttrigtime,"trigtime/I");
+  auto tNedge=tout->Branch("nedge",&tnedge,"nedge/I");
+  auto tPol=tout->Branch("pol",&tpol,"pol[nedge]/I");
+  auto tTime=tout->Branch("time",&ttime,"time[nedge]/I");
+  auto tPmt=tout->Branch("pmt",&tpmt,"pmt[nedge]/I");
+  auto tBoard=tout->Branch("board",&tboard,"board[nedge]/I");
+  auto tChip=tout->Branch("chip",&tchip,"chip[nedge]/I");
+  auto tX=tout->Branch("x",&tx,"x[nedge]/D");
+  auto tY=tout->Branch("y",&ty,"y[nedge]/D");
+  auto tR=tout->Branch("r",&tr,"r[nedge]/D");
+
+  TH1D *hX0 = new TH1D("hX0","hX0",200,-100,100);
+  TH1D *hY0 = new TH1D("hY0","hY0",200,-100,100);
+  TH1D *hX1 = new TH1D("hX1","hX1",200,-100,100);
+  TH1D *hY1 = new TH1D("hY1","hY1",200,-100,100);
+
+  vector<int> vGEMentry;
+
+
+  int startCycle = 0;
+  for(int i = 0; i < t->GetEntries(); i++){
+    if((i)%(t->GetEntries()/10)==0)cout <<Form("\rSynchronizing the dRich and GEM data: %lld%% completed    ",(1+(i/(t->GetEntries()/10)))*10) <<flush;
+    dataGEM=false;
+    t->GetEntry(i);
+    for(int j = startCycle; j < tGEM->GetEntries(); j++){
+      tGEM->GetEntry(j);
+      if(evt == evtGEM+1){
+        startCycle = max(0,j - 2);
+        dataGEM=true;
+        vGEMentry.push_back(j);
+        break;
+      }
+      if(evt < evtGEM+1){
+        startCycle = max(0,j - 2);
+        break; 
+      }
+    }
+    if(dataGEM==false) continue;
+    //Copy the dRICH info
+    tevt=(int)evt;
+    ttrigtime=trigtime;
+    tnedge=(int)nedge;
+    //cout <<tnedge <<" " <<nedge <<endl;
+    for(int j = 0; j < nedge; j++){
+      tpol[j]=pol[j];
+      tboard[j]=board[j];
+      tchip[j]=chip[j];
+      ttime[j]=time[j];
+      tpmt[j]=pmt[j];
+      tx[j]=x[j];
+      ty[j]=y[j];
+      tr[j]=radius[j];
+    }
+    //Compute GEM info
+    float tmpx0=x0;
+    float tmpy0=y0;
+    float tmpx1=x1;
+    float tmpy1=y1;
+    GEM_relative(&tmpx0,&tmpy0,&tmpx1,&tmpy1);
+    hX0->Fill(tmpx0);
+    hY0->Fill(tmpy0);
+    hX1->Fill(tmpx1);
+    hY1->Fill(tmpy1);
+    tout->Fill();
+    /*
+    gx0=x0;
+    gy0=y0;
+    gx1=x1;
+    gy1=y1;
+    GEM_relative(&gx0,&gy0,&gx1,&gy1);
+    hX0->Fill(gx0);
+    hY0->Fill(gy0);
+    hX1->Fill(gx1);
+    hY1->Fill(gy1);
+    tout->Fill();*/
+  }
+  cout <<endl;
+  //tout->Write();
+
+  runHead->UpGEMxRunOff=GEM_getBeamlineOffset(hX0);
+  runHead->UpGEMyRunOff=GEM_getBeamlineOffset(hY0);
+  runHead->DnGEMxRunOff=GEM_getBeamlineOffset(hX1);
+  runHead->DnGEMyRunOff=GEM_getBeamlineOffset(hY1);
+
+  cout <<"GEM z: " <<runHead->UpGEMz <<" " <<runHead->DnGEMz <<endl;
+  cout <<"Aero z: " <<runHead->zAerogel <<endl;
+  cout <<"GEM entry size " <<vGEMentry.size() <<" " <<tout->GetEntries() <<endl;
+  auto tGX0=tout->Branch("gx0",&gx0,"gx0/F");
   auto tGY0=tout->Branch("gy0",&gy0,"gy0/F");
   auto tGX1=tout->Branch("gx1",&gx1,"gx1/F");
   auto tGY1=tout->Branch("gy1",&gy1,"gy1/F");
@@ -120,36 +212,35 @@ void TTreeIntegration(THeader *runHead){
   auto tGYA=tout->Branch("gya",&gya,"gya/F");
   auto tGXtheta=tout->Branch("gxtheta",&gxtheta,"gxtheta/F");
   auto tGYtheta=tout->Branch("gytheta",&gytheta,"gytheta/F");
-*/
 
-  fdRICH->cd();
-
-  int startCycle = 0;
   for(int i = 0; i < tout->GetEntries(); i++){
-    if((i)%(tout->GetEntries()/10)==0)cout <<Form("\rSynchronizing the dRich and GEM data: %lld%% completed    ",(1+(i/(tout->GetEntries()/10)))*10) <<flush;
-    dataGEM=false;
-    bool flagEvt = false;
+    if((i)%(tout->GetEntries()/10)==0)cout <<Form("\rComputing tracking info: %lld%% completed    ",(1+(i/(tout->GetEntries()/10)))*10) <<flush;
     tout->GetEntry(i);
-    for(int j = startCycle; j < tGEM->GetEntries(); j++){
-      tGEM->GetEntry(j);
-      if(evt == evtGEM+1){
-        startCycle = max(0,j - 2);
-        flagEvt = true;
-        dataGEM=true;
-        break;
-      }
-    } 
-    if(dataGEM == false) {
-      tDataGEM->Fill();
-      continue;
-    }
-    tDataGEM->Fill();
-    //Compute GEM final info
-    //Save GEM info in the root TTree
+    tGEM->GetEntry(vGEMentry[i]);
+    gx0=x0;
+    gy0=y0;
+    gx1=x1;
+    gy1=y1;
+    GEM_relative(&gx0,&gy0,&gx1,&gy1);
+    //cout <<"Relative: " <<gx0 <<" " <<gy0 <<" " <<gx1 <<" " <<gy1 <<endl;
+    GEM_position(runHead,&gx0,&gy0,&gx1,&gy1);
+    AERO_computing(runHead,&gxa,&gya,&gxtheta,&gytheta,gx0,gy0,gx1,gy1);
+    //cout <<"Check here: "<<gxa <<" " <<gya <<" " <<gxtheta <<" " <<gytheta <<endl;
+    tGX0->Fill();
+    tGY0->Fill();
+    tGX1->Fill();
+    tGY1->Fill();
+    tGXA->Fill();
+    tGYA->Fill();
+    tGXtheta->Fill();
+    tGYtheta->Fill();
   }
   cout <<endl;
+
   tout->Write();
+  fOut->Close();
   fdRICH->Close();
+  fGEM->Close();
   cout <<"End of the function\n";
 }
 

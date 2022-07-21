@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/dRICH_lib.dir/lib/event.cxx.o"
-  "CMakeFiles/dRICH_lib.dir/lib/event.cxx.o.d"
+  "CMakeFiles/dRICH_lib.dir/lib/correction.cxx.o"
+  "CMakeFiles/dRICH_lib.dir/lib/correction.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o"
   "CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o"
@@ -11,6 +11,10 @@ file(REMOVE_RECURSE
   "CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/readData.cxx.o"
   "CMakeFiles/dRICH_lib.dir/lib/readData.cxx.o.d"
+  "CMakeFiles/dRICH_lib.dir/lib/selection.cxx.o"
+  "CMakeFiles/dRICH_lib.dir/lib/selection.cxx.o.d"
+  "CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.o"
+  "CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.o.d"
   "libdRICH_lib.a"
   "libdRICH_lib.pdb"
 )

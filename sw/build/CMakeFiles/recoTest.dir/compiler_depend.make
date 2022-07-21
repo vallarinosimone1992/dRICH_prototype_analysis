@@ -456,13 +456,14 @@ CMakeFiles/recoTest.dir/plugin/main_test.C.o: ../plugin/main_test.C \
   ../lib/definition.h \
   ../lib/getChannel.h \
   ../lib/photoDetPosition.h \
-  ../lib/event.h \
+  ../lib/selection.h \
+  ../lib/correction.h \
   ../lib/integrate.h \
   ../lib/readData.h \
   ../lib/fillMAPS.h
 
 
-../lib/event.h:
+../lib/selection.h:
 
 ../lib/photoDetPosition.h:
 
@@ -511,6 +512,8 @@ CMakeFiles/recoTest.dir/plugin/main_test.C.o: ../plugin/main_test.C \
 /usr/include/root/TVirtualPad.h:
 
 /usr/include/root/TPad.h:
+
+../lib/correction.h:
 
 /usr/include/root/TCanvas.h:
 

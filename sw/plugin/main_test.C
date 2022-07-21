@@ -33,7 +33,8 @@
 #include "../lib/fillMAPS.h"
 #include "../lib/getChannel.h"
 #include "../lib/photoDetPosition.h"
-#include "../lib/event.h"
+#include "../lib/selection.h"
+#include "../lib/correction.h"
 #include "../lib/integrate.h"
 #include "../lib/readData.h"
 
@@ -66,8 +67,8 @@ int main(int argc, char *argv[]){
   getMapMAPMT(&m4,&m5);
 
   THeader runHeader;
-  readHeaders(35,&runHeader);
-  //readHeaders(214,&runHeader);
+  //readHeaders(35,&runHeader);
+  readHeaders(214,&runHeader);
   cout <<" number from header: "<<runHeader.runNum <<endl;
   cout <<Form("Reading some info from run %d header file\n",runHeader.runNum);
   cout <<Form("The GEM run is %d\n",runHeader.runNumGEM);
@@ -83,12 +84,25 @@ int main(int argc, char *argv[]){
   if(runHeader.sensor=="MAPMT")getMAPMT(&runHeader);
   if(runHeader.sensor=="MPPC")getMPPC(&runHeader);
 
-
+  
 
   //TTreeIntegration(runHeader.runNum,runHeader.runNumGEM);
-  //TTreeIntegration(&runHeader);
-  //cout <<"Integration done\n";
+  TTreeIntegration(&runHeader);
+  cout <<"Integration done\n";
 
+  findTimeCoincidence(&runHeader);
+  cout <<"Time coincidence window extremes: " <<runHeader.timeMin <<" " <<runHeader.timeMax <<endl;
+  selectPhotons(&runHeader);
+  cout <<"Photon selected\n";
+  singleParticle(&runHeader);
+  cout <<"Single particle quantities computed\n";
+  //IMPORTANT! The Y axis correction must be computed befor the X axis correction.
+  opticalCenterY(&runHeader);
+  opticalCenterX(&runHeader);
+cout <<"Y correction in and out: " <<runHeader.innerCorrectionY <<" " <<runHeader.outerCorrectionY <<endl; 
+  cout <<"X correction in and out: " <<runHeader.innerCorrectionX <<" " <<runHeader.outerCorrectionX <<endl;
+  positionCorrection(&runHeader);
+  newSingleParticle(&runHeader);
   //theApp.Run();
-  return 0;
+  exit(EXIT_SUCCESS);
 }
