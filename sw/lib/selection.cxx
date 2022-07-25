@@ -12,26 +12,27 @@
 
 using namespace std;
 
+/*void rmsCut(THeader *run){
+  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite,run->runNum);
+  TFile *fIn = new TFile (fName,"UPDATE");
+  TTree *t = (TTree*) fIn->Get("dRICH");
+  t->Write("",TObject::kOverwrite);
+  fIn->Close();
+}*/
 
 void selectPhotons(THeader *run){
   int runDRICH=run->runNum;
   //Find DRICH_SUITE environment variable
-  const char  *tmp = getenv("DRICH_SUITE");
-  string env_var(tmp ? tmp : "");
-  if(env_var.empty()){
-    cerr <<"[ERROR] No such variable found! You should define the variable DRICH_SUITE!" <<endl;
-    exit(EXIT_FAILURE);
-  }
-  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",&env_var[0],runDRICH);
+  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
   TFile *fIn = new TFile (fName,"UPDATE");
   TTree *t = (TTree*) fIn->Get("dRICH");
-  
-  int nedge, pol[MAXDATA], time[MAXDATA];
-  double x[MAXDATA],y[MAXDATA],r[MAXDATA];
+
+  int nedge, pol[MAXDATA];
+  double x[MAXDATA],y[MAXDATA],r[MAXDATA],nt[MAXDATA];
 
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
-  t->SetBranchAddress("time",&time);
+  t->SetBranchAddress("nt",&nt);
   t->SetBranchAddress("x",&x);
   t->SetBranchAddress("y",&y);
   t->SetBranchAddress("r",&r);
@@ -40,13 +41,14 @@ void selectPhotons(THeader *run){
   auto tCoincPhoton= t->Branch("coincPhoton",&coincPhoton,"coincPhoton[nedge]/O");
   auto tOuterPhoton= t->Branch("outerPhoton",&outerPhoton,"outerPhoton[nedge]/O");
 
+
   cout <<"Selecting the photon\n";
   for(int i = 0; i < t->GetEntries(); i++){
     t->GetEntry(i);
     for(int j = 0; j < nedge; j++){
       coincPhoton[j]=false;
       outerPhoton[j]=false;
-      if(pol[j]==0 && time[j] > run->timeMin && time[j] < run->timeMax){
+      if(pol[j]==0 && nt[j] > run->timeMin && nt[j] < run->timeMax){
         coincPhoton[j]=true;
         if(r[j] > run->geoCut)outerPhoton[j]=true;
       }
@@ -74,11 +76,11 @@ void findTimeCoincidence(THeader *run){
   TFile *fIn = new TFile (fName,"READ");
   TTree *t = (TTree*) fIn->Get("dRICH");
 
-  int nedge, pol[MAXDATA], time[MAXDATA];
+  int nedge, pol[MAXDATA], nt[MAXDATA];
 
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
-  t->SetBranchAddress("time",&time);
+  t->SetBranchAddress("nt",&nt);
 
   cout <<"Finding the time-coincidence window\n";
 
@@ -87,7 +89,7 @@ void findTimeCoincidence(THeader *run){
   for(int i = 0; i < t->GetEntries(); i++){
     t->GetEntry(i);
     for(int j = 0; j < nedge; j++){
-      if(pol==0) h->Fill(time[j]);
+      if(pol==0) h->Fill(nt[j]);
     }
   }
   TF1 *f0 = new TF1("f0","pol0",0,1000);
@@ -99,7 +101,8 @@ void findTimeCoincidence(THeader *run){
   double timeFitMin=h->GetBinCenter(h->GetMaximumBin())-20;
   double timeFitMax=h->GetBinCenter(h->GetMaximumBin())+20;
   h->Fit("f","Q","",timeFitMin,timeFitMax);
-  run->timeMin=f->GetParameter(1)-2*f->GetParameter(2);
+  run->timeMin=f->GetParameter(1)-3*f->GetParameter(2);
   run->timeMax=f->GetParameter(1)+3*f->GetParameter(2);
+  fIn->Close();
 
 }

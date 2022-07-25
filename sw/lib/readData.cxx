@@ -43,6 +43,7 @@ void getMAPMT(THeader *runHead){
 
   TString fNamedRICH=Form("%s/DATA/dRICH_DATA/run_%04d.root",&env_var[0],runDRICH);
   TString fOutName=Form("%s/processed_data/firstStepData/run_%04d_processed.root",&env_var[0],runDRICH);
+  //TString fOutName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_processed.root",runHead->suite,runDRICH);
   TFile *fdRICH = new TFile(fNamedRICH,"READ");
   TTree *t = (TTree*) fdRICH->Get("data");
 
@@ -67,7 +68,7 @@ void getMAPMT(THeader *runHead){
   int evt, tPol[MAXDATA],tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
   uint tNedge;
   double tTrigTime;
-  double x[MAXDATA], y[MAXDATA], radius[MAXDATA];
+  double x[MAXDATA], y[MAXDATA], radius[MAXDATA],ntime[MAXDATA];
   int pmt[MAXDATA], channel[MAXDATA];
 
 
@@ -95,6 +96,8 @@ void getMAPMT(THeader *runHead){
   (void)ty;
   auto tradius=tout->Branch("radius",&radius,"radius[nedge]/D");
   (void)tradius;
+  auto tntime=tout->Branch("ntime",&ntime,"ntime[nedge]/D");
+  (void)tntime;
 
   for(int i = 0; i < t->GetEntries(); i++){
     if((i)%(t->GetEntries()/10)==0)cout <<Form("\rTaking the dRICH data: %lld%% completed    ",(1+(i/(t->GetEntries()/10)))*10) <<flush;
@@ -112,6 +115,7 @@ void getMAPMT(THeader *runHead){
       channel[j]= getMAPMT_ch(fiber[j],chM[j],board[j],chip[j],runHead->upstreamBoard);
       pmt[j]=FiberToPhDet(fiber[j],&(runHead->fiberRef)[0]);
       MAPMTposition(channel[j],pmt[j],&x[j],&y[j],&radius[j]);
+      ntime[j]=timeCalibrationMAPMT(time[j],channel[j],pmt[j]);
     }
     if(wrongEvent==true)continue;
     tout->Fill();
@@ -140,7 +144,6 @@ void getMPPC(THeader *runHead){
   map<string,int>::iterator it_map_MPPC1;
   map<string,int>::iterator it_map_MPPC2;
   getMapMPPC(&map_MPPC1,&map_MPPC2);
-  cout <<"Mappe prese\n";
 
   //Find DRICH_SUITE environment variable
   const char  *tmp = getenv("DRICH_SUITE");
@@ -153,6 +156,7 @@ void getMPPC(THeader *runHead){
 
   TString fNamedRICH=Form("%s/DATA/dRICH_DATA/run_%04d.root",&env_var[0],runDRICH);
   TString fOutName=Form("%s/processed_data/firstStepData/run_%04d_processed.root",&env_var[0],runDRICH);
+  //TString fOutName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_processed.root",runHead->suite,runDRICH);
   TFile *fdRICH = new TFile(fNamedRICH,"READ");
   TTree *t = (TTree*) fdRICH->Get("data");
 
@@ -177,7 +181,7 @@ void getMPPC(THeader *runHead){
   int evt, tPol[MAXDATA],tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
   uint tNedge;
   double tTrigTime;
-  double x[MAXDATA], y[MAXDATA], radius[MAXDATA];
+  double x[MAXDATA], y[MAXDATA], radius[MAXDATA], ntime[MAXDATA];
   int pmt[MAXDATA], channel[MAXDATA];
 
 
@@ -205,6 +209,8 @@ void getMPPC(THeader *runHead){
   (void)ty;
   auto tradius=tout->Branch("radius",&radius,"radius[nedge]/D");
   (void)tradius;
+  auto tntime=tout->Branch("ntime",&ntime,"ntime[nedge]/D");
+  (void)tntime;
 
   cout <<"TTree presi\n";
 
@@ -224,6 +230,7 @@ void getMPPC(THeader *runHead){
       channel[j]= getMPPC_ch(fiber[j],chM[j],board[j],chip[j],runHead->upstreamBoard);
       pmt[j]=FiberToPhDet(fiber[j],&(runHead->fiberRef)[0]);
       MPPCposition(channel[j],pmt[j],&x[j],&y[j],&radius[j]);
+      ntime[j]=timeCalibrationMPPC(time[j],channel[j],pmt[j]);
     }
     if(wrongEvent==true)continue;
     tout->Fill();

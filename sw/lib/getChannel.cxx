@@ -31,11 +31,19 @@ static map<string,int> m7;
 static map<string,int>::iterator it_m6;
 static map<string,int>::iterator it_m7;
 
+static map<int,double> m8;
+static map<int,double> m9;
+static map<int,double>::iterator it_m8;
+static map<int,double>::iterator it_m9;
+
+
 
 void getMaps(){
   getRunNumbers(&m1,&m2,&m3);
   getMapMAPMT(&m4,&m5);
   getMapMPPC(&m6,&m7);
+  getTimeCalibrationDataMAPMT(&m8);
+  getTimeCalibrationDataMPPC(&m9);
 }
 
 void upstreamMaroc(int fiber, THeader *run){
@@ -66,6 +74,22 @@ int getMarocChip(int mCh){
   if(mCh > 63 && mCh < 128) ret = 1;
   if(mCh > 127) ret = 2;
   return ret;
+}
+
+double timeCalibrationMAPMT(double time, int channel, int pmt){
+  if(m8.empty())getMaps();
+  int place = pmt*256+channel;
+  double correction = m8.at(place);
+  double newTime = time + correction;
+  return newTime;
+}
+
+double timeCalibrationMPPC(double time, int channel, int pmt){
+  if(m9.empty())getMaps();
+  int place = pmt*256+channel;
+  double correction = m9.at(place);
+  double newTime = time + correction;
+  return newTime;
 }
 
 

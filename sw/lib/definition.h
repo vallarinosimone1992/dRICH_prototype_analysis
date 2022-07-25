@@ -15,7 +15,7 @@ struct THeader{
   int expEvents;
   string sensor;
   float firstMirrorPosition;
-  float secomdMirrorPosition;
+  float secondMirrorPosition;
   float temperature;
   int powerHV;
   string trigger;
@@ -45,15 +45,5 @@ struct THeader{
   double timeMin;
   double timeMax;
 };
-
-/*void envVarCheck(){
-  //Find DRICH_SUITE environment variable
-  const char  *tmp = getenv("DRICH_SUITE");
-  static string env_varAll(tmp ? tmp : "");
-  if(env_varAll.empty()){
-    cerr <<"[ERROR] No such variable found! You should define the variable DRICH_SUITE!" <<endl;
-    exit(EXIT_FAILURE);
-  }
-}*/
 
 #endif

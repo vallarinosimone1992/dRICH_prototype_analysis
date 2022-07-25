@@ -14,23 +14,23 @@
 
 using namespace std;
 
-bool correctionFit=true;
-bool correctionMax=false;
+bool correctionFit=false;
+bool correctionMax=true;
 
 void newSingleParticle(THeader *run){
   TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",&run->suite[0],run->runNum);
   TFile *fIn = new TFile(fName,"UPDATE");
   TTree *t = (TTree*) fIn->Get("dRICH");
   int nedge, pmt[MAXDATA];
-  double nr[MAXDATA], time[MAXDATA];
+  double nr[MAXDATA], nt[MAXDATA];
   bool coincPhoton[MAXDATA],outerPhoton[MAXDATA];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pmt",&pmt);
   t->SetBranchAddress("nr",&nr);
-  t->SetBranchAddress("time",&time);
+  t->SetBranchAddress("nt",&nt);
   t->SetBranchAddress("coincPhoton",&coincPhoton);
   t->SetBranchAddress("outerPhoton",&outerPhoton);
-  
+
   double spnRadius[10], spnTime[10];
   int spnPhoton[10];
 
@@ -53,10 +53,10 @@ void newSingleParticle(THeader *run){
         int refTOT = 4+5*k;
         spnRadius[refPMT]+=nr[j];
         spnPhoton[refPMT]+=1;
-        spnTime[refPMT]+=time[j];
+        spnTime[refPMT]+=nt[j];
         spnRadius[refTOT]+=nr[j];
         spnPhoton[refTOT]+=1;
-        spnTime[refTOT]+=time[j];
+        spnTime[refTOT]+=nt[j];
       }
     }
     for(int j = 0; j < 10; j++){
@@ -69,7 +69,6 @@ void newSingleParticle(THeader *run){
         spnTime[j]=0;
       }
     }
-    //cin.get();
     tSpnRadius->Fill();
     tSpnPhoton->Fill();
     tSpnTime->Fill();
@@ -112,10 +111,16 @@ void positionCorrection(THeader *run){
   for(int i = 0; i < t->GetEntries(); i++){
     if(i%(t->GetEntries()/10)==0)cout <<Form("\rComputing the corrected variables: %lld%% completed   ",10*(1+i)/(t->GetEntries()/10)) <<flush;
     t->GetEntry(i);
+    //if(abs(gxtheta) > 0.001 || abs(gytheta) > 0.001) continue;
     xNCin = gxtheta*run->secondPath+run->innerCorrectionX;
     yNCin = gytheta*run->secondPath+run->innerCorrectionY;
     xNCout = gxtheta*run->firstPath+run->outerCorrectionX;
     yNCout = gytheta*run->firstPath+run->outerCorrectionY;
+/*    cout <<"Aero angle: "<<gxtheta <<" " <<gytheta <<endl;
+    cout <<"Path: " <<run->firstPath <<endl;
+    cout <<"Correction: " <<run->outerCorrectionX <<" " <<run->outerCorrectionY <<endl;
+    cout <<"New center: "<<xNCout <<" " <<yNCout <<endl;
+    cin.get();*/
     for(int j = 0; j < nedge; j++){
      nx[j]=0;
      ny[j]=0;
@@ -250,6 +255,14 @@ void opticalCenterX(THeader *run){
     cout <<"It is " <<run->sensor.c_str() <<endl;
     exit(EXIT_FAILURE);
   }
+  if(abs(run->innerCorrectionX) > 10){
+    cout <<"[WARNING] Inner correction X larger than 10. Fixed to 0. Check it\n";
+    run->innerCorrectionX=0;
+  }
+  if(abs(run->outerCorrectionX) > 10){
+    cout <<"[WARNING] Outer correction X larger than 10. Fixed to 0. Check it\n";
+    run->outerCorrectionX=0;
+  }
   fIn->Close();
 }
 
@@ -303,6 +316,14 @@ void opticalCenterY(THeader *run){
       exit(EXIT_FAILURE);
     }
   }
+  if(abs(run->innerCorrectionY) > 10){
+    cout <<"[WARNING] Inner correction y larger than 10. Fixed to 0. Check it\n";
+    run->innerCorrectionY=0;
+  }
+  if(abs(run->outerCorrectionY) > 10){
+    cout <<"[WARNING] Outer correction y larger than 10. Fixed to 0. Check it\n";
+    run->outerCorrectionY=0;
+  }
   fIn->Close();
 }
 
@@ -314,13 +335,13 @@ void singleParticle(THeader *run){
   TFile *fIn = new TFile (fName,"UPDATE");
   TTree *t = (TTree*) fIn->Get("dRICH");
 
-  int nedge, pol[MAXDATA], time[MAXDATA], pmt[MAXDATA];
-  double x[MAXDATA],y[MAXDATA],r[MAXDATA];
+  int nedge, pol[MAXDATA], pmt[MAXDATA];
+  double x[MAXDATA],y[MAXDATA],r[MAXDATA], nt[MAXDATA];
   bool coincPhoton[MAXDATA], outerPhoton[MAXDATA];
 
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
-  t->SetBranchAddress("time",&time);
+  t->SetBranchAddress("nt",&nt);
   t->SetBranchAddress("pmt",&pmt);
   t->SetBranchAddress("x",&x);
   t->SetBranchAddress("y",&y);
@@ -351,10 +372,10 @@ void singleParticle(THeader *run){
         int refTOT = 4+5*k;
         spRadius[refPMT]+=r[j];
         spPhoton[refPMT]+=1;
-        spTime[refPMT]+=time[j];
+        spTime[refPMT]+=nt[j];
         spRadius[refTOT]+=r[j];
         spPhoton[refTOT]+=1;
-        spTime[refTOT]+=time[j];
+        spTime[refTOT]+=nt[j];
       }
     }
     for(int j = 0; j < 10; j++){
@@ -367,7 +388,6 @@ void singleParticle(THeader *run){
         spTime[j]=0;
       }
     }
-    //cin.get();
     tSPRadius->Fill();
     tSPPhoton->Fill();
     tSPTime->Fill();

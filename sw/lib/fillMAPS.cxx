@@ -56,6 +56,39 @@ void getMapMPPC(map<string,int> *map_MPPC1, map<string,int> *map_MPPC2){
   fclose(file);
 }
 
+void getTimeCalibrationDataMAPMT(map<int,double> *map_time_MAPMT){
+  FILE *file;
+  file=fopen("../map/MAPMT_time_calibration.dat","r");
+  if(file == NULL){
+    cout <<"MAPMT time calibration map not found\n";
+    exit(EXIT_FAILURE);
+  }
+  char line[2000];
+  int key;
+  double value;
+  while(fgets(line,2000,file)!=NULL){
+    sscanf(line,"%d %lf",&key,&value);
+    map_time_MAPMT->insert(make_pair(key,value));
+  }
+  fclose(file);
+}
+
+void getTimeCalibrationDataMPPC(map<int,double> *map_time_MPPC){
+  FILE *file;
+  file=fopen("../map/MPPC_time_calibration.dat","r");
+  if(file == NULL){ 
+    cout <<"MPPC time calibration map not found\n";
+    exit(EXIT_FAILURE);
+  }
+  char line[2000];
+  int key;
+  double value;
+  while(fgets(line,2000,file)!=NULL){
+    sscanf(line,"%d %lf",&key,&value);
+    map_time_MPPC->insert(make_pair(key,value));
+  }
+  fclose(file);
+}
 
 void readHeaders(int run, THeader *runHeader){
   FILE *file;
@@ -82,7 +115,7 @@ void readHeaders(int run, THeader *runHeader){
       runHeader->expEvents=tExpEvents;
       runHeader->sensor=tSensor;
       runHeader->firstMirrorPosition=tFirstMirrorPosition;
-      runHeader->secomdMirrorPosition=tSecondMirrorPosition;
+      runHeader->secondMirrorPosition=tSecondMirrorPosition;
       runHeader->temperature=tTemperature;
       runHeader->powerHV=tPowerHV;
       runHeader->trigger=tTrigger;
