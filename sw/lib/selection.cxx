@@ -12,13 +12,15 @@
 
 using namespace std;
 
-/*void rmsCut(THeader *run){
-  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite,run->runNum);
-  TFile *fIn = new TFile (fName,"UPDATE");
-  TTree *t = (TTree*) fIn->Get("dRICH");
-  t->Write("",TObject::kOverwrite);
-  fIn->Close();
-}*/
+/*
+   void rmsCut(THeader *run){
+   TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite,run->runNum);
+   TFile *fIn = new TFile (fName,"UPDATE");
+   TTree *t = (TTree*) fIn->Get("dRICH");
+   t->Write("",TObject::kOverwrite);
+   fIn->Close();
+   }
+   */
 
 void selectPhotons(THeader *run){
   int runDRICH=run->runNum;

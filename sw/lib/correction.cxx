@@ -17,6 +17,68 @@ using namespace std;
 bool correctionFit=false;
 bool correctionMax=true;
 
+
+void computeRMS(THeader *run){
+  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
+  TFile *fIn = new TFile (fName,"UPDATE");
+  TTree *t = (TTree*) fIn->Get("dRICH");
+  int nedge, pmt[MAXDATA];
+  double nr[MAXDATA], nt[MAXDATA], spnRadius[10], spnTime[10];
+  bool coincPhoton[MAXDATA],outerPhoton[MAXDATA];
+  t->SetBranchAddress("nedge",&nedge);
+  t->SetBranchAddress("pmt",&pmt);
+  t->SetBranchAddress("nr",&nr);
+  t->SetBranchAddress("nt",&nt);
+  t->SetBranchAddress("coincPhoton",&coincPhoton);
+  t->SetBranchAddress("outerPhoton",&outerPhoton);
+  t->SetBranchAddress("spnRadius",&spnRadius);
+  t->SetBranchAddress("spnTime",&spnTime);
+
+  double rmsRadius[10], rmsTime[10], rmsPhoton[10];
+  auto trmsRadius=t->Branch("rmsRadius",&rmsRadius,"rmsRadius[10]/D");
+  auto trmsPhoton=t->Branch("rmsPhoton",&rmsPhoton,"rmsPhoton[10]/I");
+  auto trmsTime=t->Branch("rmsTime",&rmsTime,"rmsTime[10]/D");
+  
+  cout <<"Computing RMS\n";
+  for(int i = 0; i < t->GetEntries(); i++){
+    t->GetEntry(i);
+    for(int j = 0; j < 10; j++){
+      rmsRadius[j]=0;
+      rmsPhoton[j]=0;
+      rmsTime[j]=0;
+    }
+    for(int j = 0; j < nedge; j++){
+      if(coincPhoton[j]==true){
+        int k=0;
+        if(outerPhoton[j]==true) k = 1;
+        int refPMT = pmt[j]+5*k;
+        int refTOT = 4+5*k;
+        rmsRadius[refPMT]+=pow(spnRadius[refPMT]-nr[j],2);
+        rmsPhoton[refPMT]+=1;
+        rmsTime[refPMT]+=pow(spnTime[refPMT]-nt[j],2);
+        rmsRadius[refTOT]+=pow(spnRadius[refTOT]-nr[j],2);
+        rmsPhoton[refTOT]+=1;
+        rmsTime[refTOT]+=pow(spnRadius[refTOT]-nt[j],2);
+      }
+    }
+    for(int j = 0; j < 10; j++){
+      if(rmsPhoton[j]>1){
+        rmsRadius[j]=sqrt(rmsRadius[j]/rmsPhoton[j]);
+        rmsTime[j]=sqrt(rmsTime[j]/rmsPhoton[j]);
+        cout <<j<<" " <<rmsRadius[j]<<" " <<rmsTime[j] <<" "<<rmsPhoton[j] <<endl;
+      }else{
+        rmsRadius[j]=-10;
+        rmsTime[j]=-10;
+      }
+    }
+    trmsRadius->Fill();
+    trmsPhoton->Fill();
+    trmsTime->Fill();
+  }
+  t->Write("",TObject::kOverwrite);
+  fIn->Close();
+}
+
 void newSingleParticle(THeader *run){
   TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",&run->suite[0],run->runNum);
   TFile *fIn = new TFile(fName,"UPDATE");
@@ -37,8 +99,8 @@ void newSingleParticle(THeader *run){
   auto tSpnRadius=t->Branch("spnRadius",&spnRadius,"spnRadius[10]/D");
   auto tSpnPhoton=t->Branch("spnPhoton",&spnPhoton,"spnPhoton[10]/I");
   auto tSpnTime=t->Branch("spnTime",&spnTime,"spnTime[10]/D");
- 
- for(int i = 0; i < t->GetEntries(); i++){
+
+  for(int i = 0; i < t->GetEntries(); i++){
     t->GetEntry(i);
     for(int j = 0; j < 10; j++){
       spnRadius[j]=0;
@@ -116,15 +178,15 @@ void positionCorrection(THeader *run){
     yNCin = gytheta*run->secondPath+run->innerCorrectionY;
     xNCout = gxtheta*run->firstPath+run->outerCorrectionX;
     yNCout = gytheta*run->firstPath+run->outerCorrectionY;
-/*    cout <<"Aero angle: "<<gxtheta <<" " <<gytheta <<endl;
-    cout <<"Path: " <<run->firstPath <<endl;
-    cout <<"Correction: " <<run->outerCorrectionX <<" " <<run->outerCorrectionY <<endl;
-    cout <<"New center: "<<xNCout <<" " <<yNCout <<endl;
-    cin.get();*/
+    /*    cout <<"Aero angle: "<<gxtheta <<" " <<gytheta <<endl;
+          cout <<"Path: " <<run->firstPath <<endl;
+          cout <<"Correction: " <<run->outerCorrectionX <<" " <<run->outerCorrectionY <<endl;
+          cout <<"New center: "<<xNCout <<" " <<yNCout <<endl;
+          cin.get();*/
     for(int j = 0; j < nedge; j++){
-     nx[j]=0;
-     ny[j]=0;
-     nr[j]=0;
+      nx[j]=0;
+      ny[j]=0;
+      nr[j]=0;
       if(coincPhoton[j]==true){
         if(outerPhoton[j]==false){
           nx[j]=x[j]-xNCin;

@@ -1,6 +1,7 @@
 #include "definition.h"
 
 
+void computeRMS(THeader *run);
 void newSingleParticle(THeader *run);
 void positionCorrection(THeader *run);
 void opticalCenterX(THeader *run);

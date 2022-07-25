@@ -100,6 +100,7 @@ cout <<"Y correction in and out: " <<runHeader.innerCorrectionY <<" " <<runHeade
   cout <<"X correction in and out: " <<runHeader.innerCorrectionX <<" " <<runHeader.outerCorrectionX <<endl;
   positionCorrection(&runHeader);
   newSingleParticle(&runHeader);
+  computeRMS(&runHeader);
   //theApp.Run();
   exit(EXIT_SUCCESS);
 }
