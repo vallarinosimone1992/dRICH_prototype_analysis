@@ -29,14 +29,28 @@ target_include_directories(dRICH_lib
 )
 
 
-  add_executable(recoTest
+add_executable(recoTest
       plugin/main_test.C
-      )
+)
 
-  target_link_libraries(recoTest
+target_link_libraries(recoTest
       PRIVATE
       dRICH_lib
       PUBLIC
       ${ROOT_LIBRARIES}
       ${ROOT_EXE_LINKER_FLAGS}
-      )
+)
+
+
+add_executable(ana
+      plugin/analysis.cxx
+)
+
+
+target_link_libraries(ana
+      PRIVATE
+      dRICH_lib
+      PUBLIC
+      ${ROOT_LIBRARIES}
+      ${ROOT_EXE_LINKER_FLAGS}
+)

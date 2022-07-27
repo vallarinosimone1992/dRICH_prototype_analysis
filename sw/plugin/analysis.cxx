@@ -82,11 +82,10 @@ int main(int argc, char *argv[]){
   if(runHeader.sensor=="MAPMT")getMAPMT(&runHeader);
   if(runHeader.sensor=="MPPC")getMPPC(&runHeader);
 
-
+  
 
   //TTreeIntegration(runHeader.runNum,runHeader.runNumGEM);
-  if(runHeader.runNumGEM!=0){TTreeIntegration(&runHeader);}
-  else{noGEM_Integration(&runHeader);}
+  TTreeIntegration(&runHeader);
   cout <<"Integration done\n";
 
   findTimeCoincidence(&runHeader);
@@ -98,7 +97,7 @@ int main(int argc, char *argv[]){
   //IMPORTANT! The Y axis correction must be computed befor the X axis correction.
   opticalCenterY(&runHeader);
   opticalCenterX(&runHeader);
-  cout <<"Y correction in and out: " <<runHeader.innerCorrectionY <<" " <<runHeader.outerCorrectionY <<endl; 
+cout <<"Y correction in and out: " <<runHeader.innerCorrectionY <<" " <<runHeader.outerCorrectionY <<endl; 
   cout <<"X correction in and out: " <<runHeader.innerCorrectionX <<" " <<runHeader.outerCorrectionX <<endl;
   positionCorrection(&runHeader);
   newSingleParticle(&runHeader);

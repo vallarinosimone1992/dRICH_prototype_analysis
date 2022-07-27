@@ -42,25 +42,36 @@
 
 using namespace std;
 
-map<int,int> m1;
-map<int,int>::iterator it_m1;
-
-map<int,double> m2;
-map<int,double> m3;
-map<int,double>::iterator it_m2;
-map<int,double>::iterator it_m3;
-
-map<string,int> m4;
-map<string,int> m5;
-map<string,int>::iterator it_m4;
-map<string,int>::iterator it_m5;
-
-const double xBin[] = {-81,-77.75, -74.71875, -71.6875, -68.65625, -65.625, -62.59375, -59.5625, -56.53125, -53.5, -50.46875, -47.4375, -44.40625, -41.375, -38.34375, -35.3125, -32.28125, -29.25, -24.25, -21.21875, -18.1875, -15.15625, -12.125, -9.09375, -6.0625, -3.03125, 0, 3.03125, 6.0625, 9.09375, 12.125, 15.15625, 18.1875, 21.21875, 24.25, 29.25, 32.28125, 35.3125, 38.34375, 41.375, 44.40625, 47.4375, 50.46875, 53.5, 56.53125, 59.5625, 62.59375, 65.625, 68.65625, 71.6875, 74.71875, 77.75,81};
-const double yBin[] = {-81,-77.75, -74.71875, -71.6875, -68.65625, -65.625, -62.59375, -59.5625, -56.53125, -53.5, -50.46875, -47.4375, -44.40625, -41.375, -38.34375, -35.3125, -32.28125, -29.25, -24.25, -21.21875, -18.1875, -15.15625, -12.125, -9.09375, -6.0625, -3.03125, 0, 3.03125, 6.0625, 9.09375, 12.125, 15.15625, 18.1875, 21.21875, 24.25, 29.25, 32.28125, 35.3125, 38.34375, 41.375, 44.40625, 47.4375, 50.46875, 53.5, 56.53125, 59.5625, 62.59375, 65.625, 68.65625, 71.6875, 74.71875, 77.75,81};
-
 
 int main(int argc, char *argv[]){
   TApplication theApp("App",&argc,argv);
+
+  int dRICHRun;
+  if(argc == 2)
+    dRICHRun = atoi(argv[1]);
+  else{
+    cout <<"[ERROR] Missed the dRICH run number\n";
+    return 0;
+  }
+  cout <<Form("Analysis of the dRICH run: %04d\n",dRICHRun);
+  
+  header info;
+  readHeaders(dRICHRun,info);
+  if(gSystem->AccessPathName(Form("%s/DATA/dRICH_DATA/run_%04d.root",&dRICHDir[0],dRICHRun))){
+    cout <<"[ERROR] dRICH run not found\n";
+    return 0;
+  }
+  if(GEMRun == 0){
+    cout <<"[ERROR] GEM data was not taken for this run\n";
+    return 0;
+  }
+  if(gSystem->AccessPathName(Form("%s/DATA/GEM_DATA/run_%04d_gem.root",&dRICHDir[0],GEMRun))){
+    cout <<"[ERROR] GEM run not found\n";
+    return 0;
+  }
+
+
+
   TCanvas *c = new TCanvas();
   c->Draw();
   TH2D *h = new TH2D("h","Rings; x[mm]; y[mm]",sizeof(xBin)/sizeof(*xBin)-1,xBin,sizeof(yBin)/sizeof(*yBin)-1,yBin);
@@ -85,8 +96,7 @@ int main(int argc, char *argv[]){
 
 
   //TTreeIntegration(runHeader.runNum,runHeader.runNumGEM);
-  if(runHeader.runNumGEM!=0){TTreeIntegration(&runHeader);}
-  else{noGEM_Integration(&runHeader);}
+  TTreeIntegration(&runHeader);
   cout <<"Integration done\n";
 
   findTimeCoincidence(&runHeader);

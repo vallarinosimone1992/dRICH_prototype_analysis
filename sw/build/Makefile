@@ -142,6 +142,19 @@ recoTest/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/build
 .PHONY : recoTest/fast
 
+#=============================================================================
+# Target rules for targets named ana
+
+# Build rule for target.
+ana: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ana
+.PHONY : ana
+
+# fast build rule for target.
+ana/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ana.dir/build.make CMakeFiles/ana.dir/build
+.PHONY : ana/fast
+
 lib/averaging.o: lib/averaging.cxx.o
 .PHONY : lib/averaging.o
 
@@ -358,6 +371,30 @@ lib/tracking.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.s
 .PHONY : lib/tracking.cxx.s
 
+plugin/analysis.o: plugin/analysis.cxx.o
+.PHONY : plugin/analysis.o
+
+# target to build an object file
+plugin/analysis.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ana.dir/build.make CMakeFiles/ana.dir/plugin/analysis.cxx.o
+.PHONY : plugin/analysis.cxx.o
+
+plugin/analysis.i: plugin/analysis.cxx.i
+.PHONY : plugin/analysis.i
+
+# target to preprocess a source file
+plugin/analysis.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ana.dir/build.make CMakeFiles/ana.dir/plugin/analysis.cxx.i
+.PHONY : plugin/analysis.cxx.i
+
+plugin/analysis.s: plugin/analysis.cxx.s
+.PHONY : plugin/analysis.s
+
+# target to generate assembly for a file
+plugin/analysis.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/ana.dir/build.make CMakeFiles/ana.dir/plugin/analysis.cxx.s
+.PHONY : plugin/analysis.cxx.s
+
 plugin/main_test.o: plugin/main_test.C.o
 .PHONY : plugin/main_test.o
 
@@ -390,6 +427,7 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
+	@echo "... ana"
 	@echo "... dRICH_lib"
 	@echo "... recoTest"
 	@echo "... lib/averaging.o"
@@ -419,6 +457,9 @@ help:
 	@echo "... lib/tracking.o"
 	@echo "... lib/tracking.i"
 	@echo "... lib/tracking.s"
+	@echo "... plugin/analysis.o"
+	@echo "... plugin/analysis.i"
+	@echo "... plugin/analysis.s"
 	@echo "... plugin/main_test.o"
 	@echo "... plugin/main_test.i"
 	@echo "... plugin/main_test.s"

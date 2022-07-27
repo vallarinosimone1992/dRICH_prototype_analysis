@@ -12,7 +12,8 @@ mkdir -p $DRICH_SUITE/DATA/GEM_DATA
 mkdir -p $DRICH_SUITE/DATA/header
 mkdir -p $DRICH_SUITE/processed_data/firstStepData
 mkdir -p $DRICH_SUITE/processed_data/integrated_dRICH_GEM_data
-mkdir -p $DRICH_SUITE/output
+mkdir -p $DRICH_SUITE/output/header
+mkdir -p $DRICH_SUITE/output/plot
 
 echo "Environment set completed"
 
