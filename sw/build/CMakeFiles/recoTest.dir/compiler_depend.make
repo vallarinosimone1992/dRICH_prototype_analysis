@@ -459,9 +459,12 @@ CMakeFiles/recoTest.dir/plugin/main_test.C.o: ../plugin/main_test.C \
   ../lib/selection.h \
   ../lib/correction.h \
   ../lib/integrate.h \
+  ../lib/averaging.h \
   ../lib/readData.h \
   ../lib/fillMAPS.h
 
+
+../lib/averaging.h:
 
 ../lib/selection.h:
 

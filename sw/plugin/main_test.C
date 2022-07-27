@@ -36,6 +36,7 @@
 #include "../lib/selection.h"
 #include "../lib/correction.h"
 #include "../lib/integrate.h"
+#include "../lib/averaging.h"
 #include "../lib/readData.h"
 
 
@@ -101,6 +102,8 @@ cout <<"Y correction in and out: " <<runHeader.innerCorrectionY <<" " <<runHeade
   positionCorrection(&runHeader);
   newSingleParticle(&runHeader);
   computeRMS(&runHeader);
+  rmsCutSelection(&runHeader);
+  computeCutSingleParticle(&runHeader);
   //theApp.Run();
   exit(EXIT_SUCCESS);
 }

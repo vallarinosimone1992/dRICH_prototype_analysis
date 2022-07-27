@@ -12,19 +12,56 @@
 
 using namespace std;
 
-/*
-   void rmsCut(THeader *run){
-   TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite,run->runNum);
-   TFile *fIn = new TFile (fName,"UPDATE");
-   TTree *t = (TTree*) fIn->Get("dRICH");
-   t->Write("",TObject::kOverwrite);
-   fIn->Close();
-   }
-   */
+
+void rmsCutSelection(THeader *run){
+  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
+  TFile *fIn = new TFile (fName,"UPDATE");
+  TTree *t = (TTree*) fIn->Get("dRICH");
+
+  int nedge, pmt[MAXDATA];
+  double nr[MAXDATA], nt[MAXDATA];
+  bool coincPhoton[MAXDATA],outerPhoton[MAXDATA];
+  double rsdRadius[MAXDATA], rsdTime[MAXDATA];
+  bool goodRMS[10];
+  t->SetBranchAddress("nedge",&nedge);
+  t->SetBranchAddress("pmt",&pmt);
+  t->SetBranchAddress("nr",&nr);
+  t->SetBranchAddress("nt",&nt);
+  t->SetBranchAddress("coincPhoton",&coincPhoton);
+  t->SetBranchAddress("outerPhoton",&outerPhoton);
+  t->SetBranchAddress("rsdRadius",&rsdRadius);
+  t->SetBranchAddress("rsdTime",&rsdTime);
+  t->SetBranchAddress("goodRMS",&goodRMS);
+
+  bool cutPhotonFlag[MAXDATA];
+  auto tcutPhotonFlag= t->Branch("cutPhotonFlag",&cutPhotonFlag,"cutPhotonFlag[nedge]/O");
+    
+  for(int i = 0; i < t->GetEntries(); i++){
+    t->GetEntry(i);
+    for(int j = 0; j < nedge; j++){
+      cutPhotonFlag[j]=false;
+      int k=0;
+      double cmpRadius = run->cutRadiusInRMS;
+      double cmpTime = run->cutTimeInRMS;
+      if(outerPhoton[j]==true) {
+        k = 1;
+        cmpRadius = run->cutRadiusOutRMS;
+        cmpTime = run->cutTimeOutRMS;
+      }
+      int refTOT = 4+5*k;
+      if(coincPhoton[j]==true && goodRMS[refTOT]==true){
+        if(abs(rsdRadius[j]) < cmpRadius &&  abs(rsdTime[j]) < cmpTime)cutPhotonFlag[j] = true; 
+      }
+    } 
+    tcutPhotonFlag->Fill();
+    //cin.get();
+  }  
+  t->Write("",TObject::kOverwrite);
+  fIn->Close();
+}
+
 
 void selectPhotons(THeader *run){
-  int runDRICH=run->runNum;
-  //Find DRICH_SUITE environment variable
   TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
   TFile *fIn = new TFile (fName,"UPDATE");
   TTree *t = (TTree*) fIn->Get("dRICH");
@@ -52,8 +89,8 @@ void selectPhotons(THeader *run){
       outerPhoton[j]=false;
       if(pol[j]==0 && nt[j] > run->timeMin && nt[j] < run->timeMax){
         coincPhoton[j]=true;
-        if(r[j] > run->geoCut)outerPhoton[j]=true;
       }
+      if(r[j] > run->geoCut)outerPhoton[j]=true;
     }
     tCoincPhoton->Fill();
     tOuterPhoton->Fill();

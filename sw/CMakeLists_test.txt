@@ -12,6 +12,7 @@ separate_arguments(ROOT_EXE_LINKER_FLAGS)
 add_library(dRICH_lib
       STATIC
       lib/definition.h
+      lib/averaging.cxx
       lib/getChannel.cxx
       lib/photoDetPosition.cxx
       lib/selection.cxx

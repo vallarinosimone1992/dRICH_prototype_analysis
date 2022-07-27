@@ -1,4 +1,6 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o"
+  "CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/correction.cxx.o"
   "CMakeFiles/dRICH_lib.dir/lib/correction.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o"

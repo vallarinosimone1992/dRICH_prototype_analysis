@@ -142,6 +142,30 @@ recoTest/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/build
 .PHONY : recoTest/fast
 
+lib/averaging.o: lib/averaging.cxx.o
+.PHONY : lib/averaging.o
+
+# target to build an object file
+lib/averaging.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o
+.PHONY : lib/averaging.cxx.o
+
+lib/averaging.i: lib/averaging.cxx.i
+.PHONY : lib/averaging.i
+
+# target to preprocess a source file
+lib/averaging.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.i
+.PHONY : lib/averaging.cxx.i
+
+lib/averaging.s: lib/averaging.cxx.s
+.PHONY : lib/averaging.s
+
+# target to generate assembly for a file
+lib/averaging.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.s
+.PHONY : lib/averaging.cxx.s
+
 lib/correction.o: lib/correction.cxx.o
 .PHONY : lib/correction.o
 
@@ -368,6 +392,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... dRICH_lib"
 	@echo "... recoTest"
+	@echo "... lib/averaging.o"
+	@echo "... lib/averaging.i"
+	@echo "... lib/averaging.s"
 	@echo "... lib/correction.o"
 	@echo "... lib/correction.i"
 	@echo "... lib/correction.s"
