@@ -1,5 +1,5 @@
-CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o: \
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/averaging.cxx \
+CMakeFiles/dRICH_lib.dir/lib/computing.cxx.o: \
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/computing.cxx \
  /usr/include/stdc-predef.h /usr/include/c++/11/iostream \
  /usr/include/c++/11/x86_64-redhat-linux/bits/c++config.h \
  /usr/include/bits/wordsize.h \
@@ -262,5 +262,5 @@ CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o: \
  /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
  /usr/include/bits/uio_lim.h /usr/include/root/Buttons.h \
  /usr/include/root/TAttBBox2D.h /usr/include/root/TAttCanvas.h \
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/averaging.h \
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/computing.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/definition.h

@@ -91,8 +91,20 @@ void getTimeCalibrationDataMPPC(map<int,double> *map_time_MPPC){
 }
 
 void readHeaders(int run, THeader *runHeader){
+  const char  *tmp = getenv("DRICH_SUITE");
+  string env_var(tmp ? tmp : "");
+  if(env_var.empty()){
+    cerr <<"[ERROR] No such variable found! You should define the variable DRICH_SUITE!" <<endl;
+    exit(EXIT_FAILURE);
+  }
+  runHeader->suite=env_var;
   FILE *file;
-  file=fopen("../../../DATA/header/logbook.tsv","r");
+  string headerName=Form("%s/DATA/header/logbook.tsv",runHeader->suite.c_str());
+  if(gSystem->AccessPathName(headerName.c_str())){
+    cout <<Form("[ERROR] Header file %s not found\n",headerName.c_str());
+    exit(EXIT_FAILURE);
+  }
+  file=fopen(headerName.c_str(),"r");
   char line0[10000];
   char line[10000];
   int tRunNum, tEnergyGeV, tExpEvents, tPowerHV, tRunNumGEM, tPedestalGEM;
@@ -102,10 +114,6 @@ void readHeaders(int run, THeader *runHeader){
   while(fgets(line,10000,file)!=NULL){
     sscanf(line,"%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s %s",&tRunNum,tDay,tStartTime,tEndTime,tBeam,&tEnergyGeV,&tExpEvents,tSensor,&tFirstMirrorPosition,&tSecondMirrorPosition,&tTemperature,&tPowerHV,tTrigger,tRunType,&tRunNumGEM,&tPedestalGEM,tSetupFile,tNote);
     if(run == tRunNum){
-      cout <<"The header includes the following info\n";
-      cout <<line0;
-      cout <<line;
-      //cout <<Form("%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s %s\n",tRunNum,&tDay[0],&tStartTime[0],&tEndTime[0],&tBeam[0],tEnergyGeV,tExpEvents,&tSensor[0],tFirstMirrorPosition,tSecondMirrorPosition,tTemperature,tPowerHV,&tTrigger[0],&tRunType[0],tRunNumGEM,tPedestalGEM,&tSetupFile[0],&tNote[0]);
       runHeader->runNum = tRunNum;
       runHeader->day=tDay;
       runHeader->startTime=tStartTime;
@@ -124,22 +132,12 @@ void readHeaders(int run, THeader *runHeader){
       runHeader->pedestalGEM=tPedestalGEM;
       runHeader->setupFile=tSetupFile;
       runHeader->note=tNote;
-
       break;
     }
   }
   fclose(file);
 
-  const char  *tmp = getenv("DRICH_SUITE");
-  string env_var(tmp ? tmp : "");
-  if(env_var.empty()){
-    cerr <<"[ERROR] No such variable found! You should define the variable DRICH_SUITE!" <<endl;
-    exit(EXIT_FAILURE);
-  }
-  runHeader->suite=env_var;
-
-
-  file=fopen(Form("../map/%s.map",(runHeader->setupFile).c_str()),"r");
+  file=fopen(Form("%s/dRICH_prototype_analysis/sw/map/%s.map",runHeader->suite.c_str(),runHeader->setupFile.c_str()),"r");
   for(int i = 0; i < 8; i++){
     if(fgets(line,10000,file)!=NULL){
       int tmp1, tmp2;
@@ -198,7 +196,6 @@ void readHeaders(int run, THeader *runHeader){
     auto prz = sscanf(line,"%f",&tmp1);
     runHeader->outerCorrectionY=tmp1;
   }
-
 
   cout <<"Header and setup file read\n";
 }

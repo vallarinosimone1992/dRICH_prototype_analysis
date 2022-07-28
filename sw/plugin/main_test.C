@@ -36,7 +36,7 @@
 #include "../lib/selection.h"
 #include "../lib/correction.h"
 #include "../lib/integrate.h"
-#include "../lib/averaging.h"
+#include "../lib/computing.h"
 #include "../lib/readData.h"
 
 

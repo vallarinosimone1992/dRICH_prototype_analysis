@@ -155,29 +155,29 @@ ana/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ana.dir/build.make CMakeFiles/ana.dir/build
 .PHONY : ana/fast
 
-lib/averaging.o: lib/averaging.cxx.o
-.PHONY : lib/averaging.o
+lib/computing.o: lib/computing.cxx.o
+.PHONY : lib/computing.o
 
 # target to build an object file
-lib/averaging.cxx.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o
-.PHONY : lib/averaging.cxx.o
+lib/computing.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/computing.cxx.o
+.PHONY : lib/computing.cxx.o
 
-lib/averaging.i: lib/averaging.cxx.i
-.PHONY : lib/averaging.i
+lib/computing.i: lib/computing.cxx.i
+.PHONY : lib/computing.i
 
 # target to preprocess a source file
-lib/averaging.cxx.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.i
-.PHONY : lib/averaging.cxx.i
+lib/computing.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/computing.cxx.i
+.PHONY : lib/computing.cxx.i
 
-lib/averaging.s: lib/averaging.cxx.s
-.PHONY : lib/averaging.s
+lib/computing.s: lib/computing.cxx.s
+.PHONY : lib/computing.s
 
 # target to generate assembly for a file
-lib/averaging.cxx.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.s
-.PHONY : lib/averaging.cxx.s
+lib/computing.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/computing.cxx.s
+.PHONY : lib/computing.cxx.s
 
 lib/correction.o: lib/correction.cxx.o
 .PHONY : lib/correction.o
@@ -430,9 +430,9 @@ help:
 	@echo "... ana"
 	@echo "... dRICH_lib"
 	@echo "... recoTest"
-	@echo "... lib/averaging.o"
-	@echo "... lib/averaging.i"
-	@echo "... lib/averaging.s"
+	@echo "... lib/computing.o"
+	@echo "... lib/computing.i"
+	@echo "... lib/computing.s"
 	@echo "... lib/correction.o"
 	@echo "... lib/correction.i"
 	@echo "... lib/correction.s"

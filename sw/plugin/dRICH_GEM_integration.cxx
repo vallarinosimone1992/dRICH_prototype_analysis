@@ -36,7 +36,7 @@
 #include "../lib/selection.h"
 #include "../lib/correction.h"
 #include "../lib/integrate.h"
-#include "../lib/averaging.h"
+#include "../lib/computing.h"
 #include "../lib/readData.h"
 
 
@@ -57,17 +57,15 @@ int main(int argc, char *argv[]){
   
   header info;
   readHeaders(dRICHRun,info);
-  if(gSystem->AccessPathName(Form("%s/DATA/dRICH_DATA/run_%04d.root",&dRICHDir[0],dRICHRun))){
-    cout <<"[ERROR] dRICH run not found\n";
+  if(gSystem->AccessPathName(Form("%s/DATA/dRICH_DATA/run_%04d.root",info.suite.c_str(),info.runNum))){
+    cout <<Form("[ERROR] dRICH run %d not found\n",info->runNum);
     return 0;
   }
-  if(GEMRun == 0){
-    cout <<"[ERROR] GEM data was not taken for this run\n";
-    return 0;
-  }
-  if(gSystem->AccessPathName(Form("%s/DATA/GEM_DATA/run_%04d_gem.root",&dRICHDir[0],GEMRun))){
-    cout <<"[ERROR] GEM run not found\n";
-    return 0;
+  if(info.runNumGEM != 0){
+    if(gSystem->AccessPathName(Form("%s/DATA/GEM_DATA/run_%04d_gem.root",info.suite.c_str(),info.runNumGEM))){
+      cout <<Form("[ERROR] GEM run %d not found\n",info.runNumGEM);
+      return 0;
+    }
   }
 
 

@@ -69,19 +69,19 @@ include CMakeFiles/dRICH_lib.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/dRICH_lib.dir/flags.make
 
-CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o: CMakeFiles/dRICH_lib.dir/flags.make
-CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o: ../lib/averaging.cxx
-CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o: CMakeFiles/dRICH_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o -MF CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o.d -o CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o -c /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/averaging.cxx
+CMakeFiles/dRICH_lib.dir/lib/computing.cxx.o: CMakeFiles/dRICH_lib.dir/flags.make
+CMakeFiles/dRICH_lib.dir/lib/computing.cxx.o: ../lib/computing.cxx
+CMakeFiles/dRICH_lib.dir/lib/computing.cxx.o: CMakeFiles/dRICH_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object CMakeFiles/dRICH_lib.dir/lib/computing.cxx.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/dRICH_lib.dir/lib/computing.cxx.o -MF CMakeFiles/dRICH_lib.dir/lib/computing.cxx.o.d -o CMakeFiles/dRICH_lib.dir/lib/computing.cxx.o -c /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/computing.cxx
 
-CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.i"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/averaging.cxx > CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.i
+CMakeFiles/dRICH_lib.dir/lib/computing.cxx.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dRICH_lib.dir/lib/computing.cxx.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/computing.cxx > CMakeFiles/dRICH_lib.dir/lib/computing.cxx.i
 
-CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.s"
-	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/averaging.cxx -o CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.s
+CMakeFiles/dRICH_lib.dir/lib/computing.cxx.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dRICH_lib.dir/lib/computing.cxx.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/computing.cxx -o CMakeFiles/dRICH_lib.dir/lib/computing.cxx.s
 
 CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o: CMakeFiles/dRICH_lib.dir/flags.make
 CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o: ../lib/getChannel.cxx
@@ -197,7 +197,7 @@ CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.s: cmake_force
 
 # Object files for target dRICH_lib
 dRICH_lib_OBJECTS = \
-"CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o" \
+"CMakeFiles/dRICH_lib.dir/lib/computing.cxx.o" \
 "CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o" \
 "CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o" \
 "CMakeFiles/dRICH_lib.dir/lib/selection.cxx.o" \
@@ -210,7 +210,7 @@ dRICH_lib_OBJECTS = \
 # External object files for target dRICH_lib
 dRICH_lib_EXTERNAL_OBJECTS =
 
-libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/averaging.cxx.o
+libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/computing.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/selection.cxx.o

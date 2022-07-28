@@ -10,7 +10,7 @@
 #include <TString.h>
 #include <TCanvas.h>
 
-#include "averaging.h"
+#include "computing.h"
 #include "definition.h"
 
 using namespace std;
