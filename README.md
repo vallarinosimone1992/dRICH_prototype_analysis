@@ -1,2 +1,8 @@
-# test_beam_analysis_2021_10_PS
-Repository which includes all the corrections and analysis for the test beam of dRICH prototype performed in october 2021 at PS (CERN).
+# dRICH prototype reco and analysis
+Repository which includes all the corrections and analysis for the dRICH prototype.
+
+## How to set the environment and compile
+1. Set the environment variable DRICH\_SUITE
+2. Clone this repository inside $DRICH\_SUITE
+
+## How to execute
