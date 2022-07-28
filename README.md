@@ -1,6 +1,9 @@
 # dRICH prototype reco and analysis
 Repository which includes all the corrections and analysis for the dRICH prototype.
 
+* * *
+* * *
+
 ## How to set the environment
 1. Set the environment variable $DRICH_SUITE
 2. Clone this repository inside $DRICH_SUITE
@@ -9,11 +12,17 @@ Repository which includes all the corrections and analysis for the dRICH prototy
 5. In $DRICH_SUITE/DATA, create a software link (ln -s) between GEM_DATA and the path to the directory which contain the tracking data.
 6. Then you are ready to compile the software.
 
-# How to compile
+* * *
+* * *
+
+## How to compile
 1. cd $DRICH_SUITE/dRICH_prototype_analysis/sw/build
 2. cmake ..
 3. cmake --build .
 4. This produce two executable, reco and ana.
+
+* * *
+* * *
 
 ## How to run
 1. Be sure that $DRICH_SUITE/DATA/header/logbook.tsv exists and contains info of specific run you want to analyze. Maybe you have to download it and rename it froma google sheets; in this case, remember to download it in tsv format.
