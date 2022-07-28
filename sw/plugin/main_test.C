@@ -70,13 +70,13 @@ int main(int argc, char *argv[]){
   THeader runHeader;
   if(argc > 1)  readHeaders(35,&runHeader);
   else readHeaders(214,&runHeader);
-  cout <<" number from header: "<<runHeader.runNum <<endl;
+  /*cout <<" number from header: "<<runHeader.runNum <<endl;
   cout <<Form("Reading some info from run %d header file\n",runHeader.runNum);
   cout <<Form("The GEM run is %d\n",runHeader.runNumGEM);
   cout <<Form("There was a %s beam of %d GeV\n",(runHeader.beam).c_str(),runHeader.energyGeV);
   cout <<Form("Sensors were %s\n",(runHeader.sensor).c_str());
   cout <<Form("The paths are %lf %lf \n", runHeader.firstPath, runHeader.secondPath); 
-  cout <<Form("DRICH_SUITE = %s", runHeader.suite.c_str());
+  cout <<Form("DRICH_SUITE = %s\n", runHeader.suite.c_str());*/
   //return 0;
 
   if(runHeader.sensor=="MAPMT")getMAPMT(&runHeader);
@@ -87,19 +87,19 @@ int main(int argc, char *argv[]){
   //TTreeIntegration(runHeader.runNum,runHeader.runNumGEM);
   if(runHeader.runNumGEM!=0){TTreeIntegration(&runHeader);}
   else{noGEM_Integration(&runHeader);}
-  cout <<"Integration done\n";
+  //cout <<"Integration done\n";
 
   findTimeCoincidence(&runHeader);
-  cout <<"Time coincidence window extremes: " <<runHeader.timeMin <<" " <<runHeader.timeMax <<endl;
+  //cout <<"Time coincidence window extremes: " <<runHeader.timeMin <<" " <<runHeader.timeMax <<endl;
   selectPhotons(&runHeader);
-  cout <<"Photon selected\n";
+  //cout <<"Photon selected\n";
   singleParticle(&runHeader);
-  cout <<"Single particle quantities computed\n";
+  //cout <<"Single particle quantities computed\n";
   //IMPORTANT! The Y axis correction must be computed befor the X axis correction.
   opticalCenterY(&runHeader);
   opticalCenterX(&runHeader);
-  cout <<"Y correction in and out: " <<runHeader.innerCorrectionY <<" " <<runHeader.outerCorrectionY <<endl; 
-  cout <<"X correction in and out: " <<runHeader.innerCorrectionX <<" " <<runHeader.outerCorrectionX <<endl;
+  //cout <<"Y correction in and out: " <<runHeader.innerCorrectionY <<" " <<runHeader.outerCorrectionY <<endl; 
+  //cout <<"X correction in and out: " <<runHeader.innerCorrectionX <<" " <<runHeader.outerCorrectionX <<endl;
   positionCorrection(&runHeader);
   newSingleParticle(&runHeader);
   computeRMS(&runHeader);

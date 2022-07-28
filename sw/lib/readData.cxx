@@ -15,35 +15,18 @@
 #include "photoDetPosition.h"
 #include "definition.h"
 #include "getChannel.h"
+#include "utility.h"
 
 void getMAPMT(THeader *runHead){
-  int runDRICH=runHead->runNum;
-  string phDet=runHead->sensor;
-  if(phDet!="MAPMT"){
-    cout <<phDet.c_str() <<endl;
+  if(runHead->sensor!="MAPMT"){
     cout <<"[ERROR] Inconsistency between the selected data type and logbook [SENSOR]\n";
     exit(EXIT_FAILURE);
   }
-  //Take the MAPMT maps
-  map<string,int> map_MAPMT1;
-  map<string,int> map_MAPMT2;
-  map<string,int>::iterator it_map_MAPMT1;
-  map<string,int>::iterator it_map_MAPMT2;
-  getMapMAPMT(&map_MAPMT1,&map_MAPMT2);
-
+  //Take the sensor and time calibration data.
   getMaps();
 
-  //Find DRICH_SUITE environment variable
-  const char  *tmp = getenv("DRICH_SUITE");
-  string env_var(tmp ? tmp : "");
-  if(env_var.empty()){
-    cerr <<"[ERROR] No such variable found! You should define the variable DRICH_SUITE!" <<endl;
-    exit(EXIT_FAILURE);
-  }
-
-  TString fNamedRICH=Form("%s/DATA/dRICH_DATA/run_%04d.root",&env_var[0],runDRICH);
-  TString fOutName=Form("%s/processed_data/firstStepData/run_%04d_processed.root",&env_var[0],runDRICH);
-  //TString fOutName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_processed.root",runHead->suite,runDRICH);
+  TString fNamedRICH=Form("%s/DATA/dRICH_DATA/run_%04d.root",runHead->suite.c_str(),runHead->runNum);
+  TString fOutName=Form("%s/processed_data/firstStepData/run_%04d_processed.root",runHead->suite.c_str(),runHead->runNum);
   TFile *fdRICH = new TFile(fNamedRICH,"READ");
   TTree *t = (TTree*) fdRICH->Get("data");
 
@@ -63,14 +46,11 @@ void getMAPMT(THeader *runHead){
   t->SetBranchAddress("pol",&pol);
   t->SetBranchAddress("time",&time);
 
-  cout <<"dRICH variables setted\n";
-
   int evt, tPol[MAXDATA],tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
   uint tNedge;
   double tTrigTime;
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA],ntime[MAXDATA];
   int pmt[MAXDATA], channel[MAXDATA];
-
 
   auto evento=tout->Branch("evt",&evt,"evt/I");
   (void)evento;
@@ -99,8 +79,9 @@ void getMAPMT(THeader *runHead){
   auto tntime=tout->Branch("ntime",&ntime,"ntime[nedge]/D");
   (void)tntime;
 
+  cout <<"Taking the dRICH prototype data\n";
   for(int i = 0; i < t->GetEntries(); i++){
-    if((i)%(t->GetEntries()/10)==0)cout <<Form("\rTaking the dRICH data: %lld%% completed    ",(1+(i/(t->GetEntries()/10)))*10) <<flush;
+    if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
     evt=(int)evtDRICH;
     tTrigTime=trigtime;
@@ -120,43 +101,24 @@ void getMAPMT(THeader *runHead){
     if(wrongEvent==true)continue;
     tout->Fill();
   }
-  cout <<endl;
+  printEnd();
   tout->Write();
   fOut->Close();
-  cout <<Form("MAPMTs data wrote in %s\n",&fOutName[0]);
 }
 
 
 // ####################################################### //
 
 void getMPPC(THeader *runHead){
-  cout <<"Inside\n";
-  int runDRICH=runHead->runNum;
-  string phDet=runHead->sensor;
-  if(phDet!="MPPC"){
+  if(runHead->sensor!="MPPC"){
     cout <<"[ERROR] Inconsistency between the selected data type and logbook [SENSOR]\n";
     exit(EXIT_FAILURE);
   }
-  cout <<"Sensor checked\n";
-  //Take the MAPMT maps
-  map<string,int> map_MPPC1;
-  map<string,int> map_MPPC2;
-  map<string,int>::iterator it_map_MPPC1;
-  map<string,int>::iterator it_map_MPPC2;
-  getMapMPPC(&map_MPPC1,&map_MPPC2);
-
-  //Find DRICH_SUITE environment variable
-  const char  *tmp = getenv("DRICH_SUITE");
-  string env_var(tmp ? tmp : "");
-  if(env_var.empty()){
-    cerr <<"[ERROR] No such variable found! You should define the variable DRICH_SUITE!" <<endl;
-    exit(EXIT_FAILURE);
-  }
-  cout <<"DRICH_SUITE trovata\n";
-
-  TString fNamedRICH=Form("%s/DATA/dRICH_DATA/run_%04d.root",&env_var[0],runDRICH);
-  TString fOutName=Form("%s/processed_data/firstStepData/run_%04d_processed.root",&env_var[0],runDRICH);
-  //TString fOutName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_processed.root",runHead->suite,runDRICH);
+  //Take the sensor and time calibration data.
+  getMaps();
+  
+  TString fNamedRICH=Form("%s/DATA/dRICH_DATA/run_%04d.root",runHead->suite.c_str(),runHead->runNum);
+  TString fOutName=Form("%s/processed_data/firstStepData/run_%04d_processed.root",runHead->suite.c_str(),runHead->runNum);
   TFile *fdRICH = new TFile(fNamedRICH,"READ");
   TTree *t = (TTree*) fdRICH->Get("data");
 
@@ -176,14 +138,12 @@ void getMPPC(THeader *runHead){
   t->SetBranchAddress("pol",&pol);
   t->SetBranchAddress("time",&time);
 
-  cout <<"dRICH variables setted\n";
 
   int evt, tPol[MAXDATA],tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
   uint tNedge;
   double tTrigTime;
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA], ntime[MAXDATA];
   int pmt[MAXDATA], channel[MAXDATA];
-
 
   auto evento=tout->Branch("evt",&evt,"evt/I");
   (void)evento;
@@ -212,10 +172,9 @@ void getMPPC(THeader *runHead){
   auto tntime=tout->Branch("ntime",&ntime,"ntime[nedge]/D");
   (void)tntime;
 
-  cout <<"TTree presi\n";
-
+  cout <<"Taking the dRICH prototype data\n";
   for(int i = 0; i < t->GetEntries(); i++){
-    if((i)%(t->GetEntries()/10)==0)cout <<Form("\rTaking the dRICH data: %lld%% completed    ",(1+(i/(t->GetEntries()/10)))*10) <<flush;
+    if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
     evt=(int)evtDRICH;
     tTrigTime=trigtime;
@@ -235,10 +194,9 @@ void getMPPC(THeader *runHead){
     if(wrongEvent==true)continue;
     tout->Fill();
   }
-  cout <<endl;
+  printEnd();
   tout->Write();
   fOut->Close();
-  cout <<Form("MPPCs data wrote in %s\n",&fOutName[0]);
 }
 
 

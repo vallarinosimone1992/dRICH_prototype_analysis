@@ -9,6 +9,7 @@
 #include <TString.h>
 
 #include "definition.h"
+#include "utility.h"
 
 using namespace std;
 
@@ -36,7 +37,9 @@ void rmsCutSelection(THeader *run){
   bool cutPhotonFlag[MAXDATA];
   auto tcutPhotonFlag= t->Branch("cutPhotonFlag",&cutPhotonFlag,"cutPhotonFlag[nedge]/O");
     
+  cout <<"Applying selection based on time and radius RMS\n";
   for(int i = 0; i < t->GetEntries(); i++){
+    if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
     for(int j = 0; j < nedge; j++){
       cutPhotonFlag[j]=false;
@@ -54,12 +57,14 @@ void rmsCutSelection(THeader *run){
       }
     } 
     tcutPhotonFlag->Fill();
-    //cin.get();
-  }  
+  }
+  printEnd();
   t->Write("",TObject::kOverwrite);
   fIn->Close();
 }
 
+
+////////////////////////////////////////////////////
 
 void selectPhotons(THeader *run){
   TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
@@ -81,8 +86,9 @@ void selectPhotons(THeader *run){
   auto tOuterPhoton= t->Branch("outerPhoton",&outerPhoton,"outerPhoton[nedge]/O");
 
 
-  cout <<"Selecting the photon\n";
+  cout <<"Selecting the photon in the time coincidence window and dividing rings\n";
   for(int i = 0; i < t->GetEntries(); i++){
+    if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
     for(int j = 0; j < nedge; j++){
       coincPhoton[j]=false;
@@ -95,42 +101,36 @@ void selectPhotons(THeader *run){
     tCoincPhoton->Fill();
     tOuterPhoton->Fill();
   }
+  printEnd();
   t->Write("",TObject::kOverwrite);
   fIn->Close();
 }
 
 
-
+/////////////////////////////////////////////////////
 
 void findTimeCoincidence(THeader *run){
-  int runDRICH=run->runNum;
-  //Find DRICH_SUITE environment variable
-  const char  *tmp = getenv("DRICH_SUITE");
-  string env_var(tmp ? tmp : "");
-  if(env_var.empty()){
-    cerr <<"[ERROR] No such variable found! You should define the variable DRICH_SUITE!" <<endl;
-    exit(EXIT_FAILURE);
-  }
-  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",&env_var[0],runDRICH);
+  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",&run->suite[0],run->runNum);
   TFile *fIn = new TFile (fName,"READ");
   TTree *t = (TTree*) fIn->Get("dRICH");
 
-  int nedge, pol[MAXDATA], nt[MAXDATA];
-
+  int nedge, pol[MAXDATA];
+  double nt[MAXDATA];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
   t->SetBranchAddress("nt",&nt);
 
-  cout <<"Finding the time-coincidence window\n";
-
   TH1D *h = new TH1D("h","h",1000,0,1000);
 
+  cout <<"Finding the time-coincidence window\n";
   for(int i = 0; i < t->GetEntries(); i++){
+    if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
     for(int j = 0; j < nedge; j++){
-      if(pol==0) h->Fill(nt[j]);
+      if(pol[j]==0) h->Fill(nt[j]);
     }
   }
+  printEnd();
   TF1 *f0 = new TF1("f0","pol0",0,1000);
   h->Fit(f0,"Q","",800,1000);
   TF1 *f = new TF1("f","gaus(0)+pol0(3)",0,1000);
@@ -140,7 +140,8 @@ void findTimeCoincidence(THeader *run){
   double timeFitMin=h->GetBinCenter(h->GetMaximumBin())-20;
   double timeFitMax=h->GetBinCenter(h->GetMaximumBin())+20;
   h->Fit("f","Q","",timeFitMin,timeFitMax);
-  run->timeMin=f->GetParameter(1)-3*f->GetParameter(2);
+  //Current definition of the coincidence time window. Does it work?
+  run->timeMin=f->GetParameter(1)-3*f->GetParameter(2); 
   run->timeMax=f->GetParameter(1)+3*f->GetParameter(2);
   fIn->Close();
 

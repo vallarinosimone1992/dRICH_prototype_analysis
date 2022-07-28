@@ -37,65 +37,6 @@ int FiberToPhDet(int fiber, int cmp[8]){
 }
 
 
-int FiberToMPPC(int fiber){
-  //PLACE LEGEND:
-  //Sensore Nord = 0, Sensore Est = 1, Sensore Sud = 2, Sensore Ovest = 3
-  //Fibra non riconosciuta, cout errore and return 5;
-  int place = 5;
-  if(fiber == 5 || fiber == 7){ //NORD
-    place = 0;
-  }else if( fiber == 0 || fiber == 1){ //EST
-    place = 1;
-  }else if( fiber == 4 || fiber == 6){ //SUD
-    place = 2;
-  }else{
-    //cout <<Form("Errore nelle fibre!%d\n",fiber);
-    //cin.get();
-  }
-  return place;
-}
-
-int FiberToMAPMT(int fiber){
-  //PLACE LEGEND:
-  //Sensore Nord = 0, Sensore Est = 1, Sensore Sud = 2, Sensore Ovest = 3
-  //Fibra non riconosciuta, cout errore and return 5;
-  int place = 5;
-  if(fiber == 5 || fiber == 11){ //NORD
-    place = 0;
-  }else if( fiber == 6 || fiber == 9){ //EST
-    place = 1;
-  }else if( fiber == 4 || fiber == 8){ //SUD
-    place = 2;
-  }else if( fiber == 7 || fiber == 10){ //OVEST
-    place = 3;
-  }else{
-    //cout <<Form("Errore nelle fibre!%d\n",fiber);
-    //cin.get();
-  }
-  return place;
-}
-
-int FiberToPlace(int fiber){
-  //PLACE LEGEND:
-  //Sensore Nord = 0, Sensore Est = 1, Sensore Sud = 2, Sensore Ovest = 3
-  //Fibra non riconosciuta, cout errore and return 5;
-  int place = 5;
-  if(fiber == 5 || fiber == 11){ //NORD
-    place = 0;
-  }else if( fiber == 6 || fiber == 9){ //EST
-    place = 1;
-  }else if( fiber == 4 || fiber == 8){ //SUD
-    place = 2;
-  }else if( fiber == 7 || fiber == 10){ //OVEST
-    place = 3;
-  }else{
-    //cout <<Form("Errore nelle fibre!%d\n",fiber);
-    //cin.get();
-  }
-  return place;
-}
-
-
 void MAPMTposition(int channel, int place, double *x, double *y, double *r){
   double dX = (channel-1)/16;
   double dY = (channel-1)%16;
@@ -120,32 +61,6 @@ void MAPMTposition(int channel, int place, double *x, double *y, double *r){
     *y=-(iY+dX*passoMAPMT);
   }
   *r = sqrt((*x)*(*x)+(*y)*(*y));
-}
-
-void MAPMTposition(int channel, int place, double *x, double *y){
-  double dX = (channel-1)/16;
-  double dY = (channel-1)%16;
-  if(place == 0){//NORD
-    double iX=-(min2-0.5*passoMAPMT), iY=min1+.5*passoMAPMT;
-    *x=-(iX+dX*passoMAPMT);
-    *y=iY+dY*passoMAPMT;
-  }
-  if(place == 1){//EST
-    double iX=min1+0.5*passoMAPMT, iY=min2-.5*passoMAPMT;
-    *x=iX+dY*passoMAPMT;
-    *y=-(iY-dX*passoMAPMT);
-  }
-  if(place == 2){//SUD
-    double iX=min2-.5*passoMAPMT, iY=-(min1+.5*passoMAPMT);
-    *x=-(iX-dX*passoMAPMT);
-    *y=iY-dY*passoMAPMT;
-  }
-  if(place == 3){//WEST
-    double iX=-(min1+.5*passoMAPMT), iY=(-min2+.5*passoMAPMT);
-    *x=iX-dY*passoMAPMT;
-    *y=-(iY+dX*passoMAPMT);
-  }
-
 }
 
 void MPPCposition(int CHANNEL, int place,  double *x, double *y, double *r){

@@ -2,7 +2,6 @@
 Repository which includes all the corrections and analysis for the dRICH prototype.
 
 * * *
-* * *
 
 ## How to set the environment
 1. Set the environment variable $DRICH_SUITE
@@ -13,15 +12,14 @@ Repository which includes all the corrections and analysis for the dRICH prototy
 6. Then you are ready to compile the software.
 
 * * *
-* * *
 
 ## How to compile
 1. cd $DRICH_SUITE/dRICH_prototype_analysis/sw/build
-2. cmake ..
-3. cmake --build .
-4. This produce two executable, reco and ana.
+2. rm -r *
+3. cmake ..
+4. cmake --build .
+5. This produce two executable, reco and ana.
 
-* * *
 * * *
 
 ## How to run

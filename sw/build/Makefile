@@ -371,6 +371,30 @@ lib/tracking.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.s
 .PHONY : lib/tracking.cxx.s
 
+lib/utility.o: lib/utility.cxx.o
+.PHONY : lib/utility.o
+
+# target to build an object file
+lib/utility.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/utility.cxx.o
+.PHONY : lib/utility.cxx.o
+
+lib/utility.i: lib/utility.cxx.i
+.PHONY : lib/utility.i
+
+# target to preprocess a source file
+lib/utility.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/utility.cxx.i
+.PHONY : lib/utility.cxx.i
+
+lib/utility.s: lib/utility.cxx.s
+.PHONY : lib/utility.s
+
+# target to generate assembly for a file
+lib/utility.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/utility.cxx.s
+.PHONY : lib/utility.cxx.s
+
 plugin/analysis.o: plugin/analysis.cxx.o
 .PHONY : plugin/analysis.o
 
@@ -457,6 +481,9 @@ help:
 	@echo "... lib/tracking.o"
 	@echo "... lib/tracking.i"
 	@echo "... lib/tracking.s"
+	@echo "... lib/utility.o"
+	@echo "... lib/utility.i"
+	@echo "... lib/utility.s"
 	@echo "... plugin/analysis.o"
 	@echo "... plugin/analysis.i"
 	@echo "... plugin/analysis.s"

@@ -12,8 +12,87 @@
 
 #include "computing.h"
 #include "definition.h"
+#include "utility.h"
 
 using namespace std;
+
+void computeRMS(THeader *run){
+  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
+  TFile *fIn = new TFile (fName,"UPDATE");
+  TTree *t = (TTree*) fIn->Get("dRICH");
+
+  int nedge, pmt[MAXDATA];
+  double nr[MAXDATA], nt[MAXDATA], spnRadius[10], spnTime[10];
+  bool coincPhoton[MAXDATA],outerPhoton[MAXDATA];
+  t->SetBranchAddress("nedge",&nedge);
+  t->SetBranchAddress("pmt",&pmt);
+  t->SetBranchAddress("nr",&nr);
+  t->SetBranchAddress("nt",&nt);
+  t->SetBranchAddress("coincPhoton",&coincPhoton);
+  t->SetBranchAddress("outerPhoton",&outerPhoton);
+  t->SetBranchAddress("spnRadius",&spnRadius);
+  t->SetBranchAddress("spnTime",&spnTime);
+
+  double rmsRadius[10], rmsTime[10], rmsPhoton[10];
+  double rsdRadius[MAXDATA], rsdTime[MAXDATA];
+  bool goodRMS[10];
+  auto trmsRadius=t->Branch("rmsRadius",&rmsRadius,"rmsRadius[10]/D");
+  auto trmsPhoton=t->Branch("rmsPhoton",&rmsPhoton,"rmsPhoton[10]/I");
+  auto trmsTime=t->Branch("rmsTime",&rmsTime,"rmsTime[10]/D");
+  auto tgoodRMS=t->Branch("goodRMS",&goodRMS,"goodRMS[10]/O");
+  auto trsdRadius=t->Branch("rsdRadius",&rsdRadius,"rsdRadius[nedge]/D");
+  auto trsdTime=t->Branch("rsdTime",&rsdTime,"rsdTime[nedge]/D");
+
+  cout <<"Computing RMS and residui.\n";
+  for(int i = 0; i < t->GetEntries(); i++){
+    if(i%100==0)printProgress((double)i/t->GetEntries());
+    t->GetEntry(i);
+    for(int j = 0; j < 10; j++){
+      rmsRadius[j]=0;
+      rmsPhoton[j]=0;
+      rmsTime[j]=0;
+      goodRMS[j]=false;
+    }
+    for(int j = 0; j < nedge; j++){
+      int k=0;
+      if(outerPhoton[j]==true) k = 1;
+      int refPMT = pmt[j]+5*k;
+      int refTOT = 4+5*k;
+      rsdRadius[j]=-1000;
+      rsdTime[j]=-1000;
+      if(coincPhoton[j]==true){
+        rsdRadius[j]=nr[j]-spnRadius[refTOT];
+        rsdTime[j]=nt[j]-spnTime[refTOT];
+        rmsRadius[refPMT]+=pow(spnRadius[refPMT]-nr[j],2);
+        rmsTime[refPMT]+=pow(spnTime[refPMT]-nt[j],2);
+        rmsPhoton[refPMT]+=1;
+
+        rmsRadius[refTOT]+=pow(rsdRadius[j],2);
+        rmsTime[refTOT]+=pow(rsdTime[j],2);
+        rmsPhoton[refTOT]+=1;
+      }
+    }
+    for(int j = 0; j < 10; j++){
+      if(rmsPhoton[j]>1){
+        rmsRadius[j]=sqrt(rmsRadius[j]/rmsPhoton[j]);
+        rmsTime[j]=sqrt(rmsTime[j]/rmsPhoton[j]);
+        goodRMS[j]=true;
+      }else{
+        rmsRadius[j]=-10;
+        rmsTime[j]=-10;
+      }
+    }
+    trmsRadius->Fill();
+    trmsPhoton->Fill();
+    trmsTime->Fill();
+    tgoodRMS->Fill();
+    trsdRadius->Fill();
+    trsdTime->Fill();
+  }
+  printEnd();
+  t->Write("",TObject::kOverwrite);
+  fIn->Close();
+}
 
 
 void computeCutSingleParticle(THeader *run){
@@ -40,6 +119,7 @@ void computeCutSingleParticle(THeader *run){
 
   cout <<"Computing single particles property after cut based on rms.\n";
   for(int i = 0; i < t->GetEntries(); i++){
+    if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
     for(int j = 0; j < 10; j++){
       cutRadius[j]=0;
@@ -76,6 +156,7 @@ void computeCutSingleParticle(THeader *run){
     tcutPhoton->Fill();
     tgoodCUT->Fill();
   }
+  printEnd();
   t->Write("",TObject::kOverwrite);
   fIn->Close();
 }
@@ -103,7 +184,9 @@ void newSingleParticle(THeader *run){
   auto tSpnTime=t->Branch("spnTime",&spnTime,"spnTime[10]/D");
   auto tgoodSPN=t->Branch("goodSPN",&goodSPN,"goodSPN[10]/O");
 
+  cout <<"Computing mean quantities for each single particle\n";
   for(int i = 0; i < t->GetEntries(); i++){
+    if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
     for(int j = 0; j < 10; j++){
       spnRadius[j]=0;
@@ -141,9 +224,9 @@ void newSingleParticle(THeader *run){
     tSpnTime->Fill();
     tgoodSPN->Fill();
   }
+  printEnd();
   t->Write("",TObject::kOverwrite);
   fIn->Close();
-  cout <<endl;
 }
 
 
@@ -177,6 +260,7 @@ void singleParticle(THeader *run){
 
   cout <<"Selecting the photon\n";
   for(int i = 0; i < t->GetEntries(); i++){
+    if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
     for(int j = 0; j < 10; j++){
       spRadius[j]=0;
@@ -214,6 +298,7 @@ void singleParticle(THeader *run){
     tSPTime->Fill();
     tgoodSP->Fill();
   }
+  printEnd();
   t->Write("",TObject::kOverwrite);
   fIn->Close();
 }
