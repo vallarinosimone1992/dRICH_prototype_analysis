@@ -7,7 +7,7 @@ using namespace std;
 
 struct THeader{
   int runNum;
-  TString day;
+  string day;
   string startTime;
   string endTime;
   string beam;

@@ -101,5 +101,7 @@ int main(int argc, char *argv[]){
   rmsCutSelection(&header); //selection.cxx
                             //Compute the mean quantities for the single particle after the rms cut application
   computeCutSingleParticle(&header); //computing.cxx
+
+  writeHeader(&header);
   exit(EXIT_SUCCESS);
 }

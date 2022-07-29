@@ -9,4 +9,6 @@ void printEnd();
 void printUsage();
 
 void checkFileExistance(THeader *run);
+
+void writeHeader(THeader *run);
 #endif
