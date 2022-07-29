@@ -99,7 +99,7 @@ void readHeaders(int run, THeader *runHeader){
   }
   runHeader->suite=env_var;
   FILE *file;
-  string headerName=Form("%s/DATA/header/logbook.tsv",runHeader->suite.c_str());
+  string headerName=Form("%s/DATA/logbook/logbook.tsv",runHeader->suite.c_str());
   if(gSystem->AccessPathName(headerName.c_str())){
     cout <<Form("[ERROR] Header file %s not found\n",headerName.c_str());
     exit(EXIT_FAILURE);
@@ -107,10 +107,11 @@ void readHeaders(int run, THeader *runHeader){
   file=fopen(headerName.c_str(),"r");
   char line0[10000];
   char line[10000];
-  int tRunNum, tEnergyGeV, tExpEvents, tPowerHV, tRunNumGEM, tPedestalGEM;
+  int tRunNum=-1, tEnergyGeV, tExpEvents, tPowerHV, tRunNumGEM, tPedestalGEM;
   char tDay[200], tStartTime[200],tEndTime[200],tBeam[200], tSensor[200], tTrigger[200],tRunType[200], tSetupFile[2000],tNote[2000];
   float tFirstMirrorPosition, tSecondMirrorPosition, tTemperature;
   auto n =fgets(line0,10000,file);
+  bool headerFound=false;
   while(fgets(line,10000,file)!=NULL){
     sscanf(line,"%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s %s",&tRunNum,tDay,tStartTime,tEndTime,tBeam,&tEnergyGeV,&tExpEvents,tSensor,&tFirstMirrorPosition,&tSecondMirrorPosition,&tTemperature,&tPowerHV,tTrigger,tRunType,&tRunNumGEM,&tPedestalGEM,tSetupFile,tNote);
     if(run == tRunNum){
@@ -132,10 +133,17 @@ void readHeaders(int run, THeader *runHeader){
       runHeader->pedestalGEM=tPedestalGEM;
       runHeader->setupFile=tSetupFile;
       runHeader->note=tNote;
+
+      headerFound=true;
       break;
     }
   }
   fclose(file);
+
+  if(headerFound==false){
+    cout <<"[ERROR] Run number not found in the logbook\n";
+    exit(EXIT_FAILURE);
+  }
 
   file=fopen(Form("%s/dRICH_prototype_analysis/sw/map/%s.map",runHeader->suite.c_str(),runHeader->setupFile.c_str()),"r");
   for(int i = 0; i < 8; i++){
@@ -196,6 +204,8 @@ void readHeaders(int run, THeader *runHeader){
     auto prz = sscanf(line,"%f",&tmp1);
     runHeader->outerCorrectionY=tmp1;
   }
+
+
 
   cout <<"Header and setup file read\n";
 }

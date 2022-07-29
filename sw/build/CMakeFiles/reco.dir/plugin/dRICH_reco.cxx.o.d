@@ -1,5 +1,5 @@
-CMakeFiles/recoTest.dir/plugin/main_test.C.o: \
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/main_test.C \
+CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.o: \
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/dRICH_reco.cxx \
  /usr/include/stdc-predef.h /usr/include/c++/11/iostream \
  /usr/include/c++/11/x86_64-redhat-linux/bits/c++config.h \
  /usr/include/bits/wordsize.h \
@@ -283,12 +283,9 @@ CMakeFiles/recoTest.dir/plugin/main_test.C.o: \
  /usr/include/root/TDirectory.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/definition.h \
  /usr/include/root/TString.h \
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/fillMAPS.h \
- /usr/include/c++/11/fstream /usr/include/c++/11/bits/codecvt.h \
- /usr/include/c++/11/x86_64-redhat-linux/bits/basic_file.h \
- /usr/include/c++/11/x86_64-redhat-linux/bits/c++io.h \
- /usr/include/c++/11/bits/fstream.tcc \
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/utility.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/definition.h \
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/fillMAPS.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/getChannel.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/photoDetPosition.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/selection.h \

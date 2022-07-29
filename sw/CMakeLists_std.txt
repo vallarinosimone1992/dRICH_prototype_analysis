@@ -11,11 +11,17 @@ separate_arguments(ROOT_EXE_LINKER_FLAGS)
 
 add_library(dRICH_lib
       STATIC
+      lib/definition.h
+      lib/utility.cxx
+      lib/computing.cxx
       lib/getChannel.cxx
       lib/photoDetPosition.cxx
-      lib/event.cxx
+      lib/selection.cxx
+      lib/correction.cxx
       lib/fillMAPS.cxx
       lib/integrate.cxx
+      lib/readData.cxx
+      lib/tracking.cxx
 )
 
 target_include_directories(dRICH_lib
@@ -24,14 +30,28 @@ target_include_directories(dRICH_lib
 )
 
 
-  add_executable(reco
-      plugin/dRICH_GEM_integration.C
-      )
+add_executable(reco
+      plugin/dRICH_reco.cxx
+)
 
-  target_link_libraries(reco
+target_link_libraries(reco
       PRIVATE
       dRICH_lib
       PUBLIC
       ${ROOT_LIBRARIES}
       ${ROOT_EXE_LINKER_FLAGS}
-      )
+)
+
+
+add_executable(ana
+      plugin/analysis.cxx
+)
+
+
+target_link_libraries(ana
+      PRIVATE
+      dRICH_lib
+      PUBLIC
+      ${ROOT_LIBRARIES}
+      ${ROOT_EXE_LINKER_FLAGS}
+)

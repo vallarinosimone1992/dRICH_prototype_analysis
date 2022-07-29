@@ -258,8 +258,4 @@ CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o: \
  /usr/include/root/TFitResultPtr.h /usr/include/c++/11/cfloat \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/getChannel.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/photoDetPosition.h \
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/fillMAPS.h \
- /usr/include/c++/11/fstream /usr/include/c++/11/bits/codecvt.h \
- /usr/include/c++/11/x86_64-redhat-linux/bits/basic_file.h \
- /usr/include/c++/11/x86_64-redhat-linux/bits/c++io.h \
- /usr/include/c++/11/bits/fstream.tcc
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/fillMAPS.h

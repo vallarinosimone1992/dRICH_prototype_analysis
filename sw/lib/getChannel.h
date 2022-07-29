@@ -1,15 +1,5 @@
-#include <iostream>
-#include <stdio.h>
-#include <map>
-#include <iterator>
-#include <vector>
-#include <string>
-
-#include <TSystem.h>
-
 #include "definition.h"
 
-using namespace std;
 
 void envVarCheck();
 void getMaps();
