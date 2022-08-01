@@ -38,6 +38,7 @@
 #include "../lib/integrate.h"
 #include "../lib/computing.h"
 #include "../lib/readData.h"
+#include "../lib/drawing.h"
 
 
 using namespace std;
@@ -61,49 +62,13 @@ const double yBin[] = {-81,-77.75, -74.71875, -71.6875, -68.65625, -65.625, -62.
 
 int main(int argc, char *argv[]){
   TApplication theApp("App",&argc,argv);
-  TCanvas *c = new TCanvas();
-  c->Draw();
-  TH2D *h = new TH2D("h","Rings; x[mm]; y[mm]",sizeof(xBin)/sizeof(*xBin)-1,xBin,sizeof(yBin)/sizeof(*yBin)-1,yBin);
-  getRunNumbers(&m1, &m2, &m3);
-  getMapMAPMT(&m4,&m5);
+  inizializePlot();
+  for(int i = 0; i < 1000; i++){
+    for(int j = 0; j < i; j++)
+      fillTime(i);
+  }
+  plotAll();
 
-  THeader runHeader;
-  if(argc > 1)  readHeaders(35,&runHeader);
-  else readHeaders(214,&runHeader);
-  cout <<" number from header: "<<runHeader.runNum <<endl;
-  cout <<Form("Reading some info from run %d header file\n",runHeader.runNum);
-  cout <<Form("The GEM run is %d\n",runHeader.runNumGEM);
-  cout <<Form("There was a %s beam of %d GeV\n",(runHeader.beam).c_str(),runHeader.energyGeV);
-  cout <<Form("Sensors were %s\n",(runHeader.sensor).c_str());
-  cout <<Form("The paths are %lf %lf \n", runHeader.firstPath, runHeader.secondPath); 
-  cout <<Form("DRICH_SUITE = %s", runHeader.suite.c_str());
-  //return 0;
-
-  if(runHeader.sensor=="MAPMT")getMAPMT(&runHeader);
-  if(runHeader.sensor=="MPPC")getMPPC(&runHeader);
-
-  
-
-  //TTreeIntegration(runHeader.runNum,runHeader.runNumGEM);
-  TTreeIntegration(&runHeader);
-  cout <<"Integration done\n";
-
-  findTimeCoincidence(&runHeader);
-  cout <<"Time coincidence window extremes: " <<runHeader.timeMin <<" " <<runHeader.timeMax <<endl;
-  selectPhotons(&runHeader);
-  cout <<"Photon selected\n";
-  singleParticle(&runHeader);
-  cout <<"Single particle quantities computed\n";
-  //IMPORTANT! The Y axis correction must be computed befor the X axis correction.
-  opticalCenterY(&runHeader);
-  opticalCenterX(&runHeader);
-cout <<"Y correction in and out: " <<runHeader.innerCorrectionY <<" " <<runHeader.outerCorrectionY <<endl; 
-  cout <<"X correction in and out: " <<runHeader.innerCorrectionX <<" " <<runHeader.outerCorrectionX <<endl;
-  positionCorrection(&runHeader);
-  newSingleParticle(&runHeader);
-  computeRMS(&runHeader);
-  rmsCutSelection(&runHeader);
-  computeCutSingleParticle(&runHeader);
-  //theApp.Run();
+  theApp.Run();
   exit(EXIT_SUCCESS);
 }

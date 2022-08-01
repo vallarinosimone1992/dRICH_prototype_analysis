@@ -130,17 +130,17 @@ dRICH_lib/fast:
 .PHONY : dRICH_lib/fast
 
 #=============================================================================
-# Target rules for targets named reco
+# Target rules for targets named recoTest
 
 # Build rule for target.
-reco: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 reco
-.PHONY : reco
+recoTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 recoTest
+.PHONY : recoTest
 
 # fast build rule for target.
-reco/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/build
-.PHONY : reco/fast
+recoTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/build
+.PHONY : recoTest/fast
 
 #=============================================================================
 # Target rules for targets named ana
@@ -202,6 +202,30 @@ lib/correction.s: lib/correction.cxx.s
 lib/correction.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/correction.cxx.s
 .PHONY : lib/correction.cxx.s
+
+lib/drawing.o: lib/drawing.cxx.o
+.PHONY : lib/drawing.o
+
+# target to build an object file
+lib/drawing.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o
+.PHONY : lib/drawing.cxx.o
+
+lib/drawing.i: lib/drawing.cxx.i
+.PHONY : lib/drawing.i
+
+# target to preprocess a source file
+lib/drawing.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.i
+.PHONY : lib/drawing.cxx.i
+
+lib/drawing.s: lib/drawing.cxx.s
+.PHONY : lib/drawing.s
+
+# target to generate assembly for a file
+lib/drawing.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.s
+.PHONY : lib/drawing.cxx.s
 
 lib/fillMAPS.o: lib/fillMAPS.cxx.o
 .PHONY : lib/fillMAPS.o
@@ -419,29 +443,29 @@ plugin/analysis.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ana.dir/build.make CMakeFiles/ana.dir/plugin/analysis.cxx.s
 .PHONY : plugin/analysis.cxx.s
 
-plugin/dRICH_reco.o: plugin/dRICH_reco.cxx.o
-.PHONY : plugin/dRICH_reco.o
+plugin/main_test.o: plugin/main_test.C.o
+.PHONY : plugin/main_test.o
 
 # target to build an object file
-plugin/dRICH_reco.cxx.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.o
-.PHONY : plugin/dRICH_reco.cxx.o
+plugin/main_test.C.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.o
+.PHONY : plugin/main_test.C.o
 
-plugin/dRICH_reco.i: plugin/dRICH_reco.cxx.i
-.PHONY : plugin/dRICH_reco.i
+plugin/main_test.i: plugin/main_test.C.i
+.PHONY : plugin/main_test.i
 
 # target to preprocess a source file
-plugin/dRICH_reco.cxx.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.i
-.PHONY : plugin/dRICH_reco.cxx.i
+plugin/main_test.C.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.i
+.PHONY : plugin/main_test.C.i
 
-plugin/dRICH_reco.s: plugin/dRICH_reco.cxx.s
-.PHONY : plugin/dRICH_reco.s
+plugin/main_test.s: plugin/main_test.C.s
+.PHONY : plugin/main_test.s
 
 # target to generate assembly for a file
-plugin/dRICH_reco.cxx.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.s
-.PHONY : plugin/dRICH_reco.cxx.s
+plugin/main_test.C.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.s
+.PHONY : plugin/main_test.C.s
 
 # Help Target
 help:
@@ -453,13 +477,16 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... ana"
 	@echo "... dRICH_lib"
-	@echo "... reco"
+	@echo "... recoTest"
 	@echo "... lib/computing.o"
 	@echo "... lib/computing.i"
 	@echo "... lib/computing.s"
 	@echo "... lib/correction.o"
 	@echo "... lib/correction.i"
 	@echo "... lib/correction.s"
+	@echo "... lib/drawing.o"
+	@echo "... lib/drawing.i"
+	@echo "... lib/drawing.s"
 	@echo "... lib/fillMAPS.o"
 	@echo "... lib/fillMAPS.i"
 	@echo "... lib/fillMAPS.s"
@@ -487,9 +514,9 @@ help:
 	@echo "... plugin/analysis.o"
 	@echo "... plugin/analysis.i"
 	@echo "... plugin/analysis.s"
-	@echo "... plugin/dRICH_reco.o"
-	@echo "... plugin/dRICH_reco.i"
-	@echo "... plugin/dRICH_reco.s"
+	@echo "... plugin/main_test.o"
+	@echo "... plugin/main_test.i"
+	@echo "... plugin/main_test.s"
 .PHONY : help
 
 

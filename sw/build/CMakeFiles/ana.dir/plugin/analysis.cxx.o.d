@@ -292,4 +292,5 @@ CMakeFiles/ana.dir/plugin/analysis.cxx.o: \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/integrate.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/computing.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/readData.h \
- /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/fillMAPS.h
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/fillMAPS.h \
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/drawing.h

@@ -456,7 +456,8 @@ CMakeFiles/ana.dir/plugin/analysis.cxx.o: ../plugin/analysis.cxx \
   ../lib/integrate.h \
   ../lib/computing.h \
   ../lib/readData.h \
-  ../lib/fillMAPS.h
+  ../lib/fillMAPS.h \
+  ../lib/drawing.h
 
 
 ../lib/computing.h:
@@ -626,6 +627,8 @@ CMakeFiles/ana.dir/plugin/analysis.cxx.o: ../plugin/analysis.cxx \
 /usr/include/root/TArrayI.h:
 
 /usr/include/root/TAttMarker.h:
+
+../lib/drawing.h:
 
 /usr/include/root/TAttFill.h:
 

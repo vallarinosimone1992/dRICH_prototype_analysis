@@ -64,7 +64,7 @@ CMAKE_BINARY_DIR = /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototyp
 
 # The main recursive "all" target.
 all: CMakeFiles/dRICH_lib.dir/all
-all: CMakeFiles/reco.dir/all
+all: CMakeFiles/recoTest.dir/all
 all: CMakeFiles/ana.dir/all
 .PHONY : all
 
@@ -74,7 +74,7 @@ preinstall:
 
 # The main recursive "clean" target.
 clean: CMakeFiles/dRICH_lib.dir/clean
-clean: CMakeFiles/reco.dir/clean
+clean: CMakeFiles/recoTest.dir/clean
 clean: CMakeFiles/ana.dir/clean
 .PHONY : clean
 
@@ -85,12 +85,12 @@ clean: CMakeFiles/ana.dir/clean
 CMakeFiles/dRICH_lib.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=3,4,5,6,7,8,9,10,11,12,13 "Built target dRICH_lib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=3,4,5,6,7,8,9,10,11,12,13,14 "Built target dRICH_lib"
 .PHONY : CMakeFiles/dRICH_lib.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/dRICH_lib.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles 11
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles 12
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/dRICH_lib.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles 0
 .PHONY : CMakeFiles/dRICH_lib.dir/rule
@@ -105,30 +105,30 @@ CMakeFiles/dRICH_lib.dir/clean:
 .PHONY : CMakeFiles/dRICH_lib.dir/clean
 
 #=============================================================================
-# Target rules for target CMakeFiles/reco.dir
+# Target rules for target CMakeFiles/recoTest.dir
 
 # All Build rule for target.
-CMakeFiles/reco.dir/all: CMakeFiles/dRICH_lib.dir/all
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/depend
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=14,15 "Built target reco"
-.PHONY : CMakeFiles/reco.dir/all
+CMakeFiles/recoTest.dir/all: CMakeFiles/dRICH_lib.dir/all
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/depend
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=15,16 "Built target recoTest"
+.PHONY : CMakeFiles/recoTest.dir/all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/reco.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles 13
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/reco.dir/all
+CMakeFiles/recoTest.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles 14
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/recoTest.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles 0
-.PHONY : CMakeFiles/reco.dir/rule
+.PHONY : CMakeFiles/recoTest.dir/rule
 
 # Convenience name for target.
-reco: CMakeFiles/reco.dir/rule
-.PHONY : reco
+recoTest: CMakeFiles/recoTest.dir/rule
+.PHONY : recoTest
 
 # clean rule for target.
-CMakeFiles/reco.dir/clean:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/clean
-.PHONY : CMakeFiles/reco.dir/clean
+CMakeFiles/recoTest.dir/clean:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/clean
+.PHONY : CMakeFiles/recoTest.dir/clean
 
 #=============================================================================
 # Target rules for target CMakeFiles/ana.dir
@@ -142,7 +142,7 @@ CMakeFiles/ana.dir/all: CMakeFiles/dRICH_lib.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/ana.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles 13
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles 14
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/ana.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles 0
 .PHONY : CMakeFiles/ana.dir/rule

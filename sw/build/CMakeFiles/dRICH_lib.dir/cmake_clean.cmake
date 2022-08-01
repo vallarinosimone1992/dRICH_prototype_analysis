@@ -3,6 +3,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/dRICH_lib.dir/lib/computing.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/correction.cxx.o"
   "CMakeFiles/dRICH_lib.dir/lib/correction.cxx.o.d"
+  "CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o"
+  "CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o"
   "CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/getChannel.cxx.o"
