@@ -419,6 +419,30 @@ lib/utility.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/utility.cxx.s
 .PHONY : lib/utility.cxx.s
 
+lib/writeHeaderText.o: lib/writeHeaderText.cxx.o
+.PHONY : lib/writeHeaderText.o
+
+# target to build an object file
+lib/writeHeaderText.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o
+.PHONY : lib/writeHeaderText.cxx.o
+
+lib/writeHeaderText.i: lib/writeHeaderText.cxx.i
+.PHONY : lib/writeHeaderText.i
+
+# target to preprocess a source file
+lib/writeHeaderText.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.i
+.PHONY : lib/writeHeaderText.cxx.i
+
+lib/writeHeaderText.s: lib/writeHeaderText.cxx.s
+.PHONY : lib/writeHeaderText.s
+
+# target to generate assembly for a file
+lib/writeHeaderText.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.s
+.PHONY : lib/writeHeaderText.cxx.s
+
 plugin/analysis.o: plugin/analysis.cxx.o
 .PHONY : plugin/analysis.o
 
@@ -511,6 +535,9 @@ help:
 	@echo "... lib/utility.o"
 	@echo "... lib/utility.i"
 	@echo "... lib/utility.s"
+	@echo "... lib/writeHeaderText.o"
+	@echo "... lib/writeHeaderText.i"
+	@echo "... lib/writeHeaderText.s"
 	@echo "... plugin/analysis.o"
 	@echo "... plugin/analysis.i"
 	@echo "... plugin/analysis.s"

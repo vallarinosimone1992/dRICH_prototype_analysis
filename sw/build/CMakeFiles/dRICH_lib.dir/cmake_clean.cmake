@@ -21,6 +21,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.o.d"
   "CMakeFiles/dRICH_lib.dir/lib/utility.cxx.o"
   "CMakeFiles/dRICH_lib.dir/lib/utility.cxx.o.d"
+  "CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o"
+  "CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o.d"
   "libdRICH_lib.a"
   "libdRICH_lib.pdb"
 )

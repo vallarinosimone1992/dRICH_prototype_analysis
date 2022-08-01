@@ -11,9 +11,13 @@
 
 using namespace std;
 
-double min1=29.25;
-double min2=24.25;
+double min1MAPMT=29.25;
+double min2MAPMT=24.25;
 double passoMAPMT = 3.03125;
+
+double min1MPPC=30.4;
+double max1MPPC=81.6;
+double min2MPPC=25.6;
 double passoMPPC = 3.2;
 
 int FiberToPhDet(int fiber, int cmp[8]){
@@ -38,52 +42,57 @@ int FiberToPhDet(int fiber, int cmp[8]){
 
 
 void MAPMTposition(int channel, int place, double *x, double *y, double *r){
-  double dX = (channel-1)/16;
-  double dY = (channel-1)%16;
+  double ratio = (channel-1)/16;
+  double remainder = (channel-1)%16;
   if(place == 0){//NORD
-    double iX=-(min2-0.5*passoMAPMT), iY=min1+.5*passoMAPMT;
-    *x=-(iX+dX*passoMAPMT);
-    *y=iY+dY*passoMAPMT;
+    double iX=-(min2MAPMT-0.5*passoMAPMT), iY=min1MAPMT+.5*passoMAPMT;
+    *x=-(iX+ratio*passoMAPMT);
+    *y=iY+remainder*passoMAPMT;
   }
   if(place == 1){//EST
-    double iX=min1+0.5*passoMAPMT, iY=min2-.5*passoMAPMT;
-    *x=iX+dY*passoMAPMT;
-    *y=-(iY-dX*passoMAPMT);
+    double iX=min1MAPMT+0.5*passoMAPMT, iY=min2MAPMT-.5*passoMAPMT;
+    *x=iX+remainder*passoMAPMT;
+    *y=-(iY-ratio*passoMAPMT);
   }
   if(place == 2){//SUD
-    double iX=min2-.5*passoMAPMT, iY=-(min1+.5*passoMAPMT);
-    *x=-(iX-dX*passoMAPMT);
-    *y=iY-dY*passoMAPMT;
+    double iX=min2MAPMT-.5*passoMAPMT, iY=-(min1MAPMT+.5*passoMAPMT);
+    *x=-(iX-ratio*passoMAPMT);
+    *y=iY-remainder*passoMAPMT;
   }
   if(place == 3){//WEST
-    double iX=-(min1+.5*passoMAPMT), iY=(-min2+.5*passoMAPMT);
-    *x=iX-dY*passoMAPMT;
-    *y=-(iY+dX*passoMAPMT);
+    double iX=-(min1MAPMT+.5*passoMAPMT), iY=(-min2MAPMT+.5*passoMAPMT);
+    *x=iX-remainder*passoMAPMT;
+    *y=-(iY+ratio*passoMAPMT);
   }
   *r = sqrt((*x)*(*x)+(*y)*(*y));
 }
 
 void MPPCposition(int CHANNEL, int place,  double *x, double *y, double *r){
-  int dX = (CHANNEL-1)/16;
-  int dY = (CHANNEL-1)%16;
+  int ratio = (CHANNEL-1)/16;
+  int remainder = (CHANNEL-1)%16;
   //Place tab:
-  //0 -> North
+  //0 -> North. Pixel 1 in bottom right
   //1 -> Est
   //2 -> South
   if(place == 0){
-    double iX=-7.5*passoMPPC, iY=23.5*passoMPPC;
-    *x=iX+dY*passoMPPC;
-    *y=iY-dX*passoMPPC;
+    //double iX=-7.5*passoMPPC, iY=23.5*passoMPPC;
+    double iX=-min2MPPC+.5*passoMPPC, iY=max1MPPC-0.5*passoMPPC;
+    *x=iX+remainder*passoMPPC;
+    *y=iY-ratio*passoMPPC;
   }
   if(place == 1){
-    double iX=8.5*passoMPPC, iY=-7.5*passoMPPC;
-    *x=iX+dX*passoMPPC;
-    *y=iY+dY*passoMPPC;
+    //double iX=8.5*passoMPPC, iY=-7.5*passoMPPC;
+    double iX=min1MPPC+0.5*passoMPPC, iY=-min2MPPC+0.5*passoMPPC;
+    *x=iX+ratio*passoMPPC;
+    *y=iY+remainder*passoMPPC;
   }
   if(place == 2){
-    double iX=-7.5*passoMPPC, iY=-8.5*passoMPPC;
-    *x=iX+dY*passoMPPC;
-    *y=iY-dX*passoMPPC;
+    //double iX=-7.5*passoMPPC, iY=-8.5*passoMPPC;
+    double iX=-min2MPPC+0.5*passoMPPC, iY=-min1MPPC-0.5*passoMPPC;
+    *x=iX+remainder*passoMPPC;
+    *y=iY-ratio*passoMPPC;
+//    cout <<"Channel " <<CHANNEL <<" " <<ratio <<" " <<remainder <<"; X: " <<iX <<" " <<*x <<"; Y: " <<iY <<" " <<*y <<endl;
+//    cin.get();
   }
   *r = sqrt((*x)*(*x)+(*y)*(*y));
 }

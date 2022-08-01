@@ -39,6 +39,7 @@
 #include "../lib/computing.h"
 #include "../lib/readData.h"
 #include "../lib/drawing.h"
+#include "../lib/writeHeaderText.h"
 
 
 using namespace std;
@@ -62,13 +63,19 @@ const double yBin[] = {-81,-77.75, -74.71875, -71.6875, -68.65625, -65.625, -62.
 
 int main(int argc, char *argv[]){
   TApplication theApp("App",&argc,argv);
-  inizializePlot();
-  for(int i = 0; i < 1000; i++){
-    for(int j = 0; j < i; j++)
-      fillTime(i);
-  }
-  plotAll();
+  gStyle->SetPalette(55);
+  THeader header;
+  if(argc > 1)  readHeaders(35,&header);
+  else readHeaders(214,&header);
+  if(argc > 1)  readHeaderShort(&header);
+  else  readHeaderShort(&header);
 
-  theApp.Run();
+  inizializePlot(&header);
+  fillHisto(&header);
+  displayBase(&header);
+  displaySP(&header);
+  displaySPN(&header);
+
   exit(EXIT_SUCCESS);
+  theApp.Run();
 }

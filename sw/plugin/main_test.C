@@ -38,6 +38,7 @@
 #include "../lib/integrate.h"
 #include "../lib/computing.h"
 #include "../lib/readData.h"
+#include "../lib/writeHeaderText.h"
 
 
 using namespace std;
@@ -105,8 +106,22 @@ int main(int argc, char *argv[]){
   computeRMS(&runHeader);
   rmsCutSelection(&runHeader);
   computeCutSingleParticle(&runHeader);
+
+  writeHeaderShort(&runHeader);
+  /*THeader newHead;
+  if(argc > 1)  readHeaders(35,&newHead);
+  else readHeaders(214,&newHead);
+  readHeaderShort(&newHead);
+   cout <<"Run number from header: "<<newHead.runNum <<endl;
+     cout <<Form("Reading some info from run %d header file\n",newHead.runNum);
+     cout <<Form("The GEM run is %d\n",newHead.runNumGEM);
+     cout <<Form("There was a %s beam of %d GeV\n",(newHead.beam).c_str(),newHead.energyGeV);
+     cout <<Form("Sensors were %s\n",(newHead.sensor).c_str());
+     cout <<Form("The paths are %lf %lf \n", newHead.firstPath, newHead.secondPath); 
+     cout <<Form("DRICH_SUITE = %s\n", newHead.suite.c_str());*/
+  //return 0;
   //theApp.Run();
-    
-  
+
+
   exit(EXIT_SUCCESS);
 }
