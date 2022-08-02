@@ -130,30 +130,30 @@ dRICH_lib/fast:
 .PHONY : dRICH_lib/fast
 
 #=============================================================================
-# Target rules for targets named reco
+# Target rules for targets named recoTest
 
 # Build rule for target.
-reco: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 reco
-.PHONY : reco
+recoTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 recoTest
+.PHONY : recoTest
 
 # fast build rule for target.
-reco/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/build
-.PHONY : reco/fast
+recoTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/build
+.PHONY : recoTest/fast
 
 #=============================================================================
-# Target rules for targets named ana
+# Target rules for targets named anaTest
 
 # Build rule for target.
-ana: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 ana
-.PHONY : ana
+anaTest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 anaTest
+.PHONY : anaTest
 
 # fast build rule for target.
-ana/fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ana.dir/build.make CMakeFiles/ana.dir/build
-.PHONY : ana/fast
+anaTest/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/anaTest.dir/build.make CMakeFiles/anaTest.dir/build
+.PHONY : anaTest/fast
 
 lib/computing.o: lib/computing.cxx.o
 .PHONY : lib/computing.o
@@ -443,53 +443,53 @@ lib/writeHeaderText.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.s
 .PHONY : lib/writeHeaderText.cxx.s
 
-plugin/analysis.o: plugin/analysis.cxx.o
-.PHONY : plugin/analysis.o
+plugin/main_test.o: plugin/main_test.C.o
+.PHONY : plugin/main_test.o
 
 # target to build an object file
-plugin/analysis.cxx.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ana.dir/build.make CMakeFiles/ana.dir/plugin/analysis.cxx.o
-.PHONY : plugin/analysis.cxx.o
+plugin/main_test.C.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.o
+.PHONY : plugin/main_test.C.o
 
-plugin/analysis.i: plugin/analysis.cxx.i
-.PHONY : plugin/analysis.i
+plugin/main_test.i: plugin/main_test.C.i
+.PHONY : plugin/main_test.i
 
 # target to preprocess a source file
-plugin/analysis.cxx.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ana.dir/build.make CMakeFiles/ana.dir/plugin/analysis.cxx.i
-.PHONY : plugin/analysis.cxx.i
+plugin/main_test.C.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.i
+.PHONY : plugin/main_test.C.i
 
-plugin/analysis.s: plugin/analysis.cxx.s
-.PHONY : plugin/analysis.s
+plugin/main_test.s: plugin/main_test.C.s
+.PHONY : plugin/main_test.s
 
 # target to generate assembly for a file
-plugin/analysis.cxx.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/ana.dir/build.make CMakeFiles/ana.dir/plugin/analysis.cxx.s
-.PHONY : plugin/analysis.cxx.s
+plugin/main_test.C.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/recoTest.dir/build.make CMakeFiles/recoTest.dir/plugin/main_test.C.s
+.PHONY : plugin/main_test.C.s
 
-plugin/dRICH_reco.o: plugin/dRICH_reco.cxx.o
-.PHONY : plugin/dRICH_reco.o
+plugin/test_analysis.o: plugin/test_analysis.cxx.o
+.PHONY : plugin/test_analysis.o
 
 # target to build an object file
-plugin/dRICH_reco.cxx.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.o
-.PHONY : plugin/dRICH_reco.cxx.o
+plugin/test_analysis.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/anaTest.dir/build.make CMakeFiles/anaTest.dir/plugin/test_analysis.cxx.o
+.PHONY : plugin/test_analysis.cxx.o
 
-plugin/dRICH_reco.i: plugin/dRICH_reco.cxx.i
-.PHONY : plugin/dRICH_reco.i
+plugin/test_analysis.i: plugin/test_analysis.cxx.i
+.PHONY : plugin/test_analysis.i
 
 # target to preprocess a source file
-plugin/dRICH_reco.cxx.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.i
-.PHONY : plugin/dRICH_reco.cxx.i
+plugin/test_analysis.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/anaTest.dir/build.make CMakeFiles/anaTest.dir/plugin/test_analysis.cxx.i
+.PHONY : plugin/test_analysis.cxx.i
 
-plugin/dRICH_reco.s: plugin/dRICH_reco.cxx.s
-.PHONY : plugin/dRICH_reco.s
+plugin/test_analysis.s: plugin/test_analysis.cxx.s
+.PHONY : plugin/test_analysis.s
 
 # target to generate assembly for a file
-plugin/dRICH_reco.cxx.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.s
-.PHONY : plugin/dRICH_reco.cxx.s
+plugin/test_analysis.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/anaTest.dir/build.make CMakeFiles/anaTest.dir/plugin/test_analysis.cxx.s
+.PHONY : plugin/test_analysis.cxx.s
 
 # Help Target
 help:
@@ -499,9 +499,9 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
-	@echo "... ana"
+	@echo "... anaTest"
 	@echo "... dRICH_lib"
-	@echo "... reco"
+	@echo "... recoTest"
 	@echo "... lib/computing.o"
 	@echo "... lib/computing.i"
 	@echo "... lib/computing.s"
@@ -538,12 +538,12 @@ help:
 	@echo "... lib/writeHeaderText.o"
 	@echo "... lib/writeHeaderText.i"
 	@echo "... lib/writeHeaderText.s"
-	@echo "... plugin/analysis.o"
-	@echo "... plugin/analysis.i"
-	@echo "... plugin/analysis.s"
-	@echo "... plugin/dRICH_reco.o"
-	@echo "... plugin/dRICH_reco.i"
-	@echo "... plugin/dRICH_reco.s"
+	@echo "... plugin/main_test.o"
+	@echo "... plugin/main_test.i"
+	@echo "... plugin/main_test.s"
+	@echo "... plugin/test_analysis.o"
+	@echo "... plugin/test_analysis.i"
+	@echo "... plugin/test_analysis.s"
 .PHONY : help
 
 

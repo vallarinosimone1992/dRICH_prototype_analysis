@@ -46,18 +46,15 @@
 using namespace std;
 
 int main(int argc, char *argv[]){
-  //TApplication theApp("App",&argc,argv);
   gROOT->SetBatch(kTRUE);
   gStyle->SetPalette(55);
   THeader header;
 
-
-
   // Uncomment this to use it for quick tests
   if(argc > 1)  readHeaders(35,&header);
   else readHeaders(214,&header);
-  if(argc > 1)  readHeaderShort(&header);
-  else  readHeaderShort(&header);
+  readHeaderShort(&header);
+  header.outputDir=Form("run%04d",header.runNum);
 
 
   inizializePlot(&header);
@@ -66,7 +63,7 @@ int main(int argc, char *argv[]){
   displaySP(&header);
   displaySPN(&header);
   displayCUT(&header);
+  displayRSD(&header);
 
   exit(EXIT_SUCCESS);
-  //theApp.Run();
 }
