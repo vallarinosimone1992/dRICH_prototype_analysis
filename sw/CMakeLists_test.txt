@@ -45,12 +45,12 @@ target_link_libraries(recoTest
 )
 
 
-add_executable(ana
-      plugin/analysis.cxx
+add_executable(anaTest
+      plugin/test_analysis.cxx
 )
 
 
-target_link_libraries(ana
+target_link_libraries(anaTest
       PRIVATE
       dRICH_lib
       PUBLIC

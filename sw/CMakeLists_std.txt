@@ -22,6 +22,8 @@ add_library(dRICH_lib
       lib/integrate.cxx
       lib/readData.cxx
       lib/tracking.cxx
+       lib/drawing.cxx
+      lib/writeHeaderText.cxx
 )
 
 target_include_directories(dRICH_lib

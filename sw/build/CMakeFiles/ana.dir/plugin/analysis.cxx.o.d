@@ -280,7 +280,7 @@ CMakeFiles/ana.dir/plugin/analysis.cxx.o: \
  /usr/include/root/TTime.h /usr/include/root/TApplication.h \
  /usr/include/root/TApplicationImp.h /usr/include/root/TRandom3.h \
  /usr/include/root/TRandom.h /usr/include/root/Math/TRandomEngine.h \
- /usr/include/root/TDirectory.h \
+ /usr/include/root/TDirectory.h /usr/include/root/TROOT.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/definition.h \
  /usr/include/root/TString.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/../lib/fillMAPS.h \

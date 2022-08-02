@@ -33,8 +33,9 @@ void readHeaderShort(THeader *run){
   string fname=Form("%s/output/header/run%04d_header_data.txt",run->suite.c_str(),run->runNum);
   f=fopen(fname.c_str(),"r");
   if(f==NULL){
-    cout <<"Cazzo simo non sai scrivere\n";
-    }
+    cout <<"[ERROR] Header recap not found. Do you executed the writeHeaderShort in your reco?\n";
+    exit(EXIT_FAILURE);
+  }
   char line[MAXLINEA];
   char tmp[MAXLINEA];
 
@@ -170,6 +171,7 @@ void writeHeaderShort(THeader *run){
   fout <<run->timeMin<<endl;
   fout <<run->timeMax<<endl;
   fout.close();
+  cout <<"Header recap wrote\n";
 }
 
 

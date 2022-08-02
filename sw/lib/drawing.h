@@ -5,3 +5,4 @@ void fillHisto(THeader *run);
 void displayBase(THeader *run);
 void displaySP(THeader *run);
 void displaySPN(THeader *run);
+void displayCUT(THeader *run);

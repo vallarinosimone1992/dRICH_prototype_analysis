@@ -50,7 +50,7 @@ int main(int argc, char *argv[]){
   int run;
   if(argc == 2)
     run = atoi(argv[1]);
-  else printUsage();
+  else printUsageReco();
   cout <<Form("Analysis of the dRICH run: %04d\n",run);
   
   THeader header;//It is defined in ../lib/definition.h

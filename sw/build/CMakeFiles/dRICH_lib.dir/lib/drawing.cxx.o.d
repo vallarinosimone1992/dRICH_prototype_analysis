@@ -255,7 +255,8 @@ CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o: \
  /usr/include/root/TTree.h /usr/include/root/ROOT/TIOFeatures.hxx \
  /usr/include/root/TVirtualTreePlayer.h /usr/include/root/TBranch.h \
  /usr/include/root/TBranchCacheInfo.h /usr/include/root/TBits.h \
- /usr/include/root/TList.h /usr/include/root/TSystem.h \
+ /usr/include/root/TList.h /usr/include/root/TError.h \
+ /usr/include/root/DllImport.h /usr/include/root/TSystem.h \
  /usr/include/fcntl.h /usr/include/bits/fcntl.h \
  /usr/include/bits/fcntl-linux.h /usr/include/bits/types/struct_iovec.h \
  /usr/include/linux/falloc.h /usr/include/bits/stat.h \

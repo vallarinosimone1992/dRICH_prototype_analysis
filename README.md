@@ -27,5 +27,4 @@ Repository which includes all the corrections and analysis for the dRICH prototy
 2. cd $DRICH_SUITE/dRICH_prototype_analysis/sw/build
 3. ./reco followed by the run number. In any case, I hope I had time to write the help option.
 4. The reconstruction produces the ROOT TTree with integrated data in $DRICH_SUITE/processed_data/integrated_dRICH_GEM_data/
-5. ./ana followed by: 0 or 1 to decide if to show immediatly the output plot (0 = no), the output file name, one or more run number. You can also run with just two options, if you want to analyze just one run; in this case, the output name is a default name including the run number. In any case, I hope I took the time to write the help option.
-6. The analysis produces three kind of ouput in $DRICH_SUITE/output/specificNameDirectory: txt (including run header and maybe info like dead channel or similar), root (to access and edit the plots) and pdf files (for a quick look at plots).
+5. ./ana followed by: the output file name, one or more run number. You can also run with just one argument, the run number. In this case, you will produce the plots only for the selected run, in a directory with the run number name.

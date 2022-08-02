@@ -1212,6 +1212,8 @@ CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o: ../lib/drawing.cxx \
   /usr/include/root/TBranchCacheInfo.h \
   /usr/include/root/TBits.h \
   /usr/include/root/TList.h \
+  /usr/include/root/TError.h \
+  /usr/include/root/DllImport.h \
   /usr/include/root/TSystem.h \
   /usr/include/fcntl.h \
   /usr/include/bits/fcntl.h \

@@ -204,8 +204,5 @@ void readHeaders(int run, THeader *runHeader){
     auto prz = sscanf(line,"%f",&tmp1);
     runHeader->outerCorrectionY=tmp1;
   }
-
-
-
   cout <<"Header and setup file read\n";
 }

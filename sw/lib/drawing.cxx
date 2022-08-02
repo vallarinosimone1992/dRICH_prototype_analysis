@@ -12,6 +12,7 @@
 #include <TFile.h>
 #include <TTree.h>
 #include <TList.h>
+#include <TError.h>
 #include <TSystem.h>
 
 #include "definition.h"
@@ -29,6 +30,9 @@ static vector<TH1D*> vspPhoton;
 static vector<TH1D*> vspnRadius;
 static vector<TH1D*> vspnTime;
 static vector<TH1D*> vspnPhoton;
+static vector<TH1D*> vcutRadius;
+static vector<TH1D*> vcutTime;
+static vector<TH1D*> vcutPhoton;
 
 
 void fillHisto(THeader *run){
@@ -36,9 +40,9 @@ void fillHisto(THeader *run){
   TFile *fIn = new TFile (fName,"READ");
   TTree *t = (TTree*) fIn->Get("dRICH");
 
-  int nedge, pol[MAXDATA], pmt[MAXDATA], spPhoton[10], spnPhoton[10];
-  double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nt[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10];
-  bool coincPhoton[MAXDATA],outerPhoton[MAXDATA], goodSP[10], goodSPN[10];
+  int nedge, pol[MAXDATA], pmt[MAXDATA], spPhoton[10], spnPhoton[10], cutPhoton[10];
+  double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nt[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10];
+  bool coincPhoton[MAXDATA],outerPhoton[MAXDATA], goodSP[10], goodSPN[10], goodCUT[10];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
   t->SetBranchAddress("pmt",&pmt);
@@ -62,8 +66,13 @@ void fillHisto(THeader *run){
   t->SetBranchAddress("spnPhoton",&spnPhoton);
   t->SetBranchAddress("goodSPN",&goodSPN);
 
+  t->SetBranchAddress("cutRadius",&cutRadius);
+  t->SetBranchAddress("cutTime",&cutTime);
+  t->SetBranchAddress("cutPhoton",&cutPhoton);
+  t->SetBranchAddress("goodCUT",&goodCUT);
 
-  cout <<"Filling histograms\n";
+
+  cout <<Form("Filling histograms for run %d\n",run->runNum);;
   for(int i = 0; i < t->GetEntries(); i++){
     if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
@@ -78,16 +87,21 @@ void fillHisto(THeader *run){
       }
     }
     for(int j = 0; j < 10; j++){
-      if(goodSP[j]==true){
+      if(goodSP[j]==true && spPhoton[j] > 2){
         vspRadius[j]->Fill(spRadius[j]);
         vspTime[j]->Fill(spTime[j]);
         vspPhoton[j]->Fill(spPhoton[j]);
       }
-      if(goodSPN[j]==true){
+      if(goodSPN[j]==true && spnPhoton[j] > 2){
         vspnRadius[j]->Fill(spnRadius[j]);
         vspnTime[j]->Fill(spnTime[j]);
         vspnPhoton[j]->Fill(spnPhoton[j]);
-        }
+      }
+      if(goodCUT[j]==true && cutPhoton[j] > 2){
+        vcutRadius[j]->Fill(cutRadius[j]);
+        vcutTime[j]->Fill(cutTime[j]);
+        vcutPhoton[j]->Fill(cutPhoton[j]);
+      }
     }
   }
   printEnd();
@@ -95,11 +109,12 @@ void fillHisto(THeader *run){
 }
 
 void displayBase(THeader *run){
+  gErrorIgnoreLevel=kWarning;
   //Time distibution and coincidence peak zoom, rings before and after correction
-  string out_pdf0 = Form("%soutput/plot/run%04d/displayTime.pdf[",run->suite.c_str(),run->runNum);
-  string out_pdf = Form("%soutput/plot/run%04d/displayTime.pdf",run->suite.c_str(),run->runNum);
-  string out_pdf1 = Form("%soutput/plot/run%04d/displayTime.pdf]",run->suite.c_str(),run->runNum);
-  string out_root = Form("%soutput/plot/run%04d/displayTime.root",run->suite.c_str(),run->runNum);
+  string out_pdf0 = Form("%soutput/plot/%s/displayTime.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%soutput/plot/%s/displayTime.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%soutput/plot/%s/displayTime.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%soutput/plot/%s/displayTime.root",run->suite.c_str(),run->outputDir.c_str());
 
   TList *save = new TList();
   save->Add(hTime);
@@ -108,8 +123,8 @@ void displayBase(THeader *run){
   save->Add(hnMap);
   save->Add(hRadius);
   save->Add(hnRadius);
-  
-  TCanvas *c1 = new TCanvas("c1","c1",1600,900);
+
+  TCanvas *c1 = new TCanvas("c1","c1",900,900);
   c1->Draw();
   c1->Print(out_pdf0.c_str());
 
@@ -129,7 +144,7 @@ void displayBase(THeader *run){
   l1->Draw("same");
   l2->Draw("same");
   c1->Update();
-  
+
   c1->Print(out_pdf.c_str());
   hMap->Draw("colz");
   c1->Update();
@@ -140,19 +155,21 @@ void displayBase(THeader *run){
   c1->Print(out_pdf.c_str());
   hnRadius->Draw();
   c1->Print(out_pdf.c_str());
-  
+
   c1->Print(out_pdf1.c_str());
 
   TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
   save->Write();
   fOut->Close();
+  c1->Close();
 }
 
 void displaySP(THeader *run){
-  string out_pdf0 = Form("%soutput/plot/run%04d/displaySP.pdf[",run->suite.c_str(),run->runNum);
-  string out_pdf = Form("%soutput/plot/run%04d/displaySP.pdf",run->suite.c_str(),run->runNum);
-  string out_pdf1 = Form("%soutput/plot/run%04d/displaySP.pdf]",run->suite.c_str(),run->runNum);
-  string out_root = Form("%soutput/plot/run%04d/displaySP.root",run->suite.c_str(),run->runNum);
+  gErrorIgnoreLevel=kWarning;
+  string out_pdf0 = Form("%soutput/plot/%s/displaySP.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%soutput/plot/%s/displaySP.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%soutput/plot/%s/displaySP.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%soutput/plot/%s/displaySP.root",run->suite.c_str(),run->outputDir.c_str());
   TList *save = new TList();
   save->Add(vspRadius[4]);
   save->Add(vspTime[4]);
@@ -160,13 +177,14 @@ void displaySP(THeader *run){
   save->Add(vspRadius[9]);
   save->Add(vspTime[9]);
   save->Add(vspPhoton[9]);
-  
+
   TCanvas *c1 = new TCanvas("c1","c1",1600,900);
   c1->Draw();
   c1->Print(out_pdf0.c_str());
   c1->Divide(3);
   c1->cd(1);
   vspRadius[4]->SetTitle("Single particle radius - inner ring");
+  vspRadius[4]->GetXaxis()->SetRangeUser(30,60);
   vspRadius[4]->Draw();
   c1->cd(2);
   vspTime[4]->SetTitle("Mean time of the event - inner ring");
@@ -179,6 +197,7 @@ void displaySP(THeader *run){
   c1->Print(out_pdf.c_str());
   c1->cd(1); 
   vspRadius[9]->SetTitle("Single particle radius - outer ring");
+  vspRadius[9]->GetXaxis()->SetRangeUser(55,85);
   vspRadius[9]->Draw();
   c1->cd(2);
   vspTime[9]->SetTitle("Mean time of the event - outer ring");
@@ -194,13 +213,15 @@ void displaySP(THeader *run){
   TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
   save->Write();
   fOut->Close();
+  c1->Close();
 }
 
 void displaySPN(THeader *run){
-  string out_pdf0 = Form("%soutput/plot/run%04d/displaySPN.pdf[",run->suite.c_str(),run->runNum);
-  string out_pdf = Form("%soutput/plot/run%04d/displaySPN.pdf",run->suite.c_str(),run->runNum);
-  string out_pdf1 = Form("%soutput/plot/run%04d/displaySPN.pdf]",run->suite.c_str(),run->runNum);
-  string out_root = Form("%soutput/plot/run%04d/displaySPN.root",run->suite.c_str(),run->runNum);
+  gErrorIgnoreLevel=kWarning;
+  string out_pdf0 = Form("%soutput/plot/%s/displaySPN.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%soutput/plot/%s/displaySPN.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%soutput/plot/%s/displaySPN.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%soutput/plot/%s/displaySPN.root",run->suite.c_str(),run->outputDir.c_str());
   TList *save = new TList();
   save->Add(vspnRadius[4]);
   save->Add(vspnTime[4]);
@@ -214,6 +235,7 @@ void displaySPN(THeader *run){
   c1->Divide(3);
   c1->cd(1);
   vspnRadius[4]->SetTitle("Single particle radius - inner ring - corrected");
+  vspnRadius[4]->GetXaxis()->SetRangeUser(30,60);
   vspnRadius[4]->Draw();
   c1->cd(2);
   vspnTime[4]->SetTitle("Mean time of the event - inner ring - corrected");
@@ -226,6 +248,7 @@ void displaySPN(THeader *run){
 
   c1->cd(1); 
   vspnRadius[9]->SetTitle("Single particle radius - outer ring - corrected");
+  vspnRadius[9]->GetXaxis()->SetRangeUser(55,85);
   vspnRadius[9]->Draw();
   c1->cd(2);
   vspnTime[9]->SetTitle("Mean time of the event - outer ring - corrected");
@@ -241,12 +264,64 @@ void displaySPN(THeader *run){
   TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
   save->Write();
   fOut->Close();
+  c1->Close();
+}
+
+void displayCUT(THeader *run){
+  gErrorIgnoreLevel=kWarning;
+  string out_pdf0 = Form("%soutput/plot/%s/displayCUT.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%soutput/plot/%s/displayCUT.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%soutput/plot/%s/displayCUT.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%soutput/plot/%s/displayCUT.root",run->suite.c_str(),run->outputDir.c_str());
+  TList *save = new TList();
+  save->Add(vcutRadius[4]);
+  save->Add(vcutTime[4]);
+  save->Add(vcutRadius[9]);
+  save->Add(vcutTime[9]);
+
+  TCanvas *c1 = new TCanvas("c1","c1",1600,900);
+  c1->Draw();
+  c1->Print(out_pdf0.c_str());
+
+  c1->Divide(3);
+  c1->cd(1);
+  vcutRadius[4]->SetTitle("Single particle radius - inner ring - after rms cuts");
+  vcutRadius[4]->GetXaxis()->SetRangeUser(30,60);
+  vcutRadius[4]->Draw();
+  c1->cd(2);
+  vcutTime[4]->SetTitle("Mean time of the event - inner ring - after rms cuts");
+  vcutTime[4]->Draw();
+  c1->cd(3);
+  vcutPhoton[4]->SetTitle("# photons for particle - inner ring - after rms cuts");
+  vcutPhoton[4]->Draw();
+  c1->Print(out_pdf.c_str());
+
+
+  c1->cd(1); 
+  vcutRadius[9]->SetTitle("Single particle radius - outer ring - after rms cuts");
+  vcutRadius[9]->GetXaxis()->SetRangeUser(55,85);
+  vcutRadius[9]->Draw();
+  c1->cd(2);
+  vcutTime[9]->SetTitle("Mean time of the event - outer ring - after rms cuts");
+  vcutTime[9]->Draw();
+  c1->cd(3);
+  vcutPhoton[9]->SetTitle("# photons for particle - outer ring - after rms cuts");
+  vcutPhoton[9]->GetXaxis()->SetRangeUser(0,25);
+  vcutPhoton[9]->Draw();
+  c1->Print(out_pdf.c_str());
+  c1->Print(out_pdf1.c_str());
+
+
+  TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
+  save->Write();
+  fOut->Close();
+  c1->Close();
 }
 
 
 void inizializePlot(THeader *run){
   //Create output directory
-  string out_dir = Form("%soutput/plot/run%04d",run->suite.c_str(),run->runNum);
+  string out_dir = Form("%soutput/plot/%s",run->suite.c_str(),run->outputDir.c_str());
   if(gSystem->AccessPathName(out_dir.c_str())){
     if(std::system(Form("mkdir -p %s",out_dir.c_str()))){
       cout <<"[ERROR] Output directory not created\n";
@@ -255,7 +330,7 @@ void inizializePlot(THeader *run){
   }
 
   hTime = new TH1D("hTime","Time distribution for all hits",1000,0,1000);
-  hCoinc = new TH1D("hCoinc","Coincidence peak",5*(int)(run->timeMax-run->timeMin),run->timeMin,run->timeMax);
+  hCoinc = new TH1D("hCoinc","Coincidence peak",5*(int)(run->timeMax-run->timeMin)+10,run->timeMin-5,run->timeMax+5);
 
   if(run->sensor=="MPPC") hMap = new TH2D("hMap","Hit position MPPC;x [mm];y [mm]",sizeof(xBinMPPC)/sizeof(*xBinMPPC)-1,xBinMPPC,sizeof(yBinMPPC)/sizeof(*yBinMPPC)-1,yBinMPPC);
   else if(run->sensor=="MAPMT") hMap = new TH2D("hMap","Hit position MAPMT;x [mm];y [mm]",sizeof(xBinMAPMT)/sizeof(*xBinMAPMT)-1,xBinMAPMT,sizeof(yBinMAPMT)/sizeof(*yBinMAPMT)-1,yBinMAPMT);
@@ -273,12 +348,19 @@ void inizializePlot(THeader *run){
     vspTime.push_back(hspTime);
     TH1D *hspPhoton = new TH1D(Form("hspPhoton_%d",i),Form("Single particle radius - %d - before corrections;photon [#]",i),50,0,50);
     vspPhoton.push_back(hspPhoton);
+
     TH1D *hspnRadius = new TH1D(Form("hspnRadius_%d",i),Form("Single particle radius - %d - after corrections;radius [mm]",i),200,0,100);
     vspnRadius.push_back(hspnRadius);
     TH1D *hspnTime = new TH1D(Form("hspnTime_%d",i),Form("Single particle radius - %d - after corrections;time [ns]",i),5*(int)(run->timeMax-run->timeMin),run->timeMin,run->timeMax);
     vspnTime.push_back(hspnTime);
     TH1D *hspnPhoton = new TH1D(Form("hspnPhoton_%d",i),Form("Single particle radius - %d - after corrections;photon [#]",i),50,0,50);
     vspnPhoton.push_back(hspnPhoton);
-    cout <<i <<endl;
+
+    TH1D *hcutRadius = new TH1D(Form("hcutRadius_%d",i),Form("Single particle radius - %d - after rms cuts;radius [mm]",i),200,0,100);
+    vcutRadius.push_back(hcutRadius);
+    TH1D *hcutTime = new TH1D(Form("hcutTime_%d",i),Form("Single particle radius - %d - after rms cuts;time [ns]",i),5*(int)(run->timeMax-run->timeMin),run->timeMin,run->timeMax);
+    vcutTime.push_back(hcutTime);
+    TH1D *hcutPhoton = new TH1D(Form("hcutPhoton_%d",i),Form("Single particle radius - %d - after rms cuts;photon [#]",i),50,0,50);
+    vcutPhoton.push_back(hcutPhoton);
   }
 }

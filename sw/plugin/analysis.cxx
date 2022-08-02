@@ -28,6 +28,7 @@
 #include <TApplication.h>
 #include <TRandom3.h>
 #include <TDirectory.h>
+#include <TROOT.h>
 
 #include "../lib/definition.h"
 #include "../lib/fillMAPS.h"
@@ -44,38 +45,51 @@
 
 using namespace std;
 
-map<int,int> m1;
-map<int,int>::iterator it_m1;
-
-map<int,double> m2;
-map<int,double> m3;
-map<int,double>::iterator it_m2;
-map<int,double>::iterator it_m3;
-
-map<string,int> m4;
-map<string,int> m5;
-map<string,int>::iterator it_m4;
-map<string,int>::iterator it_m5;
-
-const double xBin[] = {-81,-77.75, -74.71875, -71.6875, -68.65625, -65.625, -62.59375, -59.5625, -56.53125, -53.5, -50.46875, -47.4375, -44.40625, -41.375, -38.34375, -35.3125, -32.28125, -29.25, -24.25, -21.21875, -18.1875, -15.15625, -12.125, -9.09375, -6.0625, -3.03125, 0, 3.03125, 6.0625, 9.09375, 12.125, 15.15625, 18.1875, 21.21875, 24.25, 29.25, 32.28125, 35.3125, 38.34375, 41.375, 44.40625, 47.4375, 50.46875, 53.5, 56.53125, 59.5625, 62.59375, 65.625, 68.65625, 71.6875, 74.71875, 77.75,81};
-const double yBin[] = {-81,-77.75, -74.71875, -71.6875, -68.65625, -65.625, -62.59375, -59.5625, -56.53125, -53.5, -50.46875, -47.4375, -44.40625, -41.375, -38.34375, -35.3125, -32.28125, -29.25, -24.25, -21.21875, -18.1875, -15.15625, -12.125, -9.09375, -6.0625, -3.03125, 0, 3.03125, 6.0625, 9.09375, 12.125, 15.15625, 18.1875, 21.21875, 24.25, 29.25, 32.28125, 35.3125, 38.34375, 41.375, 44.40625, 47.4375, 50.46875, 53.5, 56.53125, 59.5625, 62.59375, 65.625, 68.65625, 71.6875, 74.71875, 77.75,81};
-
-
 int main(int argc, char *argv[]){
-  TApplication theApp("App",&argc,argv);
+  //TApplication theApp("App",&argc,argv);
+  gROOT->SetBatch(kTRUE);
   gStyle->SetPalette(55);
-  THeader header;
-  if(argc > 1)  readHeaders(35,&header);
-  else readHeaders(214,&header);
-  if(argc > 1)  readHeaderShort(&header);
-  else  readHeaderShort(&header);
+  vector<THeader> header;
+  
+  string finish;
+  if(argc == 2){
+    cout <<Form("Analyzing run %d",atoi(argv[1]));
+    THeader tmpHeader;
+    readHeaders(atoi(argv[1]),&tmpHeader);
+    tmpHeader.outputDir=Form("run%04d",atoi(argv[1]));
+    readHeaderShort(&tmpHeader);
+    header.push_back(tmpHeader);
+  }else if(argc >= 3){
+    cout <<"Here\n";
+    string output_Name=Form("%s",argv[1]);
+    for(int i = 2; i < argc; i++){
+      THeader tmpHeader;
+      readHeaders(atoi(argv[i]),&tmpHeader);
+      tmpHeader.outputDir=Form("%s",output_Name.c_str());
+      readHeaderShort(&tmpHeader);
+      header.push_back(tmpHeader);
+    }
+  }else printUsageAna();
 
-  inizializePlot(&header);
-  fillHisto(&header);
-  displayBase(&header);
-  displaySP(&header);
-  displaySPN(&header);
+
+
+
+  /*  // Uncomment this to use it for quick tests
+      if(argc > 1)  readHeaders(35,&header);
+      else readHeaders(214,&header);
+      if(argc > 1)  readHeaderShort(&header);
+      else  readHeaderShort(&header);
+      */
+
+  inizializePlot(&header[0]);
+  for(int i = 0; i < header.size(); i++)  fillHisto(&header[i]);
+  displayBase(&header[0]);
+  displaySP(&header[0]);
+  displaySPN(&header[0]);
+  displayCUT(&header[0]);
+
+  cout <<Form("The output files are in %soutput/plot/%s\n",header[0].suite.c_str(),header[0].outputDir.c_str());
 
   exit(EXIT_SUCCESS);
-  theApp.Run();
+  //theApp.Run();
 }

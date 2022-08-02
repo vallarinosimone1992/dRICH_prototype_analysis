@@ -445,6 +445,7 @@ CMakeFiles/ana.dir/plugin/analysis.cxx.o: ../plugin/analysis.cxx \
   /usr/include/root/TRandom.h \
   /usr/include/root/Math/TRandomEngine.h \
   /usr/include/root/TDirectory.h \
+  /usr/include/root/TROOT.h \
   ../lib/definition.h \
   /usr/include/root/TString.h \
   ../lib/fillMAPS.h \
@@ -475,6 +476,8 @@ CMakeFiles/ana.dir/plugin/analysis.cxx.o: ../plugin/analysis.cxx \
 ../lib/fillMAPS.h:
 
 ../lib/definition.h:
+
+/usr/include/root/TROOT.h:
 
 /usr/include/root/TApplicationImp.h:
 

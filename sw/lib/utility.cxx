@@ -33,11 +33,14 @@ void printEnd(){
   cout <<"] " <<int(100) <<"\n";
 }
 
-void printUsage(){
-  cout <<"[WARNING] You have to run the reconstruction simply writing\n\n./reco run_number\n\nExample\n\n./reco 214\n";
+void printUsageReco(){
+  cout <<"\n\n#### USAGE ####\n./reco run_number\n\n[EXAMPLE] ./reco 214\n\n";
   exit(EXIT_FAILURE);
 }
-
+void printUsageAna(){
+  cout <<"\n\n#### USAGE ####\nTo analyze a single run: ./ana run_number \n\nTo analyze N different runs: ./ana output_name run_number_1 ... run_number_N\n\n";
+  exit(EXIT_FAILURE);
+}
 
 void checkFileExistance(THeader *run){
     if(gSystem->AccessPathName(Form("%s/DATA/dRICH_DATA/run_%04d.root",&run->suite[0],run->runNum))){

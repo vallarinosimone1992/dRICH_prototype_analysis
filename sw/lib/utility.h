@@ -6,7 +6,8 @@
 void printProgress(double progress);
 void printEnd();
 
-void printUsage();
+void printUsageReco();
+void printUsageAna();
 
 void checkFileExistance(THeader *run);
 

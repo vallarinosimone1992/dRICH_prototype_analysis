@@ -50,6 +50,7 @@ struct THeader{
   float DnGEMyRunOff;
   double timeMin;
   double timeMax;
+  string outputDir;
 };
 
 
