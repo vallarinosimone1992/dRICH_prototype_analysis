@@ -457,7 +457,9 @@ CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.o: ../plugin/dRICH_reco.cxx \
   ../lib/integrate.h \
   ../lib/computing.h \
   ../lib/readData.h \
-  ../lib/fillMAPS.h
+  ../lib/fillMAPS.h \
+  ../lib/writeHeaderText.h \
+  ../lib/utility.h
 
 
 ../lib/computing.h:
@@ -1115,6 +1117,8 @@ CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.o: ../plugin/dRICH_reco.cxx \
 /usr/include/bits/types/__fpos64_t.h:
 
 /usr/include/bits/stdio.h:
+
+../lib/writeHeaderText.h:
 
 /usr/include/root/Math/TRandomEngine.h:
 

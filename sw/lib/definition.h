@@ -35,10 +35,10 @@ struct THeader{
   float zAerogel;
   double geoCut=55.0;
   //Sigma of residui distribution for run 214
-  double cutRadiusInRMS=10;// 1.93;
-  double cutTimeInRMS=10;// 2.04;
-  double cutRadiusOutRMS=10;// 2.56;
-  double cutTimeOutRMS=10;// 2.59;
+  double cutRadiusInRMS=4;// 1.93;
+  double cutTimeInRMS=4;// 2.04;
+  double cutRadiusOutRMS=4;// 2.56;
+  double cutTimeOutRMS=4;// 2.59;
   
   double innerCorrectionX=0;
   double innerCorrectionY=0;

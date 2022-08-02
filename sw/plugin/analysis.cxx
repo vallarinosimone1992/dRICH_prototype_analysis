@@ -87,6 +87,7 @@ int main(int argc, char *argv[]){
   displaySP(&header[0]);
   displaySPN(&header[0]);
   displayCUT(&header[0]);
+  displayRSD(&header[0]);
 
   cout <<Form("The output files are in %soutput/plot/%s\n",header[0].suite.c_str(),header[0].outputDir.c_str());
 

@@ -6,3 +6,4 @@ void displayBase(THeader *run);
 void displaySP(THeader *run);
 void displaySPN(THeader *run);
 void displayCUT(THeader *run);
+void displayRSD(THeader *run);

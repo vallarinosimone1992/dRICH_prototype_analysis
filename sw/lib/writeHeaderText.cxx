@@ -109,10 +109,81 @@ void readHeaderShort(THeader *run){
 }
 
 
+
+
 void writeHeaderShort(THeader *run){
+  FILE *f;
+  string fname=Form("%s/output/header/run%04d_header_data.txt",run->suite.c_str(),run->runNum);
+  f=fopen(fname.c_str(),"w");
+
+  fprintf(f,"%d\n",(run->runNum)); 
+  fprintf(f,"%s\n",run->day.c_str());
+  fprintf(f,"%s\n",run->startTime.c_str());
+  fprintf(f,"%s\n",run->endTime.c_str());
+  fprintf(f,"%s\n",run->beam.c_str());
+  fprintf(f,"%d\n",(run->energyGeV));
+  fprintf(f,"%d\n",(run->expEvents));
+  fprintf(f,"%s\n",run->sensor.c_str());
+  fprintf(f,"%f\n",(run->firstMirrorPosition));
+  fprintf(f,"%f\n",(run->secondMirrorPosition));
+  fprintf(f,"%f\n",(run->temperature));
+  fprintf(f,"%d\n",(run->powerHV));
+  fprintf(f,"%s\n",run->trigger.c_str());
+  fprintf(f,"%s\n",run->runType.c_str());
+  fprintf(f,"%d\n",(run->runNumGEM));
+  fprintf(f,"%d\n",(run->pedestalGEM));
+  fprintf(f,"%s\n",run->setupFile.c_str());
+  fprintf(f,"%s\n",run->note.c_str());
+  fprintf(f,"%s\n",run->suite.c_str());
+
+  fprintf(f,"%d\n",(run->fiberRef[0]));
+  fprintf(f,"%d\n",(run->fiberRef[1]));
+  fprintf(f,"%d\n",(run->fiberRef[2]));
+  fprintf(f,"%d\n",(run->fiberRef[3]));
+  fprintf(f,"%d\n",(run->fiberRef[4]));
+  fprintf(f,"%d\n",(run->fiberRef[5]));
+  fprintf(f,"%d\n",(run->fiberRef[6]));
+  fprintf(f,"%d\n",(run->fiberRef[7]));
+  fprintf(f,"%d\n",(run->marocBoard[0]));
+  fprintf(f,"%d\n",(run->marocBoard[1]));
+  fprintf(f,"%d\n",(run->marocBoard[2]));
+  fprintf(f,"%d\n",(run->marocBoard[3]));
+  fprintf(f,"%d\n",(run->marocBoard[4]));
+  fprintf(f,"%d\n",(run->marocBoard[5]));
+  fprintf(f,"%d\n",(run->marocBoard[6]));
+  fprintf(f,"%d\n",(run->marocBoard[7]));
+  fprintf(f,"%d\n",(run->upstreamBoard));
+  fprintf(f,"%f\n",(run->firstPath));
+  fprintf(f,"%f\n",(run->secondPath));
+  fprintf(f,"%f\n",(run->UpGEMz));
+  fprintf(f,"%f\n",(run->DnGEMz));
+  fprintf(f,"%f\n",(run->zAerogel));
+  fprintf(f,"%lf\n",(run->geoCut));
+  fprintf(f,"%lf\n",(run->cutRadiusInRMS));
+  fprintf(f,"%lf\n",(run->cutTimeInRMS));
+  fprintf(f,"%lf\n",(run->cutRadiusOutRMS));
+  fprintf(f,"%lf\n",(run->cutTimeOutRMS));
+  fprintf(f,"%lf\n",(run->innerCorrectionX));
+  fprintf(f,"%lf\n",(run->innerCorrectionY));
+  fprintf(f,"%lf\n",(run->outerCorrectionX));
+  fprintf(f,"%lf\n",(run->outerCorrectionY));
+  fprintf(f,"%f\n",(run->UpGEMxRunOff));
+  fprintf(f,"%f\n",(run->UpGEMyRunOff));
+  fprintf(f,"%f\n",(run->DnGEMxRunOff));
+  fprintf(f,"%f\n",(run->DnGEMyRunOff));
+  fprintf(f,"%lf\n",(run->timeMin));
+  fprintf(f,"%lf\n",(run->timeMax));
+
+  fclose(f);
+  cout <<"Header recap wrote\n";
+}
+
+
+
+/*void writeHeaderShort(THeader *run){
   ofstream fout;
   string fname=Form("%s/output/header/run%04d_header_data.txt",run->suite.c_str(),run->runNum);
-  fout.open(fname.c_str());
+  fout.open(fname.c_str(),std::ios::trunc);
 
   fout <<run->runNum<<endl;
   fout <<run->day.c_str()<<endl;
@@ -172,7 +243,7 @@ void writeHeaderShort(THeader *run){
   fout <<run->timeMax<<endl;
   fout.close();
   cout <<"Header recap wrote\n";
-}
+}*/
 
 
 

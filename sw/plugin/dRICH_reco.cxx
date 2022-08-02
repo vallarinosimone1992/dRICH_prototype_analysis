@@ -39,6 +39,7 @@
 #include "../lib/integrate.h"
 #include "../lib/computing.h"
 #include "../lib/readData.h"
+#include "../lib/writeHeaderText.h"
 
 
 using namespace std;
@@ -102,6 +103,6 @@ int main(int argc, char *argv[]){
                             //Compute the mean quantities for the single particle after the rms cut application
   computeCutSingleParticle(&header); //computing.cxx
 
-  writeHeader(&header);
+  writeHeaderShort(&header);
   exit(EXIT_SUCCESS);
 }

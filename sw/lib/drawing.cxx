@@ -24,6 +24,10 @@ static TH2D *hMap;
 static TH2D *hnMap;
 static TH1D *hRadius;
 static TH1D *hnRadius;
+
+static vector<TH1D*> vrsdRadius;
+static vector<TH1D*> vrsdTime;
+
 static vector<TH1D*> vspRadius;
 static vector<TH1D*> vspTime;
 static vector<TH1D*> vspPhoton;
@@ -41,7 +45,7 @@ void fillHisto(THeader *run){
   TTree *t = (TTree*) fIn->Get("dRICH");
 
   int nedge, pol[MAXDATA], pmt[MAXDATA], spPhoton[10], spnPhoton[10], cutPhoton[10];
-  double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nt[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10];
+  double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nt[MAXDATA], rsdRadius[MAXDATA], rsdTime[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10];
   bool coincPhoton[MAXDATA],outerPhoton[MAXDATA], goodSP[10], goodSPN[10], goodCUT[10];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
@@ -55,6 +59,9 @@ void fillHisto(THeader *run){
   t->SetBranchAddress("nt",&nt);
   t->SetBranchAddress("coincPhoton",&coincPhoton);
   t->SetBranchAddress("outerPhoton",&outerPhoton);
+  t->SetBranchAddress("rsdRadius",&rsdRadius);
+  t->SetBranchAddress("rsdTime",&rsdTime);
+  
   
   t->SetBranchAddress("spRadius",&spRadius);
   t->SetBranchAddress("spTime",&spTime);
@@ -84,6 +91,13 @@ void fillHisto(THeader *run){
         hRadius->Fill(r[j]);
         hnMap->Fill(nx[j],ny[j]);
         hnRadius->Fill(nr[j]);
+        if(outerPhoton[j]==false){
+          vrsdRadius[0]->Fill(rsdRadius[j]);
+          vrsdTime[0]->Fill(rsdTime[j]);
+        }else{
+          vrsdRadius[1]->Fill(rsdRadius[j]);
+          vrsdTime[1]->Fill(rsdTime[j]);
+        }
       }
     }
     for(int j = 0; j < 10; j++){
@@ -154,6 +168,63 @@ void displayBase(THeader *run){
   hRadius->Draw();
   c1->Print(out_pdf.c_str());
   hnRadius->Draw();
+  c1->Print(out_pdf.c_str());
+
+  c1->Print(out_pdf1.c_str());
+
+  TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
+  save->Write();
+  fOut->Close();
+  c1->Close();
+}
+
+void displayRSD(THeader *run){
+  gErrorIgnoreLevel=kWarning;
+  string out_pdf0 = Form("%soutput/plot/%s/displayRSD.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%soutput/plot/%s/displayRSD.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%soutput/plot/%s/displayRSD.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%soutput/plot/%s/displayRSD.root",run->suite.c_str(),run->outputDir.c_str());
+  TList *save = new TList();
+  save->Add(vrsdRadius[0]);
+  save->Add(vrsdRadius[1]);
+  save->Add(vrsdTime[0]);
+  save->Add(vrsdTime[1]);
+  TCanvas *c1 = new TCanvas("c1","c1",1600,900);
+  c1->Divide(2);
+  c1->Draw();
+  c1->Print(out_pdf0.c_str());
+
+  c1->cd(1);
+  vrsdRadius[0]->SetTitle("Radius residui - inner ring"); 
+  TLine *l1 = new TLine(run->cutRadiusInRMS,0,run->cutRadiusInRMS,vrsdRadius[0]->GetBinContent(1));
+  l1->SetLineColor(3);
+  vrsdRadius[0]->Draw();
+  l1->Draw("same");
+  c1->Draw();
+  c1->Update();
+  c1->cd(2);
+  vrsdTime[0]->SetTitle("Time residui - inner ring"); 
+  TLine *l2 = new TLine(run->cutTimeInRMS,0,run->cutTimeInRMS,vrsdTime[0]->GetBinContent(1));
+  l2->SetLineColor(3);
+  vrsdTime[0]->Draw();
+  l2->Draw("same");
+  c1->Update();
+  c1->Print(out_pdf.c_str());
+
+  c1->cd(1);
+  vrsdRadius[1]->SetTitle("Radius residui - outer ring"); 
+  TLine *l3 = new TLine(run->cutRadiusOutRMS,0,run->cutRadiusOutRMS,vrsdRadius[1]->GetBinContent(1)); 
+  l3->SetLineColor(3);
+  vrsdRadius[1]->Draw();
+  l3->Draw("same");
+  c1->Update();
+  c1->cd(2);
+  vrsdTime[1]->SetTitle("Time residui - outer ring"); 
+  TLine *l4 = new TLine(run->cutTimeOutRMS,0,run->cutTimeOutRMS,vrsdTime[1]->GetBinContent(1)); 
+  l4->SetLineColor(3);
+  vrsdTime[1]->Draw();
+  l4->Draw("same");
+  c1->Update();
   c1->Print(out_pdf.c_str());
 
   c1->Print(out_pdf1.c_str());
@@ -362,5 +433,12 @@ void inizializePlot(THeader *run){
     vcutTime.push_back(hcutTime);
     TH1D *hcutPhoton = new TH1D(Form("hcutPhoton_%d",i),Form("Single particle radius - %d - after rms cuts;photon [#]",i),50,0,50);
     vcutPhoton.push_back(hcutPhoton);
+  }
+
+  for(int i = 0; i < 2; i++){
+    TH1D *hrsdRadius = new TH1D(Form("hrsdRadius_%d",i),Form("Radius residui - %d;rsd_r [mm];counts [#]",i),120,0,12);
+    vrsdRadius.push_back(hrsdRadius);
+    TH1D *hrsdTime = new TH1D(Form("hrsdTime_%d",i),Form("Time residui - %d;rsd_t [ns];counts [#]",i),120,0,12);
+    vrsdTime.push_back(hrsdTime);
   }
 }
