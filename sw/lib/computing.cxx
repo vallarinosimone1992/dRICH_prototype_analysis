@@ -1,6 +1,7 @@
 #define MAXDATA 10000
 #include <iostream>
 #include <vector>
+#include <string>
 
 #include <TFile.h>
 #include <TTree.h>
@@ -15,6 +16,20 @@
 #include "utility.h"
 
 using namespace std;
+
+void applyFit(TH1D *h, TF1 *f,string fname, bool out){
+  if(out == false){
+    h->GetXaxis()->SetRangeUser(30,60);
+    f = new TF1(fname.c_str(),"gaus(0)",30,60);
+  }else{
+    h->GetXaxis()->SetRangeUser(55,90);
+    f = new TF1(fname.c_str(),"gaus(0)",55,85);
+  }
+  double p1= h->GetBinCenter(h->GetMaximumBin());
+  f->SetParameters(5000,p1,2);
+  h->Fit(f->GetName(),"Q","",p1-1,p1+1.5);
+  h->Draw();
+}
 
 void computeRMS(THeader *run){
   TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);

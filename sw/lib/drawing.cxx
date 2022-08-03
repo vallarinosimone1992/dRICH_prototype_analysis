@@ -4,6 +4,7 @@
 //#include <filesystem>
 //namespace fs = std::filesystem;
 
+#include <TF1.h>
 #include <TH1D.h>
 #include <TH2D.h>
 #include <TCanvas.h>
@@ -13,10 +14,12 @@
 #include <TTree.h>
 #include <TList.h>
 #include <TError.h>
+#include <TStyle.h>
 #include <TSystem.h>
 
 #include "definition.h"
 #include "utility.h"
+#include "computing.h"
 
 static TH1D *hTime;
 static TH1D *hCoinc;
@@ -125,10 +128,10 @@ void fillHisto(THeader *run){
 void displayBase(THeader *run){
   gErrorIgnoreLevel=kWarning;
   //Time distibution and coincidence peak zoom, rings before and after correction
-  string out_pdf0 = Form("%soutput/plot/%s/displayTime.pdf[",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf = Form("%soutput/plot/%s/displayTime.pdf",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf1 = Form("%soutput/plot/%s/displayTime.pdf]",run->suite.c_str(),run->outputDir.c_str());
-  string out_root = Form("%soutput/plot/%s/displayTime.root",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf0 = Form("%soutput/plot/%s/displayBase.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%soutput/plot/%s/displayBase.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%soutput/plot/%s/displayBase.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%soutput/plot/%s/displayBase.root",run->suite.c_str(),run->outputDir.c_str());
 
   TList *save = new TList();
   save->Add(hTime);
@@ -169,7 +172,25 @@ void displayBase(THeader *run){
   c1->Print(out_pdf.c_str());
   hnRadius->Draw();
   c1->Print(out_pdf.c_str());
-
+  
+  gStyle->SetOptStat(0);
+  gStyle->SetOptFit(1);
+  TH1D *cp0 = (TH1D*)hnRadius->Clone("hnRadius_fitIn");
+  TF1 *fInRadius = new TF1("fInRadius","gaus(0)",20,60);
+  save->Add(fInRadius);
+  fInRadius->SetParameters(5000,42,3);
+  cp0->Fit("fInRadius","Q","",40,45);
+  cp0->Draw();
+  c1->Print(out_pdf.c_str());
+  
+  
+  TH1D *cp1 = (TH1D*)hnRadius->Clone("hnRadius_fitOut");
+  TF1 *fOutRadius = new TF1("fOutRadius","gaus(0)",60,90);
+  save->Add(fOutRadius);
+  fOutRadius->SetParameters(5000,72,3);
+  cp1->Fit("fOutRadius","Q","",70,75);
+  cp1->Draw();
+  c1->Print(out_pdf.c_str());
   c1->Print(out_pdf1.c_str());
 
   TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
@@ -279,6 +300,25 @@ void displaySP(THeader *run){
   vspPhoton[9]->Draw();
   c1->Print(out_pdf.c_str());
 
+  c1->Divide(1);
+  c1->cd(0);
+  gStyle->SetOptStat(0);
+  gStyle->SetOptFit(1);
+
+  TH1D *cp0 = (TH1D*)vspRadius[4]->Clone("hspRadius_fitIn");
+  TF1 *fspRadius_4=new TF1();
+  save->Add(fspRadius_4);
+  applyFit(cp0,fspRadius_4,"fspRadius_4",false);
+  cp0->Draw();
+  c1->Print(out_pdf.c_str());
+
+  TH1D *cp1 = (TH1D*)vspRadius[9]->Clone("hspRadius_fitOut");
+  TF1 *fspRadius_9 = new TF1();
+  save->Add(fspRadius_9);
+  applyFit(cp1,fspRadius_9,"fspRadius_4",true);
+  cp1->Draw();
+  c1->Print(out_pdf.c_str());
+
   c1->Print(out_pdf1.c_str());
 
   TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
@@ -329,9 +369,29 @@ void displaySPN(THeader *run){
   vspnPhoton[9]->GetXaxis()->SetRangeUser(0,25);
   vspnPhoton[9]->Draw();
   c1->Print(out_pdf.c_str());
+
+  c1->Divide(1);
+  c1->cd(0);
+  gStyle->SetOptStat(0);
+  gStyle->SetOptFit(1);
+
+  TH1D *cp0 = (TH1D*)vspnRadius[4]->Clone("hspnRadius_fitIn");
+  TF1 *fspnRadius_4=new TF1();
+  save->Add(fspnRadius_4);
+  applyFit(cp0,fspnRadius_4,"fspnRadius_4",false);
+  cp0->Draw();
+  c1->Print(out_pdf.c_str());
+
+  TH1D *cp1 = (TH1D*)vspnRadius[9]->Clone("hspnRadius_fitOut");
+  TF1 *fspnRadius_9 = new TF1();
+  save->Add(fspnRadius_9);
+  applyFit(cp1,fspnRadius_9,"fspnRadius_4",true);
+  cp1->Draw();
+  c1->Print(out_pdf.c_str());
+
+
+
   c1->Print(out_pdf1.c_str());
-
-
   TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
   save->Write();
   fOut->Close();
@@ -380,6 +440,33 @@ void displayCUT(THeader *run){
   vcutPhoton[9]->GetXaxis()->SetRangeUser(0,25);
   vcutPhoton[9]->Draw();
   c1->Print(out_pdf.c_str());
+
+
+  c1->Divide(1);
+  c1->cd(0);
+  gStyle->SetOptStat(0);
+  gStyle->SetOptFit(1);
+
+  TH1D *cp0 = (TH1D*)vcutRadius[4]->Clone("hcutRadius_fitIn");
+  TF1 *fcutRadius_4=new TF1();
+  save->Add(fcutRadius_4);
+  applyFit(cp0,fcutRadius_4,"fcutRadius_4",false);
+  cp0->Draw();
+  c1->Print(out_pdf.c_str());
+
+  TH1D *cp1 = (TH1D*)vcutRadius[9]->Clone("hcutRadius_fitOut");
+  TF1 *fcutRadius_9 = new TF1();
+  save->Add(fcutRadius_9);
+  applyFit(cp1,fcutRadius_9,"fcutRadius_4",true);
+  cp1->Draw();
+  c1->Print(out_pdf.c_str());
+
+
+
+
+
+
+
   c1->Print(out_pdf1.c_str());
 
 
@@ -405,29 +492,29 @@ void inizializePlot(THeader *run){
 
   if(run->sensor=="MPPC") hMap = new TH2D("hMap","Hit position MPPC;x [mm];y [mm]",sizeof(xBinMPPC)/sizeof(*xBinMPPC)-1,xBinMPPC,sizeof(yBinMPPC)/sizeof(*yBinMPPC)-1,yBinMPPC);
   else if(run->sensor=="MAPMT") hMap = new TH2D("hMap","Hit position MAPMT;x [mm];y [mm]",sizeof(xBinMAPMT)/sizeof(*xBinMAPMT)-1,xBinMAPMT,sizeof(yBinMAPMT)/sizeof(*yBinMAPMT)-1,yBinMAPMT);
-  else hMap = new TH2D("hMap","Hit position Other;x [mm];y [mm]",200,-100,100,200,-100,100);
+  else hMap = new TH2D("hMap","Hit position Other;x [mm];y [mm]",180,-90,90,180,-90,90);
 
-  hnMap = new TH2D("hnMap","Corrected positions of hit;x [mm];y [mm]",200,-100,100,200,-100,100);
+  hnMap = new TH2D("hnMap","Corrected positions of hit;x [mm];y [mm]",180,-90,90,180,-90,90);
 
-  hRadius = new TH1D("hRadius","Single photon radius - before corrections;r [mm]",100,0,100);
-  hnRadius = new TH1D("hnRadius","Single photon radius - after corrections;r [mm]",200,0,100);
+  hRadius = new TH1D("hRadius","Single photon radius - before corrections;r [mm]",300,0,100);
+  hnRadius = new TH1D("hnRadius","Single photon radius - after corrections;r [mm]",300,0,100);
 
   for(int i = 0; i < 10; i++){
-    TH1D *hspRadius = new TH1D(Form("hspRadius_%d",i),Form("Single particle radius - %d - before corrections;radius [mm]",i),200,0,100);
+    TH1D *hspRadius = new TH1D(Form("hspRadius_%d",i),Form("Single particle radius - %d - before corrections;radius [mm]",i),300,0,100);
     vspRadius.push_back(hspRadius);
     TH1D *hspTime = new TH1D(Form("hspTime_%d",i),Form("Single particle radius - %d - before corrections;time [ns]",i),5*(int)(run->timeMax-run->timeMin),run->timeMin,run->timeMax);
     vspTime.push_back(hspTime);
     TH1D *hspPhoton = new TH1D(Form("hspPhoton_%d",i),Form("Single particle radius - %d - before corrections;photon [#]",i),50,0,50);
     vspPhoton.push_back(hspPhoton);
 
-    TH1D *hspnRadius = new TH1D(Form("hspnRadius_%d",i),Form("Single particle radius - %d - after corrections;radius [mm]",i),200,0,100);
+    TH1D *hspnRadius = new TH1D(Form("hspnRadius_%d",i),Form("Single particle radius - %d - after corrections;radius [mm]",i),300,0,100);
     vspnRadius.push_back(hspnRadius);
     TH1D *hspnTime = new TH1D(Form("hspnTime_%d",i),Form("Single particle radius - %d - after corrections;time [ns]",i),5*(int)(run->timeMax-run->timeMin),run->timeMin,run->timeMax);
     vspnTime.push_back(hspnTime);
     TH1D *hspnPhoton = new TH1D(Form("hspnPhoton_%d",i),Form("Single particle radius - %d - after corrections;photon [#]",i),50,0,50);
     vspnPhoton.push_back(hspnPhoton);
 
-    TH1D *hcutRadius = new TH1D(Form("hcutRadius_%d",i),Form("Single particle radius - %d - after rms cuts;radius [mm]",i),200,0,100);
+    TH1D *hcutRadius = new TH1D(Form("hcutRadius_%d",i),Form("Single particle radius - %d - after rms cuts;radius [mm]",i),300,0,100);
     vcutRadius.push_back(hcutRadius);
     TH1D *hcutTime = new TH1D(Form("hcutTime_%d",i),Form("Single particle radius - %d - after rms cuts;time [ns]",i),5*(int)(run->timeMax-run->timeMin),run->timeMin,run->timeMax);
     vcutTime.push_back(hcutTime);

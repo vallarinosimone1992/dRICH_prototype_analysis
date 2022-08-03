@@ -1011,9 +1011,33 @@ CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o
  /usr/include/c++/11/bits/stl_vector.h
  /usr/include/c++/11/bits/stl_bvector.h
  /usr/include/c++/11/bits/vector.tcc
- /usr/include/root/TH1D.h
- /usr/include/root/TH1.h
- /usr/include/root/TAxis.h
+ /usr/include/root/TF1.h
+ /usr/include/root/RConfigure.h
+ /usr/include/c++/11/functional
+ /usr/include/c++/11/tuple
+ /usr/include/c++/11/utility
+ /usr/include/c++/11/bits/stl_relops.h
+ /usr/include/c++/11/array
+ /usr/include/c++/11/bits/uses_allocator.h
+ /usr/include/c++/11/bits/invoke.h
+ /usr/include/c++/11/bits/refwrap.h
+ /usr/include/c++/11/bits/std_function.h
+ /usr/include/c++/11/unordered_map
+ /usr/include/c++/11/ext/aligned_buffer.h
+ /usr/include/c++/11/bits/hashtable.h
+ /usr/include/c++/11/bits/hashtable_policy.h
+ /usr/include/c++/11/bits/enable_special_members.h
+ /usr/include/c++/11/bits/node_handle.h
+ /usr/include/c++/11/bits/unordered_map.h
+ /usr/include/c++/11/bits/erase_if.h
+ /usr/include/c++/11/bits/stl_algo.h
+ /usr/include/c++/11/bits/algorithmfwd.h
+ /usr/include/c++/11/bits/stl_heap.h
+ /usr/include/c++/11/bits/stl_tempbuf.h
+ /usr/include/c++/11/bits/uniform_int_dist.h
+ /usr/include/c++/11/cassert
+ /usr/include/assert.h
+ /usr/include/root/TFormula.h
  /usr/include/root/TNamed.h
  /usr/include/root/TObject.h
  /usr/include/root/Rtypes.h
@@ -1078,29 +1102,7 @@ CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o
  /usr/include/c++/11/tr1/poly_laguerre.tcc
  /usr/include/c++/11/tr1/riemann_zeta.tcc
  /usr/include/c++/11/algorithm
- /usr/include/c++/11/utility
- /usr/include/c++/11/bits/stl_relops.h
- /usr/include/c++/11/bits/stl_algo.h
- /usr/include/c++/11/bits/algorithmfwd.h
- /usr/include/c++/11/bits/stl_heap.h
- /usr/include/c++/11/bits/stl_tempbuf.h
- /usr/include/c++/11/bits/uniform_int_dist.h
  /usr/include/c++/11/pstl/glue_algorithm_defs.h
- /usr/include/c++/11/functional
- /usr/include/c++/11/tuple
- /usr/include/c++/11/array
- /usr/include/c++/11/bits/uses_allocator.h
- /usr/include/c++/11/bits/invoke.h
- /usr/include/c++/11/bits/refwrap.h
- /usr/include/c++/11/bits/std_function.h
- /usr/include/c++/11/unordered_map
- /usr/include/c++/11/ext/aligned_buffer.h
- /usr/include/c++/11/bits/hashtable.h
- /usr/include/c++/11/bits/hashtable_policy.h
- /usr/include/c++/11/bits/enable_special_members.h
- /usr/include/c++/11/bits/node_handle.h
- /usr/include/c++/11/bits/unordered_map.h
- /usr/include/c++/11/bits/erase_if.h
  /usr/include/c++/11/pstl/execution_defs.h
  /usr/include/root/ROOT/RStringView.hxx
  /usr/include/root/ROOT/TypeTraits.hxx
@@ -1117,12 +1119,41 @@ CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o
  /usr/include/c++/11/backward/auto_ptr.h
  /usr/include/c++/11/pstl/glue_memory_defs.h
  /usr/include/c++/11/cstdarg
- /usr/include/root/TAttAxis.h
- /usr/include/root/TArrayD.h
- /usr/include/root/TArray.h
+ /usr/include/root/TBits.h
+ /usr/include/root/TInterpreter.h
+ /usr/include/root/TDataType.h
+ /usr/include/root/TDictionary.h
+ /usr/include/root/ESTLType.h
+ /usr/include/root/TInterpreterValue.h
+ /usr/include/root/TVirtualRWMutex.h
+ /usr/include/root/TVirtualMutex.h
+ /usr/include/c++/11/map
+ /usr/include/c++/11/bits/stl_tree.h
+ /usr/include/c++/11/bits/stl_map.h
+ /usr/include/c++/11/bits/stl_multimap.h
+ /usr/include/c++/11/list
+ /usr/include/c++/11/bits/stl_list.h
+ /usr/include/c++/11/bits/list.tcc
+ /usr/include/root/Math/Types.h
+ /usr/include/root/RtypesCore.h
+ /usr/include/root/TMethodCall.h
  /usr/include/root/TAttLine.h
  /usr/include/root/TAttFill.h
  /usr/include/root/TAttMarker.h
+ /usr/include/root/TF1AbsComposition.h
+ /usr/include/root/TMath.h
+ /usr/include/root/TError.h
+ /usr/include/root/DllImport.h
+ /usr/lib/gcc/x86_64-redhat-linux/11/include/float.h
+ /usr/include/c++/11/math.h
+ /usr/include/root/Math/Types.h
+ /usr/include/root/Math/ParamFunctor.h
+ /usr/include/root/TH1D.h
+ /usr/include/root/TH1.h
+ /usr/include/root/TAxis.h
+ /usr/include/root/TAttAxis.h
+ /usr/include/root/TArrayD.h
+ /usr/include/root/TArray.h
  /usr/include/root/TArrayC.h
  /usr/include/root/TArrayS.h
  /usr/include/root/TArrayI.h
@@ -1133,7 +1164,6 @@ CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o
  /usr/include/root/TVectorDfwd.h
  /usr/include/root/TFitResultPtr.h
  /usr/include/c++/11/cfloat
- /usr/lib/gcc/x86_64-redhat-linux/11/include/float.h
  /usr/include/root/TH2D.h
  /usr/include/root/TH2.h
  /usr/include/root/TMatrixFBasefwd.h
@@ -1147,25 +1177,12 @@ CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o
  /usr/include/root/TSeqCollection.h
  /usr/include/root/TCollection.h
  /usr/include/root/TIterator.h
- /usr/include/root/TVirtualRWMutex.h
- /usr/include/root/TVirtualMutex.h
  /usr/include/root/ROOT/RRangeCast.hxx
  /usr/include/root/ROOT/RSpan.hxx
  /usr/include/root/ROOT/span.hxx
  /usr/include/c++/11/iterator
  /usr/include/c++/11/bits/stream_iterator.h
- /usr/include/c++/11/cassert
- /usr/include/assert.h
  /usr/include/root/TVirtualQConnection.h
- /usr/include/root/TInterpreter.h
- /usr/include/root/TDataType.h
- /usr/include/root/TDictionary.h
- /usr/include/root/ESTLType.h
- /usr/include/root/TInterpreterValue.h
- /usr/include/c++/11/map
- /usr/include/c++/11/bits/stl_tree.h
- /usr/include/c++/11/bits/stl_map.h
- /usr/include/c++/11/bits/stl_multimap.h
  /usr/include/root/GuiTypes.h
  /usr/include/c++/11/climits
  /usr/lib/gcc/x86_64-redhat-linux/11/include/limits.h
@@ -1213,10 +1230,11 @@ CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o
  /usr/include/root/TVirtualTreePlayer.h
  /usr/include/root/TBranch.h
  /usr/include/root/TBranchCacheInfo.h
- /usr/include/root/TBits.h
  /usr/include/root/TList.h
  /usr/include/root/TError.h
- /usr/include/root/DllImport.h
+ /usr/include/root/TStyle.h
+ /usr/include/root/TAttText.h
+ /usr/include/root/TColor.h
  /usr/include/root/TSystem.h
  /usr/include/fcntl.h
  /usr/include/bits/fcntl.h
@@ -1233,6 +1251,7 @@ CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/definition.h
  /usr/include/root/TString.h
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/utility.h
+ /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/computing.h
 
 CMakeFiles/dRICH_lib.dir/lib/fillMAPS.cxx.o
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/fillMAPS.cxx
