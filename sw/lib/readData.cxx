@@ -46,7 +46,7 @@ void getMAPMT(THeader *runHead){
   t->SetBranchAddress("pol",&pol);
   t->SetBranchAddress("time",&time);
 
-  int evt, tPol[MAXDATA],tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
+  int evt, tPol[MAXDATA], tSlot[MAXDATA], tFiber[MAXDATA], tCh[MAXDATA] ,tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
   uint tNedge;
   double tTrigTime;
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA],ntime[MAXDATA];
@@ -60,6 +60,12 @@ void getMAPMT(THeader *runHead){
   (void)tnedge;
   auto tpol=tout->Branch("pol",&tPol[0],"pol[nedge]/I");
   (void)tpol;
+  auto tslot=tout->Branch("slot",&tSlot[0],"slot[nedge]/I");
+  (void)tslot;
+  auto tfiber=tout->Branch("fiber",&tFiber[0],"fiber[nedge]/I");
+  (void)tfiber;
+  auto tch=tout->Branch("ch",&tCh[0],"ch[nedge]/I");
+  (void)tch;
   auto tboard=tout->Branch("board",&board[0],"board[nedge]/I");
   (void)tboard;
   auto tchip=tout->Branch("chip",&chip[0],"chip[nedge]/I");
@@ -83,12 +89,44 @@ void getMAPMT(THeader *runHead){
   for(int i = 0; i < t->GetEntries(); i++){
     if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
+   
+    int upEdge=0;
+    for(int j = 0; j < nedge; j++){
+      if(pol[j]==0)upEdge++;
+    }
+    for(int j = 0; j < nedge; j++){
+      for(int k = 0; k < nedge; k++){
+        if(j == k)continue;
+        if((time[j] < time[k] && pol[j]==pol[k]) || pol[j] < pol[k] ){
+          int tmpTime=time[j];
+          int tmpPol=pol[j];
+          int tmpCh=chM[j];
+          int tmpSlot=slot[j];
+          int tmpFiber=fiber[j];
+          time[j]=time[k];
+          pol[j]=pol[k];
+          chM[j]=chM[k];
+          slot[j]=slot[k];
+          fiber[j]=fiber[k];
+          time[k]=tmpTime;
+          pol[k]=tmpPol;
+          chM[k]=tmpCh;
+          slot[k]=tmpSlot;
+          fiber[k]=tmpFiber;
+        }
+      }
+    }
+
+
     evt=(int)evtDRICH;
     tTrigTime=trigtime;
     tNedge=nedge;
     bool wrongEvent=false;
     for(uint j = 0; j < nedge; j++){
       tPol[j]=pol[j];
+      tSlot[j]=slot[j];
+      tFiber[j]=fiber[j];
+      tCh[j]=chM[j];
       tTime[j]=time[j];
       board[j]=getMarocBoard(fiber[j],runHead);
       chip[j]=getMarocChip(chM[j]);
@@ -116,7 +154,7 @@ void getMPPC(THeader *runHead){
   }
   //Take the sensor and time calibration data.
   getMaps();
-  
+
   TString fNamedRICH=Form("%s/DATA/dRICH_DATA/run_%04d.root",runHead->suite.c_str(),runHead->runNum);
   TString fOutName=Form("%s/processed_data/firstStepData/run_%04d_processed.root",runHead->suite.c_str(),runHead->runNum);
   TFile *fdRICH = new TFile(fNamedRICH,"READ");
@@ -139,7 +177,7 @@ void getMPPC(THeader *runHead){
   t->SetBranchAddress("time",&time);
 
 
-  int evt, tPol[MAXDATA],tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
+  int evt, tPol[MAXDATA], tSlot[MAXDATA], tFiber[MAXDATA], tCh[MAXDATA], tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
   uint tNedge;
   double tTrigTime;
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA], ntime[MAXDATA];
@@ -153,6 +191,12 @@ void getMPPC(THeader *runHead){
   (void)tnedge;
   auto tpol=tout->Branch("pol",&tPol[0],"pol[nedge]/I");
   (void)tpol;
+  auto tslot=tout->Branch("slot",&tSlot[0],"slot[nedge]/I");
+  (void)tslot;
+  auto tfiber=tout->Branch("fiber",&tFiber[0],"fiber[nedge]/I");
+  (void)tfiber;
+  auto tch=tout->Branch("ch",&tCh[0],"ch[nedge]/I");
+  (void)tch;
   auto tboard=tout->Branch("board",&board[0],"board[nedge]/I");
   (void)tboard;
   auto tchip=tout->Branch("chip",&chip[0],"chip[nedge]/I");
@@ -176,12 +220,43 @@ void getMPPC(THeader *runHead){
   for(int i = 0; i < t->GetEntries(); i++){
     if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
+
+    int upEdge=0;
+    for(int j = 0; j < nedge; j++){
+      if(pol[j]==0)upEdge++;
+    }
+    for(int j = 0; j < nedge; j++){
+      for(int k = 0; k < nedge; k++){
+        if(j == k)continue;
+        if((time[j] < time[k] && pol[j]==pol[k]) || pol[j] < pol[k] ){
+          int tmpTime=time[j];
+          int tmpPol=pol[j];
+          int tmpCh=chM[j];
+          int tmpSlot=slot[j];
+          int tmpFiber=fiber[j];
+          time[j]=time[k];
+          pol[j]=pol[k];
+          chM[j]=chM[k];
+          slot[j]=slot[k];
+          fiber[j]=fiber[k];
+          time[k]=tmpTime;
+          pol[k]=tmpPol;
+          chM[k]=tmpCh;
+          slot[k]=tmpSlot;
+          fiber[k]=tmpFiber;
+        }
+      }
+    }
+
     evt=(int)evtDRICH;
     tTrigTime=trigtime;
     tNedge=nedge;
     bool wrongEvent=false;
     for(uint j = 0; j < nedge; j++){
       tPol[j]=pol[j];
+      tSlot[j]=slot[j];
+      tFiber[j]=fiber[j];
+      tCh[j]=chM[j];
       tTime[j]=time[j];
       board[j]=getMarocBoard(fiber[j],runHead);
       chip[j]=getMarocChip(chM[j]);

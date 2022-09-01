@@ -53,7 +53,7 @@ int main(int argc, char *argv[]){
   
   string finish;
   if(argc == 2){
-    cout <<Form("Analyzing run %d",atoi(argv[1]));
+    cout <<Form("Analyzing run %d\n",atoi(argv[1]));
     THeader tmpHeader;
     readHeaders(atoi(argv[1]),&tmpHeader);
     tmpHeader.outputDir=Form("run%04d",atoi(argv[1]));

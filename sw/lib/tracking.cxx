@@ -10,6 +10,7 @@ const double offset=51.2;
 const double pitch_GEM=0.4;
 
 double GEM_getBeamlineOffset(TH1D *h){
+  gErrorIgnoreLevel=kWarning;
   TF1 *f = new TF1("f","gaus(0)",-100,100);
   f->SetParameters(1200,0,4);
   f->SetParLimits(0,1,5000);

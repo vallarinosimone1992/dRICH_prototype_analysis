@@ -12,6 +12,7 @@
 
 #include "definition.h"
 #include "utility.h"
+#include "computing.h"
 
 using namespace std;
 
@@ -34,10 +35,11 @@ void positionCorrection(THeader *run){
   t->SetBranchAddress("coincPhoton",&coincPhoton);
   t->SetBranchAddress("outerPhoton",&outerPhoton);
 
-  double nx[MAXDATA], ny[MAXDATA], nr[MAXDATA];
+  double nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nrRad[MAXDATA];
   auto tNx = t->Branch("nx",&nx,"nx[nedge]/D");
   auto tNy = t->Branch("ny",&ny,"ny[nedge]/D");
   auto tNr = t->Branch("nr",&nr,"nr[nedge]/D");
+  //auto tNrRad = t->Branch("nrRad",&nrRad,"nrRad[nedge]/D");
 
   double xNCin;
   double yNCin;
@@ -60,20 +62,29 @@ void positionCorrection(THeader *run){
       nx[j]=0;
       ny[j]=0;
       nr[j]=0;
+      //nrRad[j]=0;
       if(coincPhoton[j]==true){
+        double inPath=0, zMir;
         if(outerPhoton[j]==false){
           nx[j]=x[j]-xNCin;
           ny[j]=y[j]-yNCin;
+          inPath=run->secondPath;
+          zMir=run->secondMirrorPosition;
         }else{
           nx[j]=x[j]-xNCout;
           ny[j]=y[j]-yNCout;
+          inPath=run->firstPath;
+          zMir=run->firstMirrorPosition;
         }
-        nr[j]=sqrt(pow(nx[j],2)+pow(ny[j],2));
+        nr[j]=mmTomRad(sqrt(pow(nx[j],2)+pow(ny[j],2)),inPath,zMir);
+        //nr[j]=sqrt(pow(nx[j],2)+pow(ny[j],2));
+        //nrRad[j]=atan(nr[j]/path);
       }
     }
     tNx->Fill();
     tNy->Fill();
     tNr->Fill();
+    //tNrRad->Fill();
     txNCin->Fill();
     tyNCin->Fill();
     txNCout->Fill();

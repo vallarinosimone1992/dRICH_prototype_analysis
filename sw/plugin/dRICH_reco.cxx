@@ -49,8 +49,7 @@ int main(int argc, char *argv[]){
   //TApplication theApp("App",&argc,argv);
 
   int run;
-  if(argc == 2)
-    run = atoi(argv[1]);
+  if(argc == 2)run = atoi(argv[1]);
   else printUsageReco();
   cout <<Form("Analysis of the dRICH run: %04d\n",run);
   
@@ -77,12 +76,18 @@ int main(int argc, char *argv[]){
   if(header.runNumGEM!=0)TTreeIntegration(&header);//integration.cxx
   else noGEM_Integration(&header);
 
+  //Hit reconstruction.
+  recoHit(&header); //selection.cxx
 
   //Find the time coincidence window extreme
   findTimeCoincidence(&header); //selection.cxx
 
   //Select the photons inside the time coincidence window and distinguish between inner and outer (waiting a better way to do this, based also on time).
   selectPhotons(&header); //selection.cxx
+  
+  //Add radiant branch.
+  //Computing.cxx
+  convertToRadiant(&header);
 
   //Compute the mean quantities for the single particle.
   singleParticle(&header); //computing.cxx

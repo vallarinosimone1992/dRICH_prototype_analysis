@@ -34,6 +34,7 @@ struct THeader{
   float DnGEMz;
   float zAerogel;
   double geoCut=55.0;
+  double radCut=100.0;
   //Sigma of residui distribution for run 214
   double cutRadiusInRMS=4;// 1.93;
   double cutTimeInRMS=4;// 2.04;
@@ -51,6 +52,8 @@ struct THeader{
   double timeMin;
   double timeMax;
   string outputDir;
+
+  double MaxHitLength=100;
 };
 
 

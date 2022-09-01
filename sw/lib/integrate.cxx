@@ -17,6 +17,7 @@
 #include "photoDetPosition.h"
 #include "fillMAPS.h"
 #include "definition.h"
+#include "computing.h"
 
 using namespace std;
 
@@ -38,7 +39,7 @@ void noGEM_Integration(THeader *run){
   t->SetTitle("dRICH and GEM data");
 
   uint nedge;
-  int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], time[MAXDATA], marocCh[MAXDATA], pmt[MAXDATA];
+  int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], slot[MAXDATA], fiber[MAXDATA], ch[MAXDATA], time[MAXDATA], marocCh[MAXDATA], pmt[MAXDATA];
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA], ntime[MAXDATA];
   double trigtime;
 
@@ -46,6 +47,9 @@ void noGEM_Integration(THeader *run){
   t->SetBranchAddress("trigtime",&trigtime);
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
+  t->SetBranchAddress("slot",&slot);
+  t->SetBranchAddress("fiber",&fiber);
+  t->SetBranchAddress("ch",&ch);
   t->SetBranchAddress("time",&time);
   t->SetBranchAddress("board",&board);
   t->SetBranchAddress("chip",&chip);
@@ -61,7 +65,7 @@ void noGEM_Integration(THeader *run){
   TFile *fOut = new TFile(fOutName,"RECREATE"); 
   TTree *tout = new TTree("dRICH","dRICH integrated data");
   
-  int tevt, tnedge, tpol[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA];
+  int tevt, tnedge, tpol[MAXDATA], tslot[MAXDATA], tfiber[MAXDATA], tch[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA];
   double ttrigtime, tx[MAXDATA],ty[MAXDATA],tr[MAXDATA], tnt[MAXDATA];
   bool dataGEM;
 
@@ -69,6 +73,9 @@ void noGEM_Integration(THeader *run){
   auto tTrigtime=tout->Branch("trigtime",&ttrigtime,"trigtime/I");
   auto tNedge=tout->Branch("nedge",&tnedge,"nedge/I");
   auto tPol=tout->Branch("pol",&tpol,"pol[nedge]/I");
+  auto tSlot=tout->Branch("slot",&tslot,"slot[nedge]/I");
+  auto tFiber=tout->Branch("fiber",&tfiber,"fiber[nedge]/I");
+  auto tCh=tout->Branch("ch",&tch,"ch[nedge]/I");
   auto tTime=tout->Branch("time",&ttime,"time[nedge]/I");
   auto tPmt=tout->Branch("pmt",&tpmt,"pmt[nedge]/I");
   auto tBoard=tout->Branch("board",&tboard,"board[nedge]/I");
@@ -99,13 +106,25 @@ void noGEM_Integration(THeader *run){
     tnedge=(int)nedge;
     for(int j = 0; j < nedge; j++){
       tpol[j]=pol[j];
+      tslot[j]=slot[j];
+      tfiber[j]=fiber[j];
+      tch[j]=marocCh[j];
       tboard[j]=board[j];
       tchip[j]=chip[j];
       ttime[j]=time[j];
       tpmt[j]=pmt[j];
       tx[j]=x[j];
       ty[j]=y[j];
-      tr[j]=radius[j];
+      double inPath=0;
+      double zMir=0;
+      if(radius[j] > run->geoCut){
+        inPath=run->firstPath;
+        zMir=run->firstMirrorPosition;
+      }else{
+        inPath=run->secondPath;
+        zMir=run->secondMirrorPosition;
+      }
+      tr[j]=mmTomRad(radius[j],inPath,zMir);
       tnt[j]=ntime[j];
     }
     tout->Fill();
@@ -145,13 +164,16 @@ void TTreeIntegration(THeader *run){
   TTree *tGEM = (TTree*) fGEM->Get("gtr");
 
   uint nedge;
-  int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], time[MAXDATA], marocCh[MAXDATA], pmt[MAXDATA];
+  int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], slot[MAXDATA], fiber[MAXDATA], ch[MAXDATA], time[MAXDATA], marocCh[MAXDATA], pmt[MAXDATA];
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA], ntime[MAXDATA];
   double trigtime;
   t->SetBranchAddress("evt",&evt);
   t->SetBranchAddress("trigtime",&trigtime);
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
+  t->SetBranchAddress("slot",&slot);
+  t->SetBranchAddress("fiber",&fiber);
+  t->SetBranchAddress("ch",&ch);
   t->SetBranchAddress("time",&time);
   t->SetBranchAddress("board",&board);
   t->SetBranchAddress("chip",&chip);
@@ -177,17 +199,20 @@ void TTreeIntegration(THeader *run){
   tGEM->SetBranchAddress("cy1",&cy1);
 
   float gx0=0, gy0=0, gx1=0, gy1=0, gxa=0, gya=0, gxtheta=0, gytheta=0;
-  
+
   TFile *fOut = new TFile(fOutName,"RECREATE"); 
   TTree *tout = new TTree("dRICH","dRICH integrated data");
-  
-  int tevt, tnedge, tpol[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA];
+
+  int tevt, tnedge, tpol[MAXDATA], tslot[MAXDATA], tfiber[MAXDATA], tch[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA];
   double ttrigtime, tx[MAXDATA],ty[MAXDATA],tr[MAXDATA], tnt[MAXDATA];
   bool dataGEM;
   auto tEvt=tout->Branch("evt",&tevt,"evt/I");
   auto tTrigtime=tout->Branch("trigtime",&ttrigtime,"trigtime/I");
   auto tNedge=tout->Branch("nedge",&tnedge,"nedge/I");
-  auto tPol=tout->Branch("pol",&tpol,"pol[nedge]/I");
+  auto tPol=tout->Branch("pol",&tpol,"pol[nedge]/I"); 
+  auto tSlot=tout->Branch("slot",&tslot,"slot[nedge]/I");
+  auto tFiber=tout->Branch("fiber",&tfiber,"fiber[nedge]/I");
+  auto tCh=tout->Branch("ch",&tch,"ch[nedge]/I");
   auto tTime=tout->Branch("time",&ttime,"time[nedge]/I");
   auto tPmt=tout->Branch("pmt",&tpmt,"pmt[nedge]/I");
   auto tBoard=tout->Branch("board",&tboard,"board[nedge]/I");
@@ -229,13 +254,26 @@ void TTreeIntegration(THeader *run){
     tnedge=(int)nedge;
     for(int j = 0; j < nedge; j++){
       tpol[j]=pol[j];
+      tslot[j]=slot[j];
+      tfiber[j]=fiber[j];
+      tch[j]=marocCh[j];
       tboard[j]=board[j];
       tchip[j]=chip[j];
       ttime[j]=time[j];
       tpmt[j]=pmt[j];
       tx[j]=x[j];
       ty[j]=y[j];
-      tr[j]=radius[j];
+      double inPath=0;
+      double zMir=0;
+      if(radius[j] > run->geoCut){
+        inPath=run->firstPath;
+        zMir=run->firstMirrorPosition;
+      }else{
+        inPath=run->secondPath;
+        zMir=run->secondMirrorPosition;
+      }
+      tr[j]=mmTomRad(radius[j],inPath,zMir);
+      //    tr[j]=radius[j];
       tnt[j]=ntime[j];
     }
     //Compute GEM info

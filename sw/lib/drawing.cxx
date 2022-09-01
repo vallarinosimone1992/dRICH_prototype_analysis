@@ -178,8 +178,8 @@ void displayBase(THeader *run){
   TH1D *cp0 = (TH1D*)hnRadius->Clone("hnRadius_fitIn");
   TF1 *fInRadius = new TF1("fInRadius","gaus(0)",20,60);
   save->Add(fInRadius);
-  fInRadius->SetParameters(5000,42,3);
-  cp0->Fit("fInRadius","Q","",40,45);
+  fInRadius->SetParameters(5000,38,3);
+  cp0->Fit("fInRadius","Q","",30,45);
   cp0->Draw();
   c1->Print(out_pdf.c_str());
   
@@ -187,8 +187,8 @@ void displayBase(THeader *run){
   TH1D *cp1 = (TH1D*)hnRadius->Clone("hnRadius_fitOut");
   TF1 *fOutRadius = new TF1("fOutRadius","gaus(0)",60,90);
   save->Add(fOutRadius);
-  fOutRadius->SetParameters(5000,72,3);
-  cp1->Fit("fOutRadius","Q","",70,75);
+  fOutRadius->SetParameters(5000,163,3);
+  cp1->Fit("fOutRadius","Q","",155,170);
   cp1->Draw();
   c1->Print(out_pdf.c_str());
   c1->Print(out_pdf1.c_str());
@@ -276,7 +276,7 @@ void displaySP(THeader *run){
   c1->Divide(3);
   c1->cd(1);
   vspRadius[4]->SetTitle("Single particle radius - inner ring");
-  vspRadius[4]->GetXaxis()->SetRangeUser(30,60);
+  vspRadius[4]->GetXaxis()->SetRangeUser(25,50);
   vspRadius[4]->Draw();
   c1->cd(2);
   vspTime[4]->SetTitle("Mean time of the event - inner ring");
@@ -289,7 +289,7 @@ void displaySP(THeader *run){
   c1->Print(out_pdf.c_str());
   c1->cd(1); 
   vspRadius[9]->SetTitle("Single particle radius - outer ring");
-  vspRadius[9]->GetXaxis()->SetRangeUser(55,85);
+  vspRadius[9]->GetXaxis()->SetRangeUser(130,180);
   vspRadius[9]->Draw();
   c1->cd(2);
   vspTime[9]->SetTitle("Mean time of the event - outer ring");
@@ -346,7 +346,7 @@ void displaySPN(THeader *run){
   c1->Divide(3);
   c1->cd(1);
   vspnRadius[4]->SetTitle("Single particle radius - inner ring - corrected");
-  vspnRadius[4]->GetXaxis()->SetRangeUser(30,60);
+  vspnRadius[4]->GetXaxis()->SetRangeUser(25,50);
   vspnRadius[4]->Draw();
   c1->cd(2);
   vspnTime[4]->SetTitle("Mean time of the event - inner ring - corrected");
@@ -359,7 +359,7 @@ void displaySPN(THeader *run){
 
   c1->cd(1); 
   vspnRadius[9]->SetTitle("Single particle radius - outer ring - corrected");
-  vspnRadius[9]->GetXaxis()->SetRangeUser(55,85);
+  vspnRadius[9]->GetXaxis()->SetRangeUser(130,180);
   vspnRadius[9]->Draw();
   c1->cd(2);
   vspnTime[9]->SetTitle("Mean time of the event - outer ring - corrected");
@@ -417,7 +417,7 @@ void displayCUT(THeader *run){
   c1->Divide(3);
   c1->cd(1);
   vcutRadius[4]->SetTitle("Single particle radius - inner ring - after rms cuts");
-  vcutRadius[4]->GetXaxis()->SetRangeUser(30,60);
+  vcutRadius[4]->GetXaxis()->SetRangeUser(25,50);
   vcutRadius[4]->Draw();
   c1->cd(2);
   vcutTime[4]->SetTitle("Mean time of the event - inner ring - after rms cuts");
@@ -430,7 +430,7 @@ void displayCUT(THeader *run){
 
   c1->cd(1); 
   vcutRadius[9]->SetTitle("Single particle radius - outer ring - after rms cuts");
-  vcutRadius[9]->GetXaxis()->SetRangeUser(55,85);
+  vcutRadius[9]->GetXaxis()->SetRangeUser(130,180);
   vcutRadius[9]->Draw();
   c1->cd(2);
   vcutTime[9]->SetTitle("Mean time of the event - outer ring - after rms cuts");
@@ -496,25 +496,25 @@ void inizializePlot(THeader *run){
 
   hnMap = new TH2D("hnMap","Corrected positions of hit;x [mm];y [mm]",180,-90,90,180,-90,90);
 
-  hRadius = new TH1D("hRadius","Single photon radius - before corrections;r [mm]",300,0,100);
-  hnRadius = new TH1D("hnRadius","Single photon radius - after corrections;r [mm]",300,0,100);
+  hRadius = new TH1D("hRadius","Single photon radius - before corrections;r [mRad]",400,0,200);
+  hnRadius = new TH1D("hnRadius","Single photon radius - after corrections;r [mRad]",400,0,200);
 
   for(int i = 0; i < 10; i++){
-    TH1D *hspRadius = new TH1D(Form("hspRadius_%d",i),Form("Single particle radius - %d - before corrections;radius [mm]",i),300,0,100);
+    TH1D *hspRadius = new TH1D(Form("hspRadius_%d",i),Form("Single particle radius - %d - before corrections;radius [mRad]",i),400,0,200);
     vspRadius.push_back(hspRadius);
     TH1D *hspTime = new TH1D(Form("hspTime_%d",i),Form("Single particle radius - %d - before corrections;time [ns]",i),5*(int)(run->timeMax-run->timeMin),run->timeMin,run->timeMax);
     vspTime.push_back(hspTime);
     TH1D *hspPhoton = new TH1D(Form("hspPhoton_%d",i),Form("Single particle radius - %d - before corrections;photon [#]",i),50,0,50);
     vspPhoton.push_back(hspPhoton);
 
-    TH1D *hspnRadius = new TH1D(Form("hspnRadius_%d",i),Form("Single particle radius - %d - after corrections;radius [mm]",i),300,0,100);
+    TH1D *hspnRadius = new TH1D(Form("hspnRadius_%d",i),Form("Single particle radius - %d - after corrections;radius [mRad]",i),400,0,200);
     vspnRadius.push_back(hspnRadius);
     TH1D *hspnTime = new TH1D(Form("hspnTime_%d",i),Form("Single particle radius - %d - after corrections;time [ns]",i),5*(int)(run->timeMax-run->timeMin),run->timeMin,run->timeMax);
     vspnTime.push_back(hspnTime);
     TH1D *hspnPhoton = new TH1D(Form("hspnPhoton_%d",i),Form("Single particle radius - %d - after corrections;photon [#]",i),50,0,50);
     vspnPhoton.push_back(hspnPhoton);
 
-    TH1D *hcutRadius = new TH1D(Form("hcutRadius_%d",i),Form("Single particle radius - %d - after rms cuts;radius [mm]",i),300,0,100);
+    TH1D *hcutRadius = new TH1D(Form("hcutRadius_%d",i),Form("Single particle radius - %d - after rms cuts;radius [mRad]",i),400,0,200);
     vcutRadius.push_back(hcutRadius);
     TH1D *hcutTime = new TH1D(Form("hcutTime_%d",i),Form("Single particle radius - %d - after rms cuts;time [ns]",i),5*(int)(run->timeMax-run->timeMin),run->timeMin,run->timeMax);
     vcutTime.push_back(hcutTime);
@@ -523,7 +523,7 @@ void inizializePlot(THeader *run){
   }
 
   for(int i = 0; i < 2; i++){
-    TH1D *hrsdRadius = new TH1D(Form("hrsdRadius_%d",i),Form("Radius residui - %d;rsd_r [mm];counts [#]",i),120,0,12);
+    TH1D *hrsdRadius = new TH1D(Form("hrsdRadius_%d",i),Form("Radius residui - %d;rsd_r [mRad];counts [#]",i),120,0,12);
     vrsdRadius.push_back(hrsdRadius);
     TH1D *hrsdTime = new TH1D(Form("hrsdTime_%d",i),Form("Time residui - %d;rsd_t [ns];counts [#]",i),120,0,12);
     vrsdTime.push_back(hrsdTime);

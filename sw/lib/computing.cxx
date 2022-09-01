@@ -17,17 +17,62 @@
 
 using namespace std;
 
+double mmTomRad(double r, double inPath, double zMir){
+  double path=0;
+  if(inPath > 1000){
+    path=inPath-zMir;
+  }else{
+    path=inPath+zMir;
+  }
+  return 1000*atan(r/path);
+}
+
+void convertToRadiant(THeader *run){
+  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
+  TFile *fIn = new TFile (fName,"UPDATE");
+  TTree *t = (TTree*) fIn->Get("dRICH");
+  int nedge;
+  double r[MAXDATA];
+  bool cutPhotonFlag[MAXDATA],outerPhoton[MAXDATA];
+  t->SetBranchAddress("nedge",&nedge);
+  t->SetBranchAddress("r",&r);
+  t->SetBranchAddress("outerPhoton",&outerPhoton);
+
+  double rRad[MAXDATA];
+  auto trRad=t->Branch("rRad",&rRad,"&rRad[nedge]/D");
+
+  cout <<"Convert radius to radiant\n";
+  for(int i = 0; i < t->GetEntries(); i++){
+    if(i%100==0)printProgress((double)i/t->GetEntries());
+    t->GetEntry(i);
+    for(int j = 0; j < nedge; j++){
+      double path=0;
+      if(outerPhoton[j]==true){
+        path = run->firstPath - run->firstMirrorPosition;
+      }else{
+        path = run->secondPath - run->secondMirrorPosition;
+      }
+      rRad[j] = atan(r[j]/path);
+    }
+    trRad->Fill();
+  }
+  printEnd();
+  t->Write("",TObject::kOverwrite);
+  fIn->Close();
+}
+
 void applyFit(TH1D *h, TF1 *f,string fname, bool out){
   if(out == false){
-    h->GetXaxis()->SetRangeUser(30,60);
-    f = new TF1(fname.c_str(),"gaus(0)",30,60);
+    h->GetXaxis()->SetRangeUser(25,50);
+    f = new TF1(fname.c_str(),"gaus(0)",25,50);
   }else{
-    h->GetXaxis()->SetRangeUser(55,90);
-    f = new TF1(fname.c_str(),"gaus(0)",55,85);
+    h->GetXaxis()->SetRangeUser(130,190);
+    f = new TF1(fname.c_str(),"gaus(0)",130,190);
   }
   double p1= h->GetBinCenter(h->GetMaximumBin());
   f->SetParameters(5000,p1,2);
-  h->Fit(f->GetName(),"Q","",p1-1,p1+1.5);
+  //h->Fit(f->GetName(),"Q","",p1-1,p1+1.5);
+  h->Fit(f->GetName(),"Q","",p1-2,p1+3);
   h->Draw();
 }
 
