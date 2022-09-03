@@ -8,6 +8,7 @@ void printEnd();
 
 void printUsageReco();
 void printUsageAna();
+void printUsageMon();
 
 void checkFileExistance(THeader *run);
 

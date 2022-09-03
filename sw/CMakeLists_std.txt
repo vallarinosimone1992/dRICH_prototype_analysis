@@ -57,3 +57,17 @@ target_link_libraries(ana
       ${ROOT_LIBRARIES}
       ${ROOT_EXE_LINKER_FLAGS}
 )
+
+add_executable(mon
+     plugin/monitor.cxx
+)
+
+target_link_libraries(mon
+      PRIVATE
+      dRICH_lib
+      PUBLIC
+      ${ROOT_LIBRARIES}
+      ${ROOT_EXE_LINKER_FLAGS}
+)
+
+

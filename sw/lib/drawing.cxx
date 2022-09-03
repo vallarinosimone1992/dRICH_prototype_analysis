@@ -125,6 +125,116 @@ void fillHisto(THeader *run){
   fIn->Close();
 }
 
+void displayMonitor(THeader *run){
+  gErrorIgnoreLevel=kWarning;
+  //Time distibution and coincidence peak zoom, rings before and after correction
+  string out_pdf0 = Form("%soutput/plot/%s/displayMonitor.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%soutput/plot/%s/displayMonitor.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%soutput/plot/%s/displayMonitor.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%soutput/plot/%s/displayMonitor.root",run->suite.c_str(),run->outputDir.c_str());
+
+  ///// WORKING HERE////
+
+  TList *save = new TList();
+  save->Add(hTime);
+  save->Add(hCoinc);
+  save->Add(hMap);
+  save->Add(hnMap);
+  save->Add(hRadius);
+  save->Add(hnRadius);
+
+  TCanvas *c1 = new TCanvas("c1","c1",1600,900);
+  c1->Divide(3,2);
+  c1->Draw();
+  c1->Print(out_pdf0.c_str());
+
+
+  c1->cd(1);
+  hTime->Draw();
+  TLine *l1 = new TLine(run->timeMin,0,run->timeMin,hTime->GetBinContent(hTime->GetMaximumBin()));
+  l1->SetLineColor(3);
+  l1->Draw("same");
+  TLine *l2 = new TLine(run->timeMax,0,run->timeMax,hTime->GetBinContent(hTime->GetMaximumBin()));
+  l2->SetLineColor(3);
+  l2->Draw("same");
+  c1->Update();
+
+  c1->cd(4);
+  hCoinc->Draw();
+  l1->SetY2(hCoinc->GetBinContent(hCoinc->GetMaximumBin()));
+  l2->SetY2(hCoinc->GetBinContent(hCoinc->GetMaximumBin()));
+  l1->Draw("same");
+  l2->Draw("same");
+
+  c1->cd(2);
+  hMap->Draw("colz");
+    
+  c1->cd(5);
+  hnMap->Draw("colz");
+
+  c1->cd(3);
+   hRadius->Draw();
+  c1->cd(6);
+  hnRadius->Draw();
+  c1->Update();
+  c1->Print(out_pdf.c_str());
+
+
+  gStyle->SetOptStat(0);
+  gStyle->SetOptFit(1);
+  
+  TCanvas *c2 = new TCanvas("c2","c2",1600,900);
+  c2->Divide(3,2);
+  c2->Draw();
+  c2->cd(1);
+  vspRadius[4]->SetTitle("Single particle radius - gas");
+  TH1D *cp0 = (TH1D*)vspRadius[4]->Clone("hspRadius_fitIn");
+  TF1 *fspRadius_4=new TF1();
+  save->Add(fspRadius_4);
+  applyFit(cp0,fspRadius_4,"fspRadius_4",false);
+  cp0->Draw(); 
+  c2->cd(2);
+  vspTime[4]->SetTitle("Mean time of the event - gas");
+  vspTime[4]->Draw();
+  c2->cd(3);
+  vspPhoton[4]->SetTitle("# photons for particle - gas");
+  vspPhoton[4]->Draw();
+  c2->cd(4); 
+  vspRadius[9]->SetTitle("Single particle radius - gas");
+  TH1D *cp1 = (TH1D*)vspRadius[9]->Clone("hspRadius_fitOut");
+  TF1 *fspRadius_9 = new TF1();
+  save->Add(fspRadius_9);
+  applyFit(cp1,fspRadius_9,"fspRadius_4",true);
+  cp1->Draw();
+  c2->cd(5);
+  vspTime[9]->SetTitle("Mean time of the event - gas");
+  vspTime[9]->Draw();
+  c2->cd(6);
+  vspPhoton[9]->SetTitle("# photons for particle - gas");
+  vspPhoton[9]->GetXaxis()->SetRangeUser(0,25);
+  vspPhoton[9]->Draw();
+  c2->Update();
+  c2->Print(out_pdf.c_str());
+
+
+  c2->Print(out_pdf1.c_str());
+
+  TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
+  save->Write();
+  fOut->Close();
+  ////c1->Close();
+}
+
+
+
+
+
+
+
+
+
+
+
 void displayBase(THeader *run){
   gErrorIgnoreLevel=kWarning;
   //Time distibution and coincidence peak zoom, rings before and after correction
@@ -172,7 +282,7 @@ void displayBase(THeader *run){
   c1->Print(out_pdf.c_str());
   hnRadius->Draw();
   c1->Print(out_pdf.c_str());
-  
+
   gStyle->SetOptStat(0);
   gStyle->SetOptFit(1);
   TH1D *cp0 = (TH1D*)hnRadius->Clone("hnRadius_fitIn");
@@ -182,8 +292,8 @@ void displayBase(THeader *run){
   cp0->Fit("fInRadius","Q","",30,45);
   cp0->Draw();
   c1->Print(out_pdf.c_str());
-  
-  
+
+
   TH1D *cp1 = (TH1D*)hnRadius->Clone("hnRadius_fitOut");
   TF1 *fOutRadius = new TF1("fOutRadius","gaus(0)",60,90);
   save->Add(fOutRadius);

@@ -155,6 +155,19 @@ ana/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/ana.dir/build.make CMakeFiles/ana.dir/build
 .PHONY : ana/fast
 
+#=============================================================================
+# Target rules for targets named mon
+
+# Build rule for target.
+mon: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 mon
+.PHONY : mon
+
+# fast build rule for target.
+mon/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mon.dir/build.make CMakeFiles/mon.dir/build
+.PHONY : mon/fast
+
 lib/computing.o: lib/computing.cxx.o
 .PHONY : lib/computing.o
 
@@ -491,6 +504,30 @@ plugin/dRICH_reco.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.s
 .PHONY : plugin/dRICH_reco.cxx.s
 
+plugin/monitor.o: plugin/monitor.cxx.o
+.PHONY : plugin/monitor.o
+
+# target to build an object file
+plugin/monitor.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mon.dir/build.make CMakeFiles/mon.dir/plugin/monitor.cxx.o
+.PHONY : plugin/monitor.cxx.o
+
+plugin/monitor.i: plugin/monitor.cxx.i
+.PHONY : plugin/monitor.i
+
+# target to preprocess a source file
+plugin/monitor.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mon.dir/build.make CMakeFiles/mon.dir/plugin/monitor.cxx.i
+.PHONY : plugin/monitor.cxx.i
+
+plugin/monitor.s: plugin/monitor.cxx.s
+.PHONY : plugin/monitor.s
+
+# target to generate assembly for a file
+plugin/monitor.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/mon.dir/build.make CMakeFiles/mon.dir/plugin/monitor.cxx.s
+.PHONY : plugin/monitor.cxx.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -501,6 +538,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... ana"
 	@echo "... dRICH_lib"
+	@echo "... mon"
 	@echo "... reco"
 	@echo "... lib/computing.o"
 	@echo "... lib/computing.i"
@@ -544,6 +582,9 @@ help:
 	@echo "... plugin/dRICH_reco.o"
 	@echo "... plugin/dRICH_reco.i"
 	@echo "... plugin/dRICH_reco.s"
+	@echo "... plugin/monitor.o"
+	@echo "... plugin/monitor.i"
+	@echo "... plugin/monitor.s"
 .PHONY : help
 
 
