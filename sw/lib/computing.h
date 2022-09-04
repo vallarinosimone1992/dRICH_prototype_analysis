@@ -7,3 +7,6 @@ void computeRMS(THeader *run);
 void computeCutSingleParticle(THeader *run);
 void newSingleParticle(THeader *run);
 void singleParticle(THeader *run);
+double getSigma(TH1D *h, TF1 *f,string fname, bool out);
+void fitSigma(TH1D *h, bool out);
+TF1* getFun(TH1D *h, bool out);

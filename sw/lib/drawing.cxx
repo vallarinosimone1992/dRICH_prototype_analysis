@@ -41,8 +41,28 @@ static vector<TH1D*> vcutRadius;
 static vector<TH1D*> vcutTime;
 static vector<TH1D*> vcutPhoton;
 
+static vector<TH1D*> vspSigPhoGas;
+static vector<TH1D*> vspSigPhoAero;
+static vector<TH1D*> vspnSigPhoGas;
+static vector<TH1D*> vspnSigPhoAero;
+static vector<TH1D*> vcutSigPhoGas;
+static vector<TH1D*> vcutSigPhoAero;
+static TH1D *hspSigVsPhoGas;
+static TH1D *hspnSigVsPhoGas;
+static TH1D *hcutSigVsPhoGas;
+static TH1D *hspSigVsPhoAero;
+static TH1D *hspnSigVsPhoAero;
+static TH1D *hcutSigVsPhoAero;
+
+static int minPhoGas=2;
+static int maxPhoGas=50;
+static int minPhoAero=2;
+static int maxPhoAero=15;
+
+
 
 void fillHisto(THeader *run){
+  gErrorIgnoreLevel=kWarning;
   TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
   TFile *fIn = new TFile (fName,"READ");
   TTree *t = (TTree*) fIn->Get("dRICH");
@@ -120,6 +140,14 @@ void fillHisto(THeader *run){
         vcutPhoton[j]->Fill(cutPhoton[j]);
       }
     }
+    if(goodSP[4]==true && spPhoton[4] > minPhoGas && spPhoton[4]<maxPhoGas) vspSigPhoGas[spPhoton[4]]->Fill(spRadius[4]);
+    if(goodSP[9]==true && spPhoton[9] > minPhoAero && spPhoton[9]<maxPhoAero) vspSigPhoAero[spPhoton[9]]->Fill(spRadius[9]);
+    
+    if(goodSPN[4]==true && spnPhoton[4] > minPhoGas && spnPhoton[4]<maxPhoGas) vspnSigPhoGas[spnPhoton[4]]->Fill(spnRadius[4]);
+    if(goodSPN[9]==true && spnPhoton[9] > minPhoAero && spnPhoton[9]<maxPhoAero) vspnSigPhoAero[spnPhoton[9]]->Fill(spnRadius[9]);
+    
+    if(goodCUT[4]==true && cutPhoton[4] > minPhoGas && cutPhoton[4]<maxPhoGas) vcutSigPhoGas[cutPhoton[4]]->Fill(cutRadius[4]);
+    if(goodCUT[9]==true && cutPhoton[9] > minPhoAero && cutPhoton[9]<maxPhoAero) vcutSigPhoAero[cutPhoton[9]]->Fill(cutRadius[9]); 
   }
   printEnd();
   fIn->Close();
@@ -132,8 +160,6 @@ void displayMonitor(THeader *run){
   string out_pdf = Form("%soutput/plot/%s/displayMonitor.pdf",run->suite.c_str(),run->outputDir.c_str());
   string out_pdf1 = Form("%soutput/plot/%s/displayMonitor.pdf]",run->suite.c_str(),run->outputDir.c_str());
   string out_root = Form("%soutput/plot/%s/displayMonitor.root",run->suite.c_str(),run->outputDir.c_str());
-
-  ///// WORKING HERE////
 
   TList *save = new TList();
   save->Add(hTime);
@@ -168,12 +194,12 @@ void displayMonitor(THeader *run){
 
   c1->cd(2);
   hMap->Draw("colz");
-    
+
   c1->cd(5);
   hnMap->Draw("colz");
 
   c1->cd(3);
-   hRadius->Draw();
+  hRadius->Draw();
   c1->cd(6);
   hnRadius->Draw();
   c1->Update();
@@ -182,7 +208,7 @@ void displayMonitor(THeader *run){
 
   gStyle->SetOptStat(0);
   gStyle->SetOptFit(1);
-  
+
   TCanvas *c2 = new TCanvas("c2","c2",1600,900);
   c2->Divide(3,2);
   c2->Draw();
@@ -225,14 +251,121 @@ void displayMonitor(THeader *run){
   ////c1->Close();
 }
 
+void displayPhotonAnalysis(THeader *run){
+  gErrorIgnoreLevel=kWarning;
+  //Time distibution and coincidence peak zoom, rings before and after correction
+  string out_pdf0 = Form("%soutput/plot/%s/displayPhotonAnalysis.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%soutput/plot/%s/displayPhotonAnalysis.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%soutput/plot/%s/displayPhotonAnalysis.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%soutput/plot/%s/displayPhotonAnalysis.root",run->suite.c_str(),run->outputDir.c_str());
 
 
+  TList *save = new TList();
+  save->Add(hspSigVsPhoGas);
+  save->Add(hspnSigVsPhoGas);
+  save->Add(hcutSigVsPhoGas);
+  save->Add(hspSigVsPhoAero);
+  save->Add(hspnSigVsPhoAero);
+  save->Add(hcutSigVsPhoAero);
+  for(int i = 0; i < minPhoGas; i++){
+    save->Add(vspSigPhoGas[i]);
+    save->Add(vspnSigPhoGas[i]);
+    save->Add(vcutSigPhoGas[i]);
+  }
+  for(int i = 0; i < minPhoAero; i++){
+    save->Add(vspSigPhoAero[i]);
+    save->Add(vspnSigPhoAero[i]);
+    save->Add(vcutSigPhoAero[i]);
+  }
 
+  for(int i = 0; i < maxPhoGas; i++){
+    if(vspSigPhoGas[i]->GetEntries()==0) continue;
+    TF1 *fspGas = getFun(vspSigPhoGas[i],false);
+    hspSigVsPhoGas->SetBinContent(i,fspGas->GetParameter(2));
+    hspSigVsPhoGas->SetBinError(i,fspGas->GetParError(2));
+  }
+  for(int i = 0; i < maxPhoGas; i++){
+    if(vspnSigPhoGas[i]->GetEntries()==0) continue;
+    TF1 *fspnGas = getFun(vspnSigPhoGas[i],false);
+    hspnSigVsPhoGas->SetBinContent(i,fspnGas->GetParameter(2));
+    hspnSigVsPhoGas->SetBinError(i,fspnGas->GetParError(2));
+  }
+  for(int i = 0; i < maxPhoGas; i++){
+    if(vcutSigPhoGas[i]->GetEntries()==0) continue;
+    TF1 *fcutGas = getFun(vcutSigPhoGas[i],false);
+    hcutSigVsPhoGas->SetBinContent(i,fcutGas->GetParameter(2));
+    hcutSigVsPhoGas->SetBinError(i,fcutGas->GetParError(2));
+  }
+  for(int i = 0; i < maxPhoAero; i++){
+    if(vspSigPhoAero[i]->GetEntries()==0) continue;
+    TF1 *fspAero = getFun(vspSigPhoAero[i],true);
+    hspSigVsPhoAero->SetBinContent(i,fspAero->GetParameter(2));
+    hspSigVsPhoAero->SetBinError(i,fspAero->GetParError(2));
+  }
+  for(int i = 0; i < maxPhoAero; i++){
+    if(vspnSigPhoAero[i]->GetEntries()==0) continue;
+    TF1 *fspnAero = getFun(vspnSigPhoAero[i],true);
+    hspnSigVsPhoAero->SetBinContent(i,fspnAero->GetParameter(2));
+    hspnSigVsPhoAero->SetBinError(i,fspnAero->GetParError(2));
+  }
+  for(int i = 0; i < maxPhoAero; i++){
+    if(vcutSigPhoAero[i]->GetEntries()==0) continue;
+    TF1 *fcutAero = getFun(vcutSigPhoAero[i],true);
+    hcutSigVsPhoAero->SetBinContent(i,fcutAero->GetParameter(2));
+    hcutSigVsPhoAero->SetBinError(i,fcutAero->GetParError(2));
+  }
 
+  gStyle->SetOptStat(0);
+  gStyle->SetOptFit(1);
 
+  TCanvas *c1 = new TCanvas("c1","c1",1600,900);
+  c1->Draw();
+  c1->Print(out_pdf0.c_str());
 
-
-
+  fitSigma(hspSigVsPhoGas,false);
+  hspSigVsPhoGas->GetXaxis()->SetRangeUser(0,25);
+  hspSigVsPhoGas->GetYaxis()->SetRangeUser(0,2);
+  hspSigVsPhoGas->Draw("E");
+  c1->Update();
+  c1->Print(out_pdf.c_str());
+  fitSigma(hspnSigVsPhoGas,false);
+  hspnSigVsPhoGas->GetXaxis()->SetRangeUser(0,25);
+  hspnSigVsPhoGas->GetYaxis()->SetRangeUser(0,2);
+  hspnSigVsPhoGas->Draw("E");
+  c1->Update();
+  c1->Print(out_pdf.c_str());
+  fitSigma(hcutSigVsPhoGas,false);
+  hcutSigVsPhoGas->GetXaxis()->SetRangeUser(0,25);
+  hcutSigVsPhoGas->GetYaxis()->SetRangeUser(0,2);
+  hcutSigVsPhoGas->Draw("E");
+  c1->Update();
+  c1->Print(out_pdf.c_str());
+  
+  fitSigma(hspSigVsPhoAero,true);
+  hspSigVsPhoAero->GetXaxis()->SetRangeUser(0,10);
+  hspSigVsPhoAero->GetYaxis()->SetRangeUser(0,5);
+  hspSigVsPhoAero->Draw("E");
+  c1->Update();
+  c1->Print(out_pdf.c_str());
+  fitSigma(hspnSigVsPhoAero,true);
+  hspnSigVsPhoAero->GetXaxis()->SetRangeUser(0,10);
+  hspnSigVsPhoAero->GetYaxis()->SetRangeUser(0,5);
+  hspnSigVsPhoAero->Draw("E");
+  c1->Update();
+  c1->Print(out_pdf.c_str());
+  fitSigma(hcutSigVsPhoAero,true);
+  hcutSigVsPhoAero->GetXaxis()->SetRangeUser(0,10);
+  hcutSigVsPhoAero->GetYaxis()->SetRangeUser(0,5);
+  hcutSigVsPhoAero->Draw("E");
+  c1->Update();
+  c1->Print(out_pdf.c_str());  
+  c1->Print(out_pdf1.c_str());
+  
+  TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
+  save->Write();
+  fOut->Close();
+  c1->Close();
+}
 
 
 void displayBase(THeader *run){
@@ -524,6 +657,7 @@ void displayCUT(THeader *run){
   c1->Draw();
   c1->Print(out_pdf0.c_str());
 
+
   c1->Divide(3);
   c1->cd(1);
   vcutRadius[4]->SetTitle("Single particle radius - inner ring - after rms cuts");
@@ -561,6 +695,7 @@ void displayCUT(THeader *run){
   TF1 *fcutRadius_4=new TF1();
   save->Add(fcutRadius_4);
   applyFit(cp0,fcutRadius_4,"fcutRadius_4",false);
+  cp0->SetTitle("Single particle radius - Gas");
   cp0->Draw();
   c1->Print(out_pdf.c_str());
 
@@ -568,14 +703,9 @@ void displayCUT(THeader *run){
   TF1 *fcutRadius_9 = new TF1();
   save->Add(fcutRadius_9);
   applyFit(cp1,fcutRadius_9,"fcutRadius_4",true);
+  cp1->SetTitle("Single particle radius - Aerogel");
   cp1->Draw();
   c1->Print(out_pdf.c_str());
-
-
-
-
-
-
 
   c1->Print(out_pdf1.c_str());
 
@@ -638,4 +768,27 @@ void inizializePlot(THeader *run){
     TH1D *hrsdTime = new TH1D(Form("hrsdTime_%d",i),Form("Time residui - %d;rsd_t [ns];counts [#]",i),120,0,12);
     vrsdTime.push_back(hrsdTime);
   }
+
+  for(int i = 0; i < maxPhoGas; i++){
+    TH1D *hspSigPhoGas= new TH1D(Form("hspSigPhoGas_%02d",i),Form("hspSigPhoGas_%02d",i),400,0,200);
+    vspSigPhoGas.push_back(hspSigPhoGas);
+    TH1D *hspnSigPhoGas= new TH1D(Form("hspnSigPhoGas_%02d",i),Form("hspnSigPhoGas_%02d",i),400,0,200);
+    vspnSigPhoGas.push_back(hspnSigPhoGas);
+    TH1D *hcutSigPhoGas= new TH1D(Form("hcutSigPhoGas_%02d",i),Form("hcutSigPhoGas_%02d",i),400,0,200);
+    vcutSigPhoGas.push_back(hcutSigPhoGas);
+  }
+  for(int i = 0; i < maxPhoAero; i++){
+    TH1D *hspSigPhoAero= new TH1D(Form("hspSigPhoAero_%02d",i),Form("hspSigPhoAero_%02d",i),400,0,200);
+    vspSigPhoAero.push_back(hspSigPhoAero);
+    TH1D *hspnSigPhoAero= new TH1D(Form("hspnSigPhoAero_%02d",i),Form("hspnSigPhoAero_%02d",i),400,0,200);
+    vspnSigPhoAero.push_back(hspnSigPhoAero);
+    TH1D *hcutSigPhoAero= new TH1D(Form("hcutSigPhoAero_%02d",i),Form("hcutSigPhoAero_%02d",i),400,0,200);
+    vcutSigPhoAero.push_back(hcutSigPhoAero);
+  }
+  hspSigVsPhoGas = new TH1D("hspSigVsPhoGas","#sigma_{r} vs photon per particle - Gas;Photon/particle [#];#sigma_{r} [mRad]",maxPhoGas+1,-0.5,maxPhoGas+0.5);
+  hspnSigVsPhoGas= new TH1D("hsnpSigVsPhoGas","#sigma_{r} vs photon per particle - Gas;Photon/particle [#];#sigma_{r} [mRad]",maxPhoGas+1,-0.5,maxPhoGas+0.5);
+  hcutSigVsPhoGas = new TH1D("hcutSigVsPhoGas","#sigma_{r} vs photon per particle - Gas;Photon/particle [#];#sigma_{r} [mRad]",maxPhoGas+1,-0.5,maxPhoGas+0.5);
+  hspSigVsPhoAero = new TH1D("hspSigVsPhoAero","#sigma_{r} vs photon per particle - Aerogel;Photon/particle [#];#sigma_{r} [mRad]",maxPhoAero+1,-0.5,maxPhoAero+0.5);
+  hspnSigVsPhoAero= new TH1D("hsnpSigVsPhoAero","#sigma_{r} vs photon per particle - Aerogel;Photon/particle [#];#sigma_{r} [mRad]",maxPhoAero+1,-0.5,maxPhoAero+0.5);
+  hcutSigVsPhoAero = new TH1D("hcutSigVsPhoAero","#sigma_{r} vs photon per particle - Aerogel;Photon/particle [#];#sigma_{r} [mRad]",maxPhoAero+1,-0.5,maxPhoAero+0.5);
 }

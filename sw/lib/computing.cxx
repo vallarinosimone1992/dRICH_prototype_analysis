@@ -61,7 +61,38 @@ void convertToRadiant(THeader *run){
   fIn->Close();
 }
 
-void applyFit(TH1D *h, TF1 *f,string fname, bool out){
+void fitSigma(TH1D *h, bool out){
+  TF1 *f = new TF1("f","sqrt([0]*[0]/x + [1]*[1])",0,100);
+  f->SetParameters(1.1,0.1);
+  int min=0, max=0;
+  if(out == false){
+    min=6;
+    max=22;
+  }else{
+    min=2;
+    max=8;
+  }
+  h->Fit("f","Q","",min,max);
+}
+
+TF1* getFun(TH1D *h, bool out){
+  TF1 *f;
+  if(out == false){
+    h->GetXaxis()->SetRangeUser(25,50);
+    f = new TF1("f","gaus(0)",25,50);
+  }else{
+    h->GetXaxis()->SetRangeUser(130,190);
+    f = new TF1("f","gaus(0)",130,190);
+  }
+  double p1= h->GetBinCenter(h->GetMaximumBin());
+  f->SetParameters(5000,p1,2);
+  h->Fit(f->GetName(),"Q","",p1-2,p1+3);
+  return  f;
+}
+
+
+
+double getSigma(TH1D *h, TF1 *f,string fname, bool out){
   if(out == false){
     h->GetXaxis()->SetRangeUser(25,50);
     f = new TF1(fname.c_str(),"gaus(0)",25,50);
@@ -73,6 +104,22 @@ void applyFit(TH1D *h, TF1 *f,string fname, bool out){
   f->SetParameters(5000,p1,2);
   //h->Fit(f->GetName(),"Q","",p1-1,p1+1.5);
   h->Fit(f->GetName(),"Q","",p1-2,p1+3);
+  return  f->GetParameter(2);
+}
+
+
+void applyFit(TH1D *h, TF1 *f,string fname, bool out){
+  if(out == false){
+    h->GetXaxis()->SetRangeUser(25,50);
+    f = new TF1(fname.c_str(),"gaus(0)",25,50);
+  }else{
+    h->GetXaxis()->SetRangeUser(130,190);
+    f = new TF1(fname.c_str(),"gaus(0)",130,190);
+  }
+  double p1= h->GetBinCenter(h->GetMaximumBin());
+  f->SetParameters(5000,p1,2);
+  //h->Fit(f->GetName(),"Q","",p1-1,p1+1.5);
+  h->Fit(f->GetName(),"Q","",p1-3,p1+3);
   h->Draw();
 }
 

@@ -8,3 +8,4 @@ void displaySP(THeader *run);
 void displaySPN(THeader *run);
 void displayCUT(THeader *run);
 void displayRSD(THeader *run);
+void displayPhotonAnalysis(THeader *run);
