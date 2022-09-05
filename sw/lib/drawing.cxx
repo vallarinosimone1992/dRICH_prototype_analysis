@@ -206,32 +206,16 @@ void displayMonitor(THeader *run){
   c1->Print(out_pdf.c_str());
 
 
-  gStyle->SetOptStat(0);
-  gStyle->SetOptFit(1);
 
   TCanvas *c2 = new TCanvas("c2","c2",1600,900);
   c2->Divide(3,2);
   c2->Draw();
-  c2->cd(1);
-  vspRadius[4]->SetTitle("Single particle radius - gas");
-  TH1D *cp0 = (TH1D*)vspRadius[4]->Clone("hspRadius_fitIn");
-  TF1 *fspRadius_4=new TF1();
-  save->Add(fspRadius_4);
-  applyFit(cp0,fspRadius_4,"fspRadius_4",false);
-  cp0->Draw(); 
   c2->cd(2);
   vspTime[4]->SetTitle("Mean time of the event - gas");
   vspTime[4]->Draw();
   c2->cd(3);
   vspPhoton[4]->SetTitle("# photons for particle - gas");
   vspPhoton[4]->Draw();
-  c2->cd(4); 
-  vspRadius[9]->SetTitle("Single particle radius - gas");
-  TH1D *cp1 = (TH1D*)vspRadius[9]->Clone("hspRadius_fitOut");
-  TF1 *fspRadius_9 = new TF1();
-  save->Add(fspRadius_9);
-  applyFit(cp1,fspRadius_9,"fspRadius_4",true);
-  cp1->Draw();
   c2->cd(5);
   vspTime[9]->SetTitle("Mean time of the event - gas");
   vspTime[9]->Draw();
@@ -239,6 +223,26 @@ void displayMonitor(THeader *run){
   vspPhoton[9]->SetTitle("# photons for particle - gas");
   vspPhoton[9]->GetXaxis()->SetRangeUser(0,25);
   vspPhoton[9]->Draw();
+  c2->Update();
+
+
+  c2->cd(1);
+  gStyle->SetOptStat(0);
+  gStyle->SetOptFit(1);
+  vspRadius[4]->SetTitle("Single particle radius - gas");
+  TH1D *cp0 = (TH1D*)vspRadius[4]->Clone("hspRadius_fitIn");
+  TF1 *fspRadius_4=new TF1();
+  save->Add(fspRadius_4);
+  applyFit(cp0,fspRadius_4,"fspRadius_4",false);
+  cp0->Draw(); 
+  c2->cd(4); 
+  vspRadius[9]->SetTitle("Single particle radius - gas");
+  TH1D *cp1 = (TH1D*)vspRadius[9]->Clone("hspRadius_fitOut");
+  TF1 *fspRadius_9 = new TF1();
+  save->Add(fspRadius_9);
+  applyFit(cp1,fspRadius_9,"fspRadius_4",true);
+  cp1->Draw();
+
   c2->Update();
   c2->Print(out_pdf.c_str());
 
@@ -340,7 +344,7 @@ void displayPhotonAnalysis(THeader *run){
   hcutSigVsPhoGas->Draw("E");
   c1->Update();
   c1->Print(out_pdf.c_str());
-  
+
   fitSigma(hspSigVsPhoAero,true);
   hspSigVsPhoAero->GetXaxis()->SetRangeUser(0,10);
   hspSigVsPhoAero->GetYaxis()->SetRangeUser(0,5);
@@ -360,7 +364,7 @@ void displayPhotonAnalysis(THeader *run){
   c1->Update();
   c1->Print(out_pdf.c_str());  
   c1->Print(out_pdf1.c_str());
-  
+
   TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
   save->Write();
   fOut->Close();
@@ -408,9 +412,9 @@ void displayBase(THeader *run){
   l1->Draw("same");
   l2->Draw("same");
   c1->Update();
-  
-//  gStyle->SetOptStat(1);
-//  gStyle->SetOptFit(0);
+
+  //  gStyle->SetOptStat(1);
+  //  gStyle->SetOptFit(0);
 
   c1->Print(out_pdf.c_str());
   hMap->Draw("colz");
