@@ -19,6 +19,12 @@ using namespace std;
 bool correctionFit=false;
 bool correctionMax=true;
 
+double timeWalkCorrection(double t0, double t1){
+    double dur = t1-t0;
+    return t0+20./50.*(dur-50);
+}
+
+
 void positionCorrection(THeader *run){
   TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",&run->suite[0],run->runNum);
   TFile *fIn = new TFile(fName,"UPDATE");

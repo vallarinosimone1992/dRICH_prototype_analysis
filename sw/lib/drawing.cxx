@@ -398,12 +398,19 @@ void displayBase(THeader *run){
   c1->Update();
   c1->Print(out_pdf.c_str());
 
+  gStyle->SetOptFit(1);
+  TF1 *f = new TF1("fCoinc","gaus(0)",0,1000);
+  f->SetParameters(25000,330,4);
+  hCoinc->Fit("fCoinc","Q","",run->timeMin,run->timeMax);
   hCoinc->Draw();
   l1->SetY2(hCoinc->GetBinContent(hCoinc->GetMaximumBin()));
   l2->SetY2(hCoinc->GetBinContent(hCoinc->GetMaximumBin()));
   l1->Draw("same");
   l2->Draw("same");
   c1->Update();
+  
+//  gStyle->SetOptStat(1);
+//  gStyle->SetOptFit(0);
 
   c1->Print(out_pdf.c_str());
   hMap->Draw("colz");

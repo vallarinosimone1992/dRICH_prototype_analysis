@@ -3419,7 +3419,8 @@ CMakeFiles/dRICH_lib.dir/lib/selection.cxx.o: ../lib/selection.cxx \
   /usr/include/root/TMath.h \
   /usr/include/root/TString.h \
   ../lib/definition.h \
-  ../lib/utility.h
+  ../lib/utility.h \
+  ../lib/correction.h
 
 CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.o: ../lib/tracking.cxx \
   /usr/include/stdc-predef.h \
@@ -4592,6 +4593,8 @@ CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o: ../lib/writeHeaderText.cxx \
 /usr/include/root/TVirtualPad.h:
 
 /usr/include/root/TPad.h:
+
+../lib/correction.h:
 
 /usr/include/root/TCanvas.h:
 

@@ -10,6 +10,7 @@
 
 #include "definition.h"
 #include "utility.h"
+#include "correction.h"
 
 using namespace std;
 
@@ -57,6 +58,7 @@ void recoHit(THeader *run){
         if(x[j]==x[k] && y[j]==y[k]){
           goodHit[j]=true;
           goodHit[k]=true;
+          nt[j] = timeWalkCorrection(nt[j],nt[k]);
           break;
         }
       }
