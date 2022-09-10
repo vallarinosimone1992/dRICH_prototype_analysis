@@ -7,6 +7,7 @@
 #include <TF1.h>
 #include <TH1D.h>
 #include <TH2D.h>
+#include <THStack.h>
 #include <TCanvas.h>
 #include <TLine.h>
 #include <TEllipse.h>
@@ -25,6 +26,9 @@ static TH1D *hTime;
 static TH1D *hCoinc;
 static TH1D *hHitStart;
 static TH1D *hHitEnd;
+static TH1D *hHitDur;
+static TH2D *hHitCorr;
+static TH2D *hHitCorrDur;
 static TH2D *hMap;
 static TH2D *hMapNC;
 static TH2D *hnMap;
@@ -79,12 +83,14 @@ void fillHisto(THeader *run){
   TFile *fIn = new TFile (fName,"READ");
   TTree *t = (TTree*) fIn->Get("dRICH");
 
-  int nedge, pol[MAXDATA], pmt[MAXDATA], spPhoton[10], spnPhoton[10], cutPhoton[10];
-  double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nt[MAXDATA], rsdRadius[MAXDATA], rsdTime[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10];
+  int nedge, pol[MAXDATA], pmt[MAXDATA], spPhoton[10], spnPhoton[10], cutPhoton[10], fiber[MAXDATA], ch[MAXDATA];
+  double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nt[MAXDATA], dur[MAXDATA], rsdRadius[MAXDATA], rsdTime[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10];
   float gx0, gy0, gx1, gy1, gxa, gya, gxtheta, gytheta;
   bool goodHit[MAXDATA], coincPhoton[MAXDATA],outerPhoton[MAXDATA], goodSP[10], goodSPN[10], goodCUT[10];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
+  t->SetBranchAddress("fiber",&fiber);
+  t->SetBranchAddress("ch",&ch);
   t->SetBranchAddress("pmt",&pmt);
   t->SetBranchAddress("x",&x);
   t->SetBranchAddress("y",&y);
@@ -93,6 +99,7 @@ void fillHisto(THeader *run){
   t->SetBranchAddress("ny",&ny);
   t->SetBranchAddress("nr",&nr);
   t->SetBranchAddress("nt",&nt);
+  t->SetBranchAddress("dur",&dur);
   t->SetBranchAddress("goodHit",&goodHit);
   t->SetBranchAddress("coincPhoton",&coincPhoton);
   t->SetBranchAddress("outerPhoton",&outerPhoton);
@@ -143,6 +150,8 @@ void fillHisto(THeader *run){
         if(pol[j]==0){
           hHitStart->Fill(nt[j]);
           nHit++;
+	  hHitDur->Fill(dur[j]);
+	  hHitCorrDur->Fill(dur[j],nt[j]);
           }
         else hHitEnd->Fill(nt[j]);
       }
@@ -180,6 +189,15 @@ void fillHisto(THeader *run){
         vcutPhoton[j]->Fill(cutPhoton[j]);
       }
     }
+    for(int j = 0; j < nedge; j++){
+    	if(goodHit[j]==0 || pol[j]!=0)continue;
+	for(int k = j; k < nedge; k++){
+    		if(goodHit[k]==0 || pol[k]!=1)continue;
+		if(fiber[j]!=fiber[k] || ch[j]!=ch[k]) continue;
+		hHitCorr->Fill(nt[j],nt[k]);
+		break;
+	}
+    }
     if(goodSP[4]==true && spPhoton[4] > minPhoGas && spPhoton[4]<maxPhoGas) vspSigPhoGas[spPhoton[4]]->Fill(spRadius[4]);
     if(goodSP[9]==true && spPhoton[9] > minPhoAero && spPhoton[9]<maxPhoAero) vspSigPhoAero[spPhoton[9]]->Fill(spRadius[9]);
 
@@ -206,6 +224,9 @@ void displayMonitor(THeader *run){
   save->Add(hCoinc);
   save->Add(hHitStart);
   save->Add(hHitEnd);
+  save->Add(hHitDur);
+  save->Add(hHitCorr);
+  save->Add(hHitCorrDur);
   save->Add(hHitReco);
   save->Add(hEdge);
   save->Add(hMap);
@@ -218,7 +239,12 @@ void displayMonitor(THeader *run){
   c1->Draw();
   c1->Print(out_pdf0.c_str());
   c1->cd(1);
-  hTime->Draw();
+  THStack *hsHitTime = new THStack("hsHitTime","Hit start and End;[ns]");
+  hHitEnd->SetLineColor(2);
+  hsHitTime->Add(hHitStart);
+  hsHitTime->Add(hHitEnd);
+  hsHitTime->Draw();
+  //hTime->Draw();
   TLine *l1 = new TLine(run->timeMin,0,run->timeMin,hTime->GetBinContent(hTime->GetMaximumBin()));
   l1->SetLineColor(3);
   l1->Draw("same");
@@ -233,13 +259,13 @@ void displayMonitor(THeader *run){
   l1->Draw("same");
   l2->Draw("same");
   c1->cd(2);
-  hHitStart->Draw();
+  hHitDur->Draw();
   c1->cd(3);
-  hHitEnd->Draw();
+  hHitCorr->Draw("colz");
   c1->cd(6);
   hHitReco->Draw();
   c1->cd(7);
-  hEdge->Draw();
+  hHitCorrDur->Draw("colz");
   c1->cd(4);
   hMap->Draw("colz");
   c1->cd(8);
@@ -800,6 +826,9 @@ void inizializePlot(THeader *run){
   hCoinc = new TH1D("hCoinc","Coincidence peak",5*(int)(run->timeMax-run->timeMin)+10,run->timeMin-5,run->timeMax+5);
   hHitStart = new TH1D("hHitStart","Hit start",1000,0,1000);
   hHitEnd = new TH1D("hHitEnd","Hit end",1000,0,1000);
+  hHitDur = new TH1D("hHitDur","Hit duration",101,-.50,100.5);
+  hHitCorr = new TH2D("hHitCorr","Hit correlation; Start [ns]; End[ns]",1000,0,1000,1000,0,1000); 
+  hHitCorrDur = new TH2D("hHitCorrDur","Hit correlation; Start [ns]; Dur[ns]",100,0,100,101,-.50,100.5); 
   hHitReco = new TH1D("hHitReco","Number of reconstructed hit for event",151,-0.5,150.5);
   hEdge = new TH1D("hEdge","Number of edge for event",151,-0.5,150.5);
 
