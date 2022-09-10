@@ -116,25 +116,34 @@ void getMAPMT(THeader *runHead){
         }
       }
     }
-
-
+    
     evt=(int)evtDRICH;
     tTrigTime=trigtime;
     tNedge=nedge;
     bool wrongEvent=false;
+    int ntrig=0;
+    double trigger=0;
+    for(int j = 0; j < nedge; j++){
+    	if(fiber[j]==11 && chM[j]==27 && pol[j]==0){
+		ntrig++;
+		trigger=time[j];
+	}
+    }
+    if(ntrig!=1)continue;
     for(uint j = 0; j < nedge; j++){
       tPol[j]=pol[j];
       tSlot[j]=slot[j];
       tFiber[j]=fiber[j];
       tCh[j]=chM[j];
-      tTime[j]=time[j];
+      if(fiber[j]!=11 || chM[j]!=27)tTime[j]=time[j]-trigger + 400; //Added offset 400 to distinguish peak from trigger
+      else tTime[j]=time[j]-trigger; //No offset 400 -> Trigger hit
       board[j]=getMarocBoard(fiber[j],runHead);
       chip[j]=getMarocChip(chM[j]);
       upstreamMaroc(fiber[j], runHead);
       channel[j]= getMAPMT_ch(fiber[j],chM[j],board[j],chip[j],runHead->upstreamBoard);
       pmt[j]=FiberToPhDet(fiber[j],&(runHead->fiberRef)[0]);
       MAPMTposition(channel[j],pmt[j],&x[j],&y[j],&radius[j]);
-      ntime[j]=timeCalibrationMAPMT(time[j],channel[j],pmt[j]);
+      ntime[j]=timeCalibrationMAPMT(tTime[j],channel[j],pmt[j]);
     }
     if(wrongEvent==true)continue;
     tout->Fill();
@@ -252,12 +261,22 @@ void getMPPC(THeader *runHead){
     tTrigTime=trigtime;
     tNedge=nedge;
     bool wrongEvent=false;
+    int ntrig=0;
+    double trigger=0;
+    for(int j = 0; j < nedge; j++){
+    	if(fiber[j]==11 && chM[j]==27 && pol[j]==0){
+		ntrig++;
+		trigger=time[j];
+	}
+    }
     for(uint j = 0; j < nedge; j++){
       tPol[j]=pol[j];
       tSlot[j]=slot[j];
       tFiber[j]=fiber[j];
       tCh[j]=chM[j];
-      tTime[j]=time[j];
+      if(fiber[j]!=11 || chM[j]!=27)tTime[j]=time[j]-trigger + 200; //Added offset 200 to distinguish peak from trigger
+      else tTime[j]=time[j]-trigger; //No offset 200 -> Trigger hit
+      //tTime[j]=time[j];
       board[j]=getMarocBoard(fiber[j],runHead);
       chip[j]=getMarocChip(chM[j]);
       upstreamMaroc(fiber[j], runHead);

@@ -98,7 +98,7 @@ void fillHisto(THeader *run){
   t->SetBranchAddress("nx",&nx);
   t->SetBranchAddress("ny",&ny);
   t->SetBranchAddress("nr",&nr);
-  t->SetBranchAddress("nt",&nt);
+  t->SetBranchAddress("ntc",&nt);
   t->SetBranchAddress("dur",&dur);
   t->SetBranchAddress("goodHit",&goodHit);
   t->SetBranchAddress("coincPhoton",&coincPhoton);
@@ -135,13 +135,15 @@ void fillHisto(THeader *run){
   for(int i = 0; i < t->GetEntries(); i++){
     if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
+    if(abs(gxa) > 2 || abs(gya)>2)continue; 
     hUpGEM->Fill(gx0,gy0);
     hDnGEM->Fill(gx1,gy1);
     hBeam->Fill(gxa,gya);
     hBeamTheta->Fill(gxtheta,gytheta);
     int nHit = 0;
     hEdge->Fill(nedge);
-    for(int j = 0; j < nedge; j++){  
+    for(int j = 0; j < nedge; j++){
+	    if(nt[j] < 355 || nt[j]>360) continue;
       if(pol[j]==0){
         hTime->Fill(nt[j]);
         hMapNC->Fill(x[j],y[j]);
@@ -243,7 +245,9 @@ void displayMonitor(THeader *run){
   hHitEnd->SetLineColor(2);
   hsHitTime->Add(hHitStart);
   hsHitTime->Add(hHitEnd);
-  hsHitTime->Draw();
+  hsHitTime->Draw("nostack");
+  hsHitTime->GetXaxis()->SetRangeUser(300,600);
+  hsHitTime->Draw("nostack");
   //hTime->Draw();
   TLine *l1 = new TLine(run->timeMin,0,run->timeMin,hTime->GetBinContent(hTime->GetMaximumBin()));
   l1->SetLineColor(3);
@@ -254,6 +258,9 @@ void displayMonitor(THeader *run){
   c1->Update();
   c1->cd(5);
   hCoinc->Draw();
+  TF1 *fcoinc = new TF1("fcoinc","gaus(0)",200,400);
+  fcoinc->SetParameters(20000,355,2);
+  hCoinc->Fit(fcoinc,"Q","",run->timeMin,run->timeMax);
   l1->SetY2(hCoinc->GetBinContent(hCoinc->GetMaximumBin()));
   l2->SetY2(hCoinc->GetBinContent(hCoinc->GetMaximumBin()));
   l1->Draw("same");
@@ -828,7 +835,7 @@ void inizializePlot(THeader *run){
   hHitEnd = new TH1D("hHitEnd","Hit end",1000,0,1000);
   hHitDur = new TH1D("hHitDur","Hit duration",101,-.50,100.5);
   hHitCorr = new TH2D("hHitCorr","Hit correlation; Start [ns]; End[ns]",1000,0,1000,1000,0,1000); 
-  hHitCorrDur = new TH2D("hHitCorrDur","Hit correlation; Start [ns]; Dur[ns]",100,0,100,101,-.50,100.5); 
+  hHitCorrDur = new TH2D("hHitCorrDur","Hit correlation; Dur [ns]; Start [ns]",71,-.5,70.5,100,350,450); 
   hHitReco = new TH1D("hHitReco","Number of reconstructed hit for event",151,-0.5,150.5);
   hEdge = new TH1D("hEdge","Number of edge for event",151,-0.5,150.5);
 
@@ -846,7 +853,7 @@ void inizializePlot(THeader *run){
   hUpGEM = new TH2D("hUpGEM","Upstream GEM; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
   hDnGEM = new TH2D("hDnGEM","Dnstream GEM; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
   hBeam = new TH2D("hBeam","Beam profile at aerogel; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
-  hBeamTheta = new TH2D("hBeamTheta","Beam divergence; x_0[mm];y_0[mm]",300,-6,6,300,-6,6);
+  hBeamTheta = new TH2D("hBeamTheta","Beam divergence; x_0[mm];y_0[mm]",100,-.002,.002,100,-.002,.002);
 
 
   hRadius = new TH1D("hRadius","Single photon radius - before corrections;r [mRad]",400,0,200);

@@ -21,7 +21,7 @@ void recoHit(THeader *run){
   TTree *t = (TTree*) fIn->Get("dRICH");
 
   int nedge, pmt[MAXDATA], pol[MAXDATA], slot[MAXDATA], fiber[MAXDATA], ch[MAXDATA];
-  double x[MAXDATA], y[MAXDATA], nt[MAXDATA], dur[MAXDATA];
+  double x[MAXDATA], y[MAXDATA], nt[MAXDATA], dur[MAXDATA], ntc[MAXDATA];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
   t->SetBranchAddress("slot",&slot);
@@ -35,12 +35,16 @@ void recoHit(THeader *run){
   bool goodHit[MAXDATA];
   auto tgoodHit= t->Branch("goodHit",&goodHit,"goodHit[nedge]/O");
   auto tdur = t->Branch("dur",&dur,"dur[nedge]/D");
+  auto tntc = t->Branch("ntc",&ntc,"ntc[nedge]/D");
     
   cout <<"Applying selection based on time and radius RMS\n";
   for(int i = 0; i < t->GetEntries(); i++){
     if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
-    for(int j = 0; j < nedge; j++)goodHit[j]=false;
+    for(int j = 0; j < nedge; j++){goodHit[j]=false;
+    	ntc[j]=0;
+	dur[j]=0;
+    }
     for(int j = 0; j < nedge; j++){
       //cout <<pol[j] <<endl;
       if(pol[j]!=0)continue;
@@ -57,16 +61,19 @@ void recoHit(THeader *run){
         //cout <<"X " <<x[j] <<" " <<x[k] <<endl;
         //cout <<"Y " <<y[j] <<" " <<y[k] <<endl;
         if(x[j]==x[k] && y[j]==y[k]){
-          goodHit[j]=true;
-          goodHit[k]=true;
-	  dur[j] = nt[k]-nt[j];
-          nt[j] = timeWalkCorrection(nt[j],nt[k]);
+		//if(nt[k]-nt[j]>35){ //Remove crosstalk
+          	  goodHit[j]=true;
+          	  goodHit[k]=true;
+	  	  dur[j] = nt[k]-nt[j];
+          	  ntc[j] = timeWalkCorrection(nt[j],nt[k]);
+		//}
           break;
         }
       }
     }
     tgoodHit->Fill();
     tdur->Fill();
+    tntc->Fill();
   }
   printEnd();
   t->Write("",TObject::kOverwrite);
@@ -212,6 +219,8 @@ void findTimeCoincidence(THeader *run){
 	//Current definition of the coincidence time window. Does it work?
 	run->timeMin=f->GetParameter(1)-3*f->GetParameter(2); 
 	run->timeMax=f->GetParameter(1)+3*f->GetParameter(2);
+	//run->timeMin=400;
+	//run->timeMax=450;
 	fIn->Close();
 
 }

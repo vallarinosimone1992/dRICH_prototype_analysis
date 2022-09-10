@@ -21,6 +21,8 @@ bool correctionMax=true;
 
 double timeWalkCorrection(double t0, double t1){
     double dur = t1-t0;
+    cout <<"Correzione: " <<t1 <<" " <<t0 << " " << t0+20./50.*(dur-50) <<endl;
+
     return t0+20./50.*(dur-50);
 }
 

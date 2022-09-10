@@ -1,0 +1,6 @@
+/data01/lab/dRICH_ana/dRICH_prototype_analysis/sw/build/CMakeFiles/edit_cache.dir
+/data01/lab/dRICH_ana/dRICH_prototype_analysis/sw/build/CMakeFiles/mon.dir
+/data01/lab/dRICH_ana/dRICH_prototype_analysis/sw/build/CMakeFiles/rebuild_cache.dir
+/data01/lab/dRICH_ana/dRICH_prototype_analysis/sw/build/CMakeFiles/ana.dir
+/data01/lab/dRICH_ana/dRICH_prototype_analysis/sw/build/CMakeFiles/reco.dir
+/data01/lab/dRICH_ana/dRICH_prototype_analysis/sw/build/CMakeFiles/dRICH_lib.dir
