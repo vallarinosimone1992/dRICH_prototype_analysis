@@ -29,6 +29,11 @@ static TH2D *hnMap;
 static TH1D *hRadius;
 static TH1D *hnRadius;
 
+static TH2D *hUpGEM;
+static TH2D *hDnGEM;
+static TH2D *hBeam;
+
+
 static vector<TH1D*> vrsdRadius;
 static vector<TH1D*> vrsdTime;
 
@@ -70,6 +75,7 @@ void fillHisto(THeader *run){
 
   int nedge, pol[MAXDATA], pmt[MAXDATA], spPhoton[10], spnPhoton[10], cutPhoton[10];
   double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nt[MAXDATA], rsdRadius[MAXDATA], rsdTime[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10];
+  float gx0, gy0, gx1, gy1, gxa, gya, gxtheta, gytheta;
   bool coincPhoton[MAXDATA],outerPhoton[MAXDATA], goodSP[10], goodSPN[10], goodCUT[10];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
@@ -86,6 +92,14 @@ void fillHisto(THeader *run){
   t->SetBranchAddress("rsdRadius",&rsdRadius);
   t->SetBranchAddress("rsdTime",&rsdTime);
   
+  t->SetBranchAddress("gx0",&gx0);
+  t->SetBranchAddress("gy0",&gy0);
+  t->SetBranchAddress("gx1",&gx1);
+  t->SetBranchAddress("gy1",&gy1);
+  t->SetBranchAddress("gxa",&gxa);
+  t->SetBranchAddress("gya",&gya);
+  t->SetBranchAddress("gxtheta",&gxtheta);
+  t->SetBranchAddress("gytheta",&gytheta);
   
   t->SetBranchAddress("spRadius",&spRadius);
   t->SetBranchAddress("spTime",&spTime);
@@ -107,7 +121,11 @@ void fillHisto(THeader *run){
   for(int i = 0; i < t->GetEntries(); i++){
     if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
+    hUpGEM->Fill(gx0,gy0);
+    hDnGEM->Fill(gx1,gy1);
+    hBeam->Fill(gxa,gya);
     for(int j = 0; j < nedge; j++){
+      
       if(pol[j]==0){
         hTime->Fill(nt[j]);
         hMapNC->Fill(x[j],y[j]);
@@ -250,6 +268,18 @@ void displayMonitor(THeader *run){
   c2->Update();
   c2->Print(out_pdf.c_str());
 
+  TCanvas *c3 = new TCanvas("c3","GEM canvas",1600,900);
+  c3->Draw();
+  c3->Divide(2,2);
+  c3->cd(1);
+  hUpGEM->Draw("colz");
+  c3->cd(2);
+  hDnGEM->Draw("colz");
+  c3->cd(3);
+  hBeam->Draw("colz");
+  c3->cd(4);
+  c3->Update();
+  c3->Print(out_pdf.c_str());
 
   c2->Print(out_pdf1.c_str());
 
@@ -754,6 +784,11 @@ void inizializePlot(THeader *run){
   else hMapNC = new TH2D("hMapNC","All hit position Other;x [mm];y [mm]",180,-90,90,180,-90,90);
 
   hnMap = new TH2D("hnMap","Corrected positions of hit;x [mm];y [mm]",180,-90,90,180,-90,90);
+
+  hUpGEM = new TH2D("hUpGEM","Upstream GEM; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
+  hDnGEM = new TH2D("hDnGEM","Dnstream GEM; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
+  hBeam = new TH2D("hBeam","Beam profile at aerogel; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
+
 
   hRadius = new TH1D("hRadius","Single photon radius - before corrections;r [mRad]",400,0,200);
   hnRadius = new TH1D("hnRadius","Single photon radius - after corrections;r [mRad]",400,0,200);
