@@ -23,15 +23,21 @@
 
 static TH1D *hTime;
 static TH1D *hCoinc;
+static TH1D *hHitStart;
+static TH1D *hHitEnd;
 static TH2D *hMap;
 static TH2D *hMapNC;
 static TH2D *hnMap;
 static TH1D *hRadius;
 static TH1D *hnRadius;
 
+static TH1D *hEdge;
+static TH1D *hHitReco;
+
 static TH2D *hUpGEM;
 static TH2D *hDnGEM;
 static TH2D *hBeam;
+static TH2D *hBeamTheta;
 
 
 static vector<TH1D*> vrsdRadius;
@@ -76,7 +82,7 @@ void fillHisto(THeader *run){
   int nedge, pol[MAXDATA], pmt[MAXDATA], spPhoton[10], spnPhoton[10], cutPhoton[10];
   double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nt[MAXDATA], rsdRadius[MAXDATA], rsdTime[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10];
   float gx0, gy0, gx1, gy1, gxa, gya, gxtheta, gytheta;
-  bool coincPhoton[MAXDATA],outerPhoton[MAXDATA], goodSP[10], goodSPN[10], goodCUT[10];
+  bool goodHit[MAXDATA], coincPhoton[MAXDATA],outerPhoton[MAXDATA], goodSP[10], goodSPN[10], goodCUT[10];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
   t->SetBranchAddress("pmt",&pmt);
@@ -87,6 +93,7 @@ void fillHisto(THeader *run){
   t->SetBranchAddress("ny",&ny);
   t->SetBranchAddress("nr",&nr);
   t->SetBranchAddress("nt",&nt);
+  t->SetBranchAddress("goodHit",&goodHit);
   t->SetBranchAddress("coincPhoton",&coincPhoton);
   t->SetBranchAddress("outerPhoton",&outerPhoton);
   t->SetBranchAddress("rsdRadius",&rsdRadius);
@@ -124,12 +131,22 @@ void fillHisto(THeader *run){
     hUpGEM->Fill(gx0,gy0);
     hDnGEM->Fill(gx1,gy1);
     hBeam->Fill(gxa,gya);
-    for(int j = 0; j < nedge; j++){
-      
+    hBeamTheta->Fill(gxtheta,gytheta);
+    int nHit = 0;
+    hEdge->Fill(nedge);
+    for(int j = 0; j < nedge; j++){  
       if(pol[j]==0){
         hTime->Fill(nt[j]);
         hMapNC->Fill(x[j],y[j]);
-        }
+      }
+      if(goodHit[j]==1){
+        if(pol[j]==0){
+          hHitStart->Fill(nt[j]);
+          nHit++;
+          }
+        else hHitEnd->Fill(nt[j]);
+      }
+
       if(coincPhoton[j]==true){
         hCoinc->Fill(nt[j]);
         hMap->Fill(x[j],y[j]);
@@ -145,6 +162,7 @@ void fillHisto(THeader *run){
         }
       }
     }
+    hHitReco->Fill(nHit);
     for(int j = 0; j < 10; j++){
       if(goodSP[j]==true && spPhoton[j] > 2){
         vspRadius[j]->Fill(spRadius[j]);
@@ -164,10 +182,10 @@ void fillHisto(THeader *run){
     }
     if(goodSP[4]==true && spPhoton[4] > minPhoGas && spPhoton[4]<maxPhoGas) vspSigPhoGas[spPhoton[4]]->Fill(spRadius[4]);
     if(goodSP[9]==true && spPhoton[9] > minPhoAero && spPhoton[9]<maxPhoAero) vspSigPhoAero[spPhoton[9]]->Fill(spRadius[9]);
-    
+
     if(goodSPN[4]==true && spnPhoton[4] > minPhoGas && spnPhoton[4]<maxPhoGas) vspnSigPhoGas[spnPhoton[4]]->Fill(spnRadius[4]);
     if(goodSPN[9]==true && spnPhoton[9] > minPhoAero && spnPhoton[9]<maxPhoAero) vspnSigPhoAero[spnPhoton[9]]->Fill(spnRadius[9]);
-    
+
     if(goodCUT[4]==true && cutPhoton[4] > minPhoGas && cutPhoton[4]<maxPhoGas) vcutSigPhoGas[cutPhoton[4]]->Fill(cutRadius[4]);
     if(goodCUT[9]==true && cutPhoton[9] > minPhoAero && cutPhoton[9]<maxPhoAero) vcutSigPhoAero[cutPhoton[9]]->Fill(cutRadius[9]); 
   }
@@ -186,17 +204,19 @@ void displayMonitor(THeader *run){
   TList *save = new TList();
   save->Add(hTime);
   save->Add(hCoinc);
+  save->Add(hHitStart);
+  save->Add(hHitEnd);
+  save->Add(hHitReco);
+  save->Add(hEdge);
   save->Add(hMap);
   save->Add(hnMap);
   save->Add(hRadius);
   save->Add(hnRadius);
 
   TCanvas *c1 = new TCanvas("c1","c1",1600,900);
-  c1->Divide(3,2);
+  c1->Divide(4,2);
   c1->Draw();
   c1->Print(out_pdf0.c_str());
-
-
   c1->cd(1);
   hTime->Draw();
   TLine *l1 = new TLine(run->timeMin,0,run->timeMin,hTime->GetBinContent(hTime->GetMaximumBin()));
@@ -206,28 +226,31 @@ void displayMonitor(THeader *run){
   l2->SetLineColor(3);
   l2->Draw("same");
   c1->Update();
-
-  c1->cd(4);
+  c1->cd(5);
   hCoinc->Draw();
   l1->SetY2(hCoinc->GetBinContent(hCoinc->GetMaximumBin()));
   l2->SetY2(hCoinc->GetBinContent(hCoinc->GetMaximumBin()));
   l1->Draw("same");
   l2->Draw("same");
-
   c1->cd(2);
+  hHitStart->Draw();
+  c1->cd(3);
+  hHitEnd->Draw();
+  c1->cd(6);
+  hHitReco->Draw();
+  c1->cd(7);
+  hEdge->Draw();
+  c1->cd(4);
   hMap->Draw("colz");
-
-  c1->cd(5);
+  c1->cd(8);
   hMapNC->Draw("colz");
 
-  c1->cd(3);
-  hRadius->Draw();
-  c1->cd(6);
-  hnRadius->Draw();
   c1->Update();
   c1->Print(out_pdf.c_str());
 
+  
 
+  
 
   TCanvas *c2 = new TCanvas("c2","c2",1600,900);
   c2->Divide(3,2);
@@ -239,10 +262,10 @@ void displayMonitor(THeader *run){
   vspPhoton[4]->SetTitle("# photons for particle - gas");
   vspPhoton[4]->Draw();
   c2->cd(5);
-  vspTime[9]->SetTitle("Mean time of the event - gas");
+  vspTime[9]->SetTitle("Mean time of the event - aerogel");
   vspTime[9]->Draw();
   c2->cd(6);
-  vspPhoton[9]->SetTitle("# photons for particle - gas");
+  vspPhoton[9]->SetTitle("# photons for particle - aerogel");
   vspPhoton[9]->GetXaxis()->SetRangeUser(0,25);
   vspPhoton[9]->Draw();
   c2->Update();
@@ -258,7 +281,7 @@ void displayMonitor(THeader *run){
   applyFit(cp0,fspRadius_4,"fspRadius_4",false);
   cp0->Draw(); 
   c2->cd(4); 
-  vspRadius[9]->SetTitle("Single particle radius - gas");
+  vspRadius[9]->SetTitle("Single particle radius - aerogel");
   TH1D *cp1 = (TH1D*)vspRadius[9]->Clone("hspRadius_fitOut");
   TF1 *fspRadius_9 = new TF1();
   save->Add(fspRadius_9);
@@ -278,6 +301,7 @@ void displayMonitor(THeader *run){
   c3->cd(3);
   hBeam->Draw("colz");
   c3->cd(4);
+  hBeamTheta->Draw("colz");
   c3->Update();
   c3->Print(out_pdf.c_str());
 
@@ -774,11 +798,16 @@ void inizializePlot(THeader *run){
 
   hTime = new TH1D("hTime","Time distribution for all hits",1000,0,1000);
   hCoinc = new TH1D("hCoinc","Coincidence peak",5*(int)(run->timeMax-run->timeMin)+10,run->timeMin-5,run->timeMax+5);
+  hHitStart = new TH1D("hHitStart","Hit start",1000,0,1000);
+  hHitEnd = new TH1D("hHitEnd","Hit end",1000,0,1000);
+  hHitReco = new TH1D("hHitReco","Number of reconstructed hit for event",151,-0.5,150.5);
+  hEdge = new TH1D("hEdge","Number of edge for event",151,-0.5,150.5);
+
 
   if(run->sensor=="MPPC") hMap = new TH2D("hMap","Hit position MPPC;x [mm];y [mm]",sizeof(xBinMPPC)/sizeof(*xBinMPPC)-1,xBinMPPC,sizeof(yBinMPPC)/sizeof(*yBinMPPC)-1,yBinMPPC);
   else if(run->sensor=="MAPMT") hMap = new TH2D("hMap","Hit position MAPMT;x [mm];y [mm]",sizeof(xBinMAPMT)/sizeof(*xBinMAPMT)-1,xBinMAPMT,sizeof(yBinMAPMT)/sizeof(*yBinMAPMT)-1,yBinMAPMT);
   else hMap = new TH2D("hMap","Hit position Other;x [mm];y [mm]",180,-90,90,180,-90,90);
-  
+
   if(run->sensor=="MPPC") hMapNC = new TH2D("hMapNC","All hit position MPPC;x [mm];y [mm]",sizeof(xBinMPPC)/sizeof(*xBinMPPC)-1,xBinMPPC,sizeof(yBinMPPC)/sizeof(*yBinMPPC)-1,yBinMPPC);
   else if(run->sensor=="MAPMT") hMapNC = new TH2D("hMapNC","All hit position MAPMT;x [mm];y [mm]",sizeof(xBinMAPMT)/sizeof(*xBinMAPMT)-1,xBinMAPMT,sizeof(yBinMAPMT)/sizeof(*yBinMAPMT)-1,yBinMAPMT);
   else hMapNC = new TH2D("hMapNC","All hit position Other;x [mm];y [mm]",180,-90,90,180,-90,90);
@@ -788,6 +817,7 @@ void inizializePlot(THeader *run){
   hUpGEM = new TH2D("hUpGEM","Upstream GEM; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
   hDnGEM = new TH2D("hDnGEM","Dnstream GEM; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
   hBeam = new TH2D("hBeam","Beam profile at aerogel; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
+  hBeamTheta = new TH2D("hBeamTheta","Beam divergence; x_0[mm];y_0[mm]",300,-6,6,300,-6,6);
 
 
   hRadius = new TH1D("hRadius","Single photon radius - before corrections;r [mRad]",400,0,200);

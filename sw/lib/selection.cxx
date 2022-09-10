@@ -208,7 +208,7 @@ void findTimeCoincidence(THeader *run){
   TF1 *f0 = new TF1("f0","pol0",0,1000);
   h->Fit(f0,"Q","",800,1000);
   TF1 *f = new TF1("f","gaus(0)+pol0(3)",0,1000);
-  f->SetParameters(10000,380,5,f0->GetParameter(0));
+  f->SetParameters(10000,h->GetBinCenter(h->GetMaximumBin()),5,f0->GetParameter(0));
   f->SetParLimits(2,0.5,30);
   f->FixParameter(3,f0->GetParameter(0));
   double timeFitMin=h->GetBinCenter(h->GetMaximumBin())-20;
