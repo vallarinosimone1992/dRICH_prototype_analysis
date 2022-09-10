@@ -24,6 +24,7 @@
 static TH1D *hTime;
 static TH1D *hCoinc;
 static TH2D *hMap;
+static TH2D *hMapNC;
 static TH2D *hnMap;
 static TH1D *hRadius;
 static TH1D *hnRadius;
@@ -107,7 +108,10 @@ void fillHisto(THeader *run){
     if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
     for(int j = 0; j < nedge; j++){
-      if(pol[j]==0) hTime->Fill(nt[j]);
+      if(pol[j]==0){
+        hTime->Fill(nt[j]);
+        hMapNC->Fill(x[j],y[j]);
+        }
       if(coincPhoton[j]==true){
         hCoinc->Fill(nt[j]);
         hMap->Fill(x[j],y[j]);
@@ -196,7 +200,7 @@ void displayMonitor(THeader *run){
   hMap->Draw("colz");
 
   c1->cd(5);
-  hnMap->Draw("colz");
+  hMapNC->Draw("colz");
 
   c1->cd(3);
   hRadius->Draw();
@@ -744,6 +748,10 @@ void inizializePlot(THeader *run){
   if(run->sensor=="MPPC") hMap = new TH2D("hMap","Hit position MPPC;x [mm];y [mm]",sizeof(xBinMPPC)/sizeof(*xBinMPPC)-1,xBinMPPC,sizeof(yBinMPPC)/sizeof(*yBinMPPC)-1,yBinMPPC);
   else if(run->sensor=="MAPMT") hMap = new TH2D("hMap","Hit position MAPMT;x [mm];y [mm]",sizeof(xBinMAPMT)/sizeof(*xBinMAPMT)-1,xBinMAPMT,sizeof(yBinMAPMT)/sizeof(*yBinMAPMT)-1,yBinMAPMT);
   else hMap = new TH2D("hMap","Hit position Other;x [mm];y [mm]",180,-90,90,180,-90,90);
+  
+  if(run->sensor=="MPPC") hMapNC = new TH2D("hMapNC","All hit position MPPC;x [mm];y [mm]",sizeof(xBinMPPC)/sizeof(*xBinMPPC)-1,xBinMPPC,sizeof(yBinMPPC)/sizeof(*yBinMPPC)-1,yBinMPPC);
+  else if(run->sensor=="MAPMT") hMapNC = new TH2D("hMapNC","All hit position MAPMT;x [mm];y [mm]",sizeof(xBinMAPMT)/sizeof(*xBinMAPMT)-1,xBinMAPMT,sizeof(yBinMAPMT)/sizeof(*yBinMAPMT)-1,yBinMAPMT);
+  else hMapNC = new TH2D("hMapNC","All hit position Other;x [mm];y [mm]",180,-90,90,180,-90,90);
 
   hnMap = new TH2D("hnMap","Corrected positions of hit;x [mm];y [mm]",180,-90,90,180,-90,90);
 
