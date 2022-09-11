@@ -129,12 +129,12 @@ void computeRMS(THeader *run){
   TTree *t = (TTree*) fIn->Get("dRICH");
 
   int nedge, pmt[MAXDATA];
-  double nr[MAXDATA], nt[MAXDATA], spnRadius[10], spnTime[10];
+  double nr[MAXDATA], nttw[MAXDATA], spnRadius[10], spnTime[10];
   bool coincPhoton[MAXDATA],outerPhoton[MAXDATA];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pmt",&pmt);
   t->SetBranchAddress("nr",&nr);
-  t->SetBranchAddress("nt",&nt);
+  t->SetBranchAddress("nttw",&nttw);
   t->SetBranchAddress("coincPhoton",&coincPhoton);
   t->SetBranchAddress("outerPhoton",&outerPhoton);
   t->SetBranchAddress("spnRadius",&spnRadius);
@@ -169,9 +169,9 @@ void computeRMS(THeader *run){
       rsdTime[j]=-1000;
       if(coincPhoton[j]==true){
         rsdRadius[j]=nr[j]-spnRadius[refTOT];
-        rsdTime[j]=nt[j]-spnTime[refTOT];
+        rsdTime[j]=nttw[j]-spnTime[refTOT];
         rmsRadius[refPMT]+=pow(spnRadius[refPMT]-nr[j],2);
-        rmsTime[refPMT]+=pow(spnTime[refPMT]-nt[j],2);
+        rmsTime[refPMT]+=pow(spnTime[refPMT]-nttw[j],2);
         rmsPhoton[refPMT]+=1;
 
         rmsRadius[refTOT]+=pow(rsdRadius[j],2);
@@ -207,12 +207,12 @@ void computeCutSingleParticle(THeader *run){
   TFile *fIn = new TFile (fName,"UPDATE");
   TTree *t = (TTree*) fIn->Get("dRICH");
   int nedge, pmt[MAXDATA];
-  double nr[MAXDATA], nt[MAXDATA];
+  double nr[MAXDATA], nttw[MAXDATA];
   bool cutPhotonFlag[MAXDATA],outerPhoton[MAXDATA];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pmt",&pmt);
   t->SetBranchAddress("nr",&nr);
-  t->SetBranchAddress("nt",&nt);
+  t->SetBranchAddress("nttw",&nttw);
   t->SetBranchAddress("outerPhoton",&outerPhoton);
   t->SetBranchAddress("cutPhotonFlag",&cutPhotonFlag);
 
@@ -241,10 +241,10 @@ void computeCutSingleParticle(THeader *run){
       if(cutPhotonFlag[j]==true){
         cutRadius[refPMT]+=nr[j];
         cutPhoton[refPMT]+=1;
-        cutTime[refPMT]+=nt[j];
+        cutTime[refPMT]+=nttw[j];
         cutRadius[refTOT]+=nr[j];
         cutPhoton[refTOT]+=1;
-        cutTime[refTOT]+=nt[j];
+        cutTime[refTOT]+=nttw[j];
       }
     }
     for(int j = 0; j < 10; j++){
@@ -273,12 +273,12 @@ void newSingleParticle(THeader *run){
   TFile *fIn = new TFile(fName,"UPDATE");
   TTree *t = (TTree*) fIn->Get("dRICH");
   int nedge, pmt[MAXDATA];
-  double nr[MAXDATA], nt[MAXDATA];
+  double nr[MAXDATA], nttw[MAXDATA];
   bool coincPhoton[MAXDATA],outerPhoton[MAXDATA];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pmt",&pmt);
   t->SetBranchAddress("nr",&nr);
-  t->SetBranchAddress("nt",&nt);
+  t->SetBranchAddress("nttw",&nttw);
   t->SetBranchAddress("coincPhoton",&coincPhoton);
   t->SetBranchAddress("outerPhoton",&outerPhoton);
 
@@ -309,10 +309,10 @@ void newSingleParticle(THeader *run){
       if(coincPhoton[j]==true){
         spnRadius[refPMT]+=nr[j];
         spnPhoton[refPMT]+=1;
-        spnTime[refPMT]+=nt[j];
+        spnTime[refPMT]+=nttw[j];
         spnRadius[refTOT]+=nr[j];
         spnPhoton[refTOT]+=1;
-        spnTime[refTOT]+=nt[j];
+        spnTime[refTOT]+=nttw[j];
       }
     }
     for(int j = 0; j < 10; j++){
@@ -343,12 +343,12 @@ void singleParticle(THeader *run){
   TTree *t = (TTree*) fIn->Get("dRICH");
 
   int nedge, pol[MAXDATA], pmt[MAXDATA];
-  double x[MAXDATA],y[MAXDATA],r[MAXDATA], nt[MAXDATA];
+  double x[MAXDATA],y[MAXDATA],r[MAXDATA], nttw[MAXDATA];
   bool coincPhoton[MAXDATA], outerPhoton[MAXDATA];
 
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
-  t->SetBranchAddress("nt",&nt);
+  t->SetBranchAddress("nttw",&nttw);
   t->SetBranchAddress("pmt",&pmt);
   t->SetBranchAddress("x",&x);
   t->SetBranchAddress("y",&y);
@@ -383,10 +383,10 @@ void singleParticle(THeader *run){
         int refTOT = 4+5*k;
         spRadius[refPMT]+=r[j];
         spPhoton[refPMT]+=1;
-        spTime[refPMT]+=nt[j];
+        spTime[refPMT]+=nttw[j];
         spRadius[refTOT]+=r[j];
         spPhoton[refTOT]+=1;
-        spTime[refTOT]+=nt[j];
+        spTime[refTOT]+=nttw[j];
       }
     }
     for(int j = 0; j < 10; j++){

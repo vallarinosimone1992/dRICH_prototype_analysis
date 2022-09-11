@@ -49,8 +49,9 @@ void getMAPMT(THeader *runHead){
   int evt, tPol[MAXDATA], tSlot[MAXDATA], tFiber[MAXDATA], tCh[MAXDATA] ,tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
   uint tNedge;
   double tTrigTime;
-  double x[MAXDATA], y[MAXDATA], radius[MAXDATA],ntime[MAXDATA];
+  double x[MAXDATA], y[MAXDATA], radius[MAXDATA],nt[MAXDATA];
   int pmt[MAXDATA], channel[MAXDATA];
+  bool trigSig[MAXDATA];
 
   auto evento=tout->Branch("evt",&evt,"evt/I");
   (void)evento;
@@ -82,8 +83,9 @@ void getMAPMT(THeader *runHead){
   (void)ty;
   auto tradius=tout->Branch("radius",&radius,"radius[nedge]/D");
   (void)tradius;
-  auto tntime=tout->Branch("ntime",&ntime,"ntime[nedge]/D");
-  (void)tntime;
+  auto tnt=tout->Branch("nt",&nt,"nt[nedge]/D");
+  (void)tnt;
+  auto ttrigSig=tout->Branch("trigSig",&trigSig,"trigSig[nedge]/O");
 
   cout <<"Taking the dRICH prototype data\n";
   for(int i = 0; i < t->GetEntries(); i++){
@@ -135,15 +137,22 @@ void getMAPMT(THeader *runHead){
       tSlot[j]=slot[j];
       tFiber[j]=fiber[j];
       tCh[j]=chM[j];
-      if(fiber[j]!=11 || chM[j]!=27)tTime[j]=time[j]-trigger + 400; //Added offset 400 to distinguish peak from trigger
-      else tTime[j]=time[j]-trigger; //No offset 400 -> Trigger hit
-      board[j]=getMarocBoard(fiber[j],runHead);
+      //if(fiber[j]!=11 || chM[j]!=27)tTime[j]=time[j]-trigger + 400; //Added offset 400 to distinguish peak from trigger
+      //else tTime[j]=time[j]-trigger; //No offset 400 -> Trigger hit
       chip[j]=getMarocChip(chM[j]);
+      board[j]=getMarocBoard(fiber[j],runHead);
       upstreamMaroc(fiber[j], runHead);
       channel[j]= getMAPMT_ch(fiber[j],chM[j],board[j],chip[j],runHead->upstreamBoard);
+      if(fiber[j]!=11 || chip[j]!=0){
+        tTime[j]=time[j]-trigger + 400; //Added offset 400 to distinguish peak from trigger
+        trigSig[j]=false;
+      }else {
+        tTime[j]=time[j]-trigger; //No offset 400 -> Trigger hit
+        trigSig[j]=true;
+      }
       pmt[j]=FiberToPhDet(fiber[j],&(runHead->fiberRef)[0]);
       MAPMTposition(channel[j],pmt[j],&x[j],&y[j],&radius[j]);
-      ntime[j]=timeCalibrationMAPMT(tTime[j],channel[j],pmt[j]);
+      nt[j]=timeCalibrationMAPMT(tTime[j],channel[j],pmt[j]);
     }
     if(wrongEvent==true)continue;
     tout->Fill();
@@ -189,7 +198,7 @@ void getMPPC(THeader *runHead){
   int evt, tPol[MAXDATA], tSlot[MAXDATA], tFiber[MAXDATA], tCh[MAXDATA], tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
   uint tNedge;
   double tTrigTime;
-  double x[MAXDATA], y[MAXDATA], radius[MAXDATA], ntime[MAXDATA];
+  double x[MAXDATA], y[MAXDATA], radius[MAXDATA], nt[MAXDATA];
   int pmt[MAXDATA], channel[MAXDATA];
 
   auto evento=tout->Branch("evt",&evt,"evt/I");
@@ -222,8 +231,8 @@ void getMPPC(THeader *runHead){
   (void)ty;
   auto tradius=tout->Branch("radius",&radius,"radius[nedge]/D");
   (void)tradius;
-  auto tntime=tout->Branch("ntime",&ntime,"ntime[nedge]/D");
-  (void)tntime;
+  auto tnt=tout->Branch("nt",&nt,"nt[nedge]/D");
+  (void)tnt;
 
   cout <<"Taking the dRICH prototype data\n";
   for(int i = 0; i < t->GetEntries(); i++){
@@ -264,26 +273,26 @@ void getMPPC(THeader *runHead){
     int ntrig=0;
     double trigger=0;
     for(int j = 0; j < nedge; j++){
-    	if(fiber[j]==11 && chM[j]==27 && pol[j]==0){
-		ntrig++;
-		trigger=time[j];
-	}
+      if(fiber[j]==11 && chM[j]==27 && pol[j]==0){
+        ntrig++;
+        trigger=time[j];
+      }
     }
     for(uint j = 0; j < nedge; j++){
       tPol[j]=pol[j];
       tSlot[j]=slot[j];
       tFiber[j]=fiber[j];
       tCh[j]=chM[j];
-      if(fiber[j]!=11 || chM[j]!=27)tTime[j]=time[j]-trigger + 200; //Added offset 200 to distinguish peak from trigger
-      else tTime[j]=time[j]-trigger; //No offset 200 -> Trigger hit
-      //tTime[j]=time[j];
+      if(fiber[j]!=11 || chM[j]!=27)tTime[j]=time[j]-trigger + 400; //Added offset 400 to distinguish peak from trigger
+      else tTime[j]=time[j]-trigger; //No offset 400 -> Trigger hit
+                                     //tTime[j]=time[j];
       board[j]=getMarocBoard(fiber[j],runHead);
       chip[j]=getMarocChip(chM[j]);
       upstreamMaroc(fiber[j], runHead);
       channel[j]= getMPPC_ch(fiber[j],chM[j],board[j],chip[j],runHead->upstreamBoard);
       pmt[j]=FiberToPhDet(fiber[j],&(runHead->fiberRef)[0]);
       MPPCposition(channel[j],pmt[j],&x[j],&y[j],&radius[j]);
-      ntime[j]=timeCalibrationMPPC(time[j],channel[j],pmt[j]);
+      nt[j]=timeCalibrationMPPC(tTime[j],channel[j],pmt[j]);
     }
     if(wrongEvent==true)continue;
     tout->Fill();

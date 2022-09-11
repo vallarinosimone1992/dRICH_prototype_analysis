@@ -84,9 +84,9 @@ void fillHisto(THeader *run){
   TTree *t = (TTree*) fIn->Get("dRICH");
 
   int nedge, pol[MAXDATA], pmt[MAXDATA], spPhoton[10], spnPhoton[10], cutPhoton[10], fiber[MAXDATA], ch[MAXDATA];
-  double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nt[MAXDATA], dur[MAXDATA], rsdRadius[MAXDATA], rsdTime[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10];
+  double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nttw[MAXDATA], dur[MAXDATA], rsdRadius[MAXDATA], rsdTime[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10];
   float gx0, gy0, gx1, gy1, gxa, gya, gxtheta, gytheta;
-  bool goodHit[MAXDATA], coincPhoton[MAXDATA],outerPhoton[MAXDATA], goodSP[10], goodSPN[10], goodCUT[10];
+  bool trigSig[MAXDATA], goodHit[MAXDATA], coincPhoton[MAXDATA],outerPhoton[MAXDATA], goodSP[10], goodSPN[10], goodCUT[10];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
   t->SetBranchAddress("fiber",&fiber);
@@ -98,8 +98,9 @@ void fillHisto(THeader *run){
   t->SetBranchAddress("nx",&nx);
   t->SetBranchAddress("ny",&ny);
   t->SetBranchAddress("nr",&nr);
-  t->SetBranchAddress("ntc",&nt);
+  t->SetBranchAddress("nttw",&nttw);
   t->SetBranchAddress("dur",&dur);
+  t->SetBranchAddress("trigSig",&trigSig);
   t->SetBranchAddress("goodHit",&goodHit);
   t->SetBranchAddress("coincPhoton",&coincPhoton);
   t->SetBranchAddress("outerPhoton",&outerPhoton);
@@ -135,7 +136,6 @@ void fillHisto(THeader *run){
   for(int i = 0; i < t->GetEntries(); i++){
     if(i%100==0)printProgress((double)i/t->GetEntries());
     t->GetEntry(i);
-    if(abs(gxa) > 2 || abs(gya)>2)continue; 
     hUpGEM->Fill(gx0,gy0);
     hDnGEM->Fill(gx1,gy1);
     hBeam->Fill(gxa,gya);
@@ -143,23 +143,26 @@ void fillHisto(THeader *run){
     int nHit = 0;
     hEdge->Fill(nedge);
     for(int j = 0; j < nedge; j++){
-	    if(nt[j] < 355 || nt[j]>360) continue;
       if(pol[j]==0){
-        hTime->Fill(nt[j]);
+        hTime->Fill(nttw[j]);
         hMapNC->Fill(x[j],y[j]);
       }
       if(goodHit[j]==1){
         if(pol[j]==0){
-          hHitStart->Fill(nt[j]);
+          if(dur[j]>35 && trigSig[j]==false)hHitStart->Fill(nttw[j]);
           nHit++;
-	  hHitDur->Fill(dur[j]);
-	  hHitCorrDur->Fill(dur[j],nt[j]);
+	        //if(nttw[j] > run->timeMin && nttw[j] < run->timeMax) hHitDur->Fill(dur[j]);
+	        //if(nttw[j] > 360 && nttw[j] < 370)hHitDur->Fill(dur[j]);
+	        if(trigSig[j]==1)hHitDur->Fill(dur[j]);
+	        hHitCorrDur->Fill(dur[j],nttw[j]);
           }
-        else hHitEnd->Fill(nt[j]);
+        else{
+          if(dur[j]>35 && trigSig[j]==false)hHitEnd->Fill(nttw[j]);
+          }
       }
 
       if(coincPhoton[j]==true){
-        hCoinc->Fill(nt[j]);
+        if(dur[j]>35)hCoinc->Fill(nttw[j]);
         hMap->Fill(x[j],y[j]);
         hRadius->Fill(r[j]);
         hnMap->Fill(nx[j],ny[j]);
@@ -192,13 +195,13 @@ void fillHisto(THeader *run){
       }
     }
     for(int j = 0; j < nedge; j++){
-    	if(goodHit[j]==0 || pol[j]!=0)continue;
-	for(int k = j; k < nedge; k++){
-    		if(goodHit[k]==0 || pol[k]!=1)continue;
-		if(fiber[j]!=fiber[k] || ch[j]!=ch[k]) continue;
-		hHitCorr->Fill(nt[j],nt[k]);
-		break;
-	}
+      if(goodHit[j]==0 || pol[j]!=0)continue;
+      for(int k = j; k < nedge; k++){
+        if(goodHit[k]==0 || pol[k]!=1)continue;
+        if(fiber[j]!=fiber[k] || ch[j]!=ch[k]) continue;
+        hHitCorr->Fill(nttw[j],nttw[k]);
+        break;
+      }
     }
     if(goodSP[4]==true && spPhoton[4] > minPhoGas && spPhoton[4]<maxPhoGas) vspSigPhoGas[spPhoton[4]]->Fill(spRadius[4]);
     if(goodSP[9]==true && spPhoton[9] > minPhoAero && spPhoton[9]<maxPhoAero) vspSigPhoAero[spPhoton[9]]->Fill(spRadius[9]);
@@ -241,7 +244,7 @@ void displayMonitor(THeader *run){
   c1->Draw();
   c1->Print(out_pdf0.c_str());
   c1->cd(1);
-  THStack *hsHitTime = new THStack("hsHitTime","Hit start and End;[ns]");
+  THStack *hsHitTime = new THStack("hsHitTime","Hit start and End - Duration > 35;[ns]");
   hHitEnd->SetLineColor(2);
   hsHitTime->Add(hHitStart);
   hsHitTime->Add(hHitEnd);
@@ -281,9 +284,9 @@ void displayMonitor(THeader *run){
   c1->Update();
   c1->Print(out_pdf.c_str());
 
-  
 
-  
+
+
 
   TCanvas *c2 = new TCanvas("c2","c2",1600,900);
   c2->Divide(3,2);
@@ -835,7 +838,7 @@ void inizializePlot(THeader *run){
   hHitEnd = new TH1D("hHitEnd","Hit end",1000,0,1000);
   hHitDur = new TH1D("hHitDur","Hit duration",101,-.50,100.5);
   hHitCorr = new TH2D("hHitCorr","Hit correlation; Start [ns]; End[ns]",1000,0,1000,1000,0,1000); 
-  hHitCorrDur = new TH2D("hHitCorrDur","Hit correlation; Dur [ns]; Start [ns]",71,-.5,70.5,100,350,450); 
+  hHitCorrDur = new TH2D("hHitCorrDur","Hit correlation; Dur [ns]; Start [ns]",71,-.5,70.5,100,330,430); 
   hHitReco = new TH1D("hHitReco","Number of reconstructed hit for event",151,-0.5,150.5);
   hEdge = new TH1D("hEdge","Number of edge for event",151,-0.5,150.5);
 
