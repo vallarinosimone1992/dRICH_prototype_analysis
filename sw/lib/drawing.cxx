@@ -83,10 +83,11 @@ void fillHisto(THeader *run){
   TFile *fIn = new TFile (fName,"READ");
   TTree *t = (TTree*) fIn->Get("dRICH");
 
-  int nedge, pol[MAXDATA], pmt[MAXDATA], spPhoton[10], spnPhoton[10], cutPhoton[10], fiber[MAXDATA], ch[MAXDATA];
+  int evt, nedge, pol[MAXDATA], pmt[MAXDATA], spPhoton[10], spnPhoton[10], cutPhoton[10], fiber[MAXDATA], ch[MAXDATA];
   double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nttw[MAXDATA], dur[MAXDATA], rsdRadius[MAXDATA], rsdTime[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10];
   float gx0, gy0, gx1, gy1, gxa, gya, gxtheta, gytheta;
   bool trigSig[MAXDATA], goodHit[MAXDATA], coincPhoton[MAXDATA],outerPhoton[MAXDATA], goodSP[10], goodSPN[10], goodCUT[10];
+  t->SetBranchAddress("evt",&evt);
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
   t->SetBranchAddress("fiber",&fiber);
@@ -143,6 +144,9 @@ void fillHisto(THeader *run){
     int nHit = 0;
     hEdge->Fill(nedge);
     for(int j = 0; j < nedge; j++){
+      //if(goodSP[4]!=true && spPhoton[4] <= 2)continue;
+      if(spRadius[9]>150)continue;
+      cout <<evt <<" "<<spRadius[4] <<" " <<spRadius[9] <<" " <<j <<" " <<x[j] <<" " <<y[j] <<endl; 
       if(pol[j]==0){
         hTime->Fill(nttw[j]);
         hMapNC->Fill(x[j],y[j]);
@@ -153,7 +157,7 @@ void fillHisto(THeader *run){
           nHit++;
 	        //if(nttw[j] > run->timeMin && nttw[j] < run->timeMax) hHitDur->Fill(dur[j]);
 	        //if(nttw[j] > 360 && nttw[j] < 370)hHitDur->Fill(dur[j]);
-	        if(trigSig[j]==1)hHitDur->Fill(dur[j]);
+	        if(trigSig[j]==false)hHitDur->Fill(dur[j]);
 	        hHitCorrDur->Fill(dur[j],nttw[j]);
           }
         else{
@@ -179,6 +183,7 @@ void fillHisto(THeader *run){
     hHitReco->Fill(nHit);
     for(int j = 0; j < 10; j++){
       if(goodSP[j]==true && spPhoton[j] > 2){
+      	//if(spRadius[9]>150)continue;
         vspRadius[j]->Fill(spRadius[j]);
         vspTime[j]->Fill(spTime[j]);
         vspPhoton[j]->Fill(spPhoton[j]);
@@ -219,10 +224,11 @@ void fillHisto(THeader *run){
 void displayMonitor(THeader *run){
   gErrorIgnoreLevel=kWarning;
   //Time distibution and coincidence peak zoom, rings before and after correction
-  string out_pdf0 = Form("%soutput/plot/%s/displayMonitor.pdf[",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf = Form("%soutput/plot/%s/displayMonitor.pdf",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf1 = Form("%soutput/plot/%s/displayMonitor.pdf]",run->suite.c_str(),run->outputDir.c_str());
-  string out_root = Form("%soutput/plot/%s/displayMonitor.root",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf0 = Form("%s/output/plot/%s/displayMonitor.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%s/output/plot/%s/displayMonitor.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%s/output/plot/%s/displayMonitor.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%s/output/plot/%s/displayMonitor.root",run->suite.c_str(),run->outputDir.c_str());
+  cout <<"Check: " <<out_pdf.c_str() << endl;
 
   TList *save = new TList();
   save->Add(hTime);
@@ -283,10 +289,6 @@ void displayMonitor(THeader *run){
 
   c1->Update();
   c1->Print(out_pdf.c_str());
-
-
-
-
 
   TCanvas *c2 = new TCanvas("c2","c2",1600,900);
   c2->Divide(3,2);
@@ -352,10 +354,10 @@ void displayMonitor(THeader *run){
 void displayPhotonAnalysis(THeader *run){
   gErrorIgnoreLevel=kWarning;
   //Time distibution and coincidence peak zoom, rings before and after correction
-  string out_pdf0 = Form("%soutput/plot/%s/displayPhotonAnalysis.pdf[",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf = Form("%soutput/plot/%s/displayPhotonAnalysis.pdf",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf1 = Form("%soutput/plot/%s/displayPhotonAnalysis.pdf]",run->suite.c_str(),run->outputDir.c_str());
-  string out_root = Form("%soutput/plot/%s/displayPhotonAnalysis.root",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf0 = Form("%s/output/plot/%s/displayPhotonAnalysis.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%s/output/plot/%s/displayPhotonAnalysis.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%s/output/plot/%s/displayPhotonAnalysis.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%s/output/plot/%s/displayPhotonAnalysis.root",run->suite.c_str(),run->outputDir.c_str());
 
 
   TList *save = new TList();
@@ -469,10 +471,10 @@ void displayPhotonAnalysis(THeader *run){
 void displayBase(THeader *run){
   gErrorIgnoreLevel=kWarning;
   //Time distibution and coincidence peak zoom, rings before and after correction
-  string out_pdf0 = Form("%soutput/plot/%s/displayBase.pdf[",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf = Form("%soutput/plot/%s/displayBase.pdf",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf1 = Form("%soutput/plot/%s/displayBase.pdf]",run->suite.c_str(),run->outputDir.c_str());
-  string out_root = Form("%soutput/plot/%s/displayBase.root",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf0 = Form("%s/output/plot/%s/displayBase.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%s/output/plot/%s/displayBase.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%s/output/plot/%s/displayBase.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%s/output/plot/%s/displayBase.root",run->suite.c_str(),run->outputDir.c_str());
 
   TList *save = new TList();
   save->Add(hTime);
@@ -549,10 +551,10 @@ void displayBase(THeader *run){
 
 void displayRSD(THeader *run){
   gErrorIgnoreLevel=kWarning;
-  string out_pdf0 = Form("%soutput/plot/%s/displayRSD.pdf[",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf = Form("%soutput/plot/%s/displayRSD.pdf",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf1 = Form("%soutput/plot/%s/displayRSD.pdf]",run->suite.c_str(),run->outputDir.c_str());
-  string out_root = Form("%soutput/plot/%s/displayRSD.root",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf0 = Form("%s/output/plot/%s/displayRSD.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%s/output/plot/%s/displayRSD.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%s/output/plot/%s/displayRSD.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%s/output/plot/%s/displayRSD.root",run->suite.c_str(),run->outputDir.c_str());
   TList *save = new TList();
   save->Add(vrsdRadius[0]);
   save->Add(vrsdRadius[1]);
@@ -606,10 +608,10 @@ void displayRSD(THeader *run){
 
 void displaySP(THeader *run){
   gErrorIgnoreLevel=kWarning;
-  string out_pdf0 = Form("%soutput/plot/%s/displaySP.pdf[",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf = Form("%soutput/plot/%s/displaySP.pdf",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf1 = Form("%soutput/plot/%s/displaySP.pdf]",run->suite.c_str(),run->outputDir.c_str());
-  string out_root = Form("%soutput/plot/%s/displaySP.root",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf0 = Form("%s/output/plot/%s/displaySP.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%s/output/plot/%s/displaySP.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%s/output/plot/%s/displaySP.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%s/output/plot/%s/displaySP.root",run->suite.c_str(),run->outputDir.c_str());
   TList *save = new TList();
   save->Add(vspRadius[4]);
   save->Add(vspTime[4]);
@@ -677,10 +679,10 @@ void displaySP(THeader *run){
 
 void displaySPN(THeader *run){
   gErrorIgnoreLevel=kWarning;
-  string out_pdf0 = Form("%soutput/plot/%s/displaySPN.pdf[",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf = Form("%soutput/plot/%s/displaySPN.pdf",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf1 = Form("%soutput/plot/%s/displaySPN.pdf]",run->suite.c_str(),run->outputDir.c_str());
-  string out_root = Form("%soutput/plot/%s/displaySPN.root",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf0 = Form("%s/output/plot/%s/displaySPN.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%s/output/plot/%s/displaySPN.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%s/output/plot/%s/displaySPN.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%s/output/plot/%s/displaySPN.root",run->suite.c_str(),run->outputDir.c_str());
   TList *save = new TList();
   save->Add(vspnRadius[4]);
   save->Add(vspnTime[4]);
@@ -748,10 +750,10 @@ void displaySPN(THeader *run){
 
 void displayCUT(THeader *run){
   gErrorIgnoreLevel=kWarning;
-  string out_pdf0 = Form("%soutput/plot/%s/displayCUT.pdf[",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf = Form("%soutput/plot/%s/displayCUT.pdf",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf1 = Form("%soutput/plot/%s/displayCUT.pdf]",run->suite.c_str(),run->outputDir.c_str());
-  string out_root = Form("%soutput/plot/%s/displayCUT.root",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf0 = Form("%s/output/plot/%s/displayCUT.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%s/output/plot/%s/displayCUT.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%s/output/plot/%s/displayCUT.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%s/output/plot/%s/displayCUT.root",run->suite.c_str(),run->outputDir.c_str());
   TList *save = new TList();
   save->Add(vcutRadius[4]);
   save->Add(vcutTime[4]);
@@ -823,8 +825,9 @@ void displayCUT(THeader *run){
 
 
 void inizializePlot(THeader *run){
-  //Create output directory
-  string out_dir = Form("%soutput/plot/%s",run->suite.c_str(),run->outputDir.c_str());
+  //Create /output directory
+  string out_dir = Form("%s/output/plot/%s",run->suite.c_str(),run->outputDir.c_str());
+  cout <<out_dir.c_str() <<endl;
   if(gSystem->AccessPathName(out_dir.c_str())){
     if(std::system(Form("mkdir -p %s",out_dir.c_str()))){
       cout <<"[ERROR] Output directory not created\n";

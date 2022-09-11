@@ -70,7 +70,7 @@ void fitSigma(TH1D *h, bool out){
     max=22;
   }else{
     min=2;
-    max=8;
+    max=10;
   }
   h->Fit("f","Q","",min,max);
 }

@@ -104,7 +104,7 @@ void rmsCutSelection(THeader *run){
   t->SetBranchAddress("rsdTime",&rsdTime);
   t->SetBranchAddress("goodRMS",&goodRMS);
   t->SetBranchAddress("goodHit",&goodHit);
-  t->SetBranchAddress("goodHit",&goodHit);
+  //t->SetBranchAddress("goodHit",&goodHit);
 
   bool cutPhotonFlag[MAXDATA];
   auto tcutPhotonFlag= t->Branch("cutPhotonFlag",&cutPhotonFlag,"cutPhotonFlag[nedge]/O");
@@ -145,7 +145,7 @@ void selectPhotons(THeader *run){
   TTree *t = (TTree*) fIn->Get("dRICH");
 
   int nedge, pol[MAXDATA];
-  double x[MAXDATA],y[MAXDATA],r[MAXDATA],nttw[MAXDATA];
+  double x[MAXDATA],y[MAXDATA],r[MAXDATA],nttw[MAXDATA], dur[MAXDATA];
   bool goodHit[MAXDATA],trigSig[MAXDATA];
 
   t->SetBranchAddress("nedge",&nedge);
@@ -154,6 +154,7 @@ void selectPhotons(THeader *run){
   t->SetBranchAddress("x",&x);
   t->SetBranchAddress("y",&y);
   t->SetBranchAddress("r",&r);
+  t->SetBranchAddress("dur",&dur);
   t->SetBranchAddress("goodHit",&goodHit);
   t->SetBranchAddress("trigSig",&trigSig);
 
@@ -169,7 +170,7 @@ void selectPhotons(THeader *run){
       coincPhoton[j]=false;
       outerPhoton[j]=false;
       if(goodHit[j]==false)continue;
-      if(pol[j]==0 && nttw[j] > run->timeMin && nttw[j] < run->timeMax && trigSig[j]==false) coincPhoton[j]=true;
+      if(pol[j]==0 && nttw[j] > run->timeMin && nttw[j] < run->timeMax && trigSig[j]==false && dur[j] > 35) coincPhoton[j]=true;
       //if(r[j] > run->geoCut)outerPhoton[j]=true;
       if(r[j] > run->radCut)outerPhoton[j]=true;
       //Attention, if you refine the cut you should check the conversion to milliradiant.
