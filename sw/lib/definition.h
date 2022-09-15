@@ -51,6 +51,7 @@ struct THeader{
   float DnGEMyRunOff;
   double timeMin;
   double timeMax;
+  double durMin=35;
   string outputDir;
 
   double MaxHitLength=100;

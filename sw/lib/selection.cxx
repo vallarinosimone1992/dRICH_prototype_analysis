@@ -139,7 +139,7 @@ void rmsCutSelection(THeader *run){
 
 ////////////////////////////////////////////////////
 
-void selectPhotons(THeader *run){
+void coincidence(THeader *run){
   TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
   TFile *fIn = new TFile (fName,"UPDATE");
   TTree *t = (TTree*) fIn->Get("dRICH");
@@ -158,9 +158,8 @@ void selectPhotons(THeader *run){
   t->SetBranchAddress("goodHit",&goodHit);
   t->SetBranchAddress("trigSig",&trigSig);
 
-  bool coincPhoton[MAXDATA], outerPhoton[MAXDATA];
+  bool coincPhoton[MAXDATA];
   auto tCoincPhoton= t->Branch("coincPhoton",&coincPhoton,"coincPhoton[nedge]/O");
-  auto tOuterPhoton= t->Branch("outerPhoton",&outerPhoton,"outerPhoton[nedge]/O");
 
   cout <<"Selecting the photon in the time coincidence window and dividing rings\n";
   for(int i = 0; i < t->GetEntries(); i++){
@@ -168,14 +167,56 @@ void selectPhotons(THeader *run){
     t->GetEntry(i);
     for(int j = 0; j < nedge; j++){
       coincPhoton[j]=false;
-      outerPhoton[j]=false;
       if(goodHit[j]==false)continue;
-      if(pol[j]==0 && nttw[j] > run->timeMin && nttw[j] < run->timeMax && trigSig[j]==false && dur[j] > 35) coincPhoton[j]=true;
+      if(pol[j]==0 && nttw[j] > run->timeMin && nttw[j] < run->timeMax && trigSig[j]==false) coincPhoton[j]=true;
+    }
+    tCoincPhoton->Fill();
+  }
+  printEnd();
+  t->Write("",TObject::kOverwrite);
+  fIn->Close();
+}
+
+
+/////////////////////////////////////////////////////
+
+void selectPhotons(THeader *run){
+  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
+  TFile *fIn = new TFile (fName,"UPDATE");
+  TTree *t = (TTree*) fIn->Get("dRICH");
+
+  int nedge, pol[MAXDATA];
+  double x[MAXDATA],y[MAXDATA],r[MAXDATA],nttw[MAXDATA], dur[MAXDATA];
+  bool coincPhoton[MAXDATA],trigSig[MAXDATA];
+
+  t->SetBranchAddress("nedge",&nedge);
+  t->SetBranchAddress("pol",&pol);
+  t->SetBranchAddress("nttw",&nttw);
+  t->SetBranchAddress("x",&x);
+  t->SetBranchAddress("y",&y);
+  t->SetBranchAddress("r",&r);
+  t->SetBranchAddress("dur",&dur);
+  t->SetBranchAddress("coincPhoton",&coincPhoton);
+  t->SetBranchAddress("trigSig",&trigSig);
+
+  bool goodPhoton[MAXDATA], outerPhoton[MAXDATA];
+  auto tGoodPhoton= t->Branch("goodPhoton",&goodPhoton,"goodPhoton[nedge]/O");
+  auto tOuterPhoton= t->Branch("outerPhoton",&outerPhoton,"outerPhoton[nedge]/O");
+
+  cout <<"Selecting the photon in the time goodidence window and dividing rings\n";
+  for(int i = 0; i < t->GetEntries(); i++){
+    if(i%100==0)printProgress((double)i/t->GetEntries());
+    t->GetEntry(i);
+    for(int j = 0; j < nedge; j++){
+      goodPhoton[j]=false;
+      if(coincPhoton[j]==false)continue;
+      outerPhoton[j]=false;
+      if(dur[j] > run->durMin) goodPhoton[j]=true;
       //if(r[j] > run->geoCut)outerPhoton[j]=true;
       if(r[j] > run->radCut)outerPhoton[j]=true;
       //Attention, if you refine the cut you should check the conversion to milliradiant.
     }
-    tCoincPhoton->Fill();
+    tGoodPhoton->Fill();
     tOuterPhoton->Fill();
   }
   printEnd();

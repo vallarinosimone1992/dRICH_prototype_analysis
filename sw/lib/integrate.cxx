@@ -39,7 +39,7 @@ void noGEM_Integration(THeader *run){
   t->SetTitle("dRICH and GEM data");
 
   uint nedge;
-  int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], slot[MAXDATA], fiber[MAXDATA], ch[MAXDATA], time[MAXDATA], marocCh[MAXDATA], pmt[MAXDATA];
+  int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], slot[MAXDATA], fiber[MAXDATA], ch[MAXDATA], time[MAXDATA], marocCh[MAXDATA], pmt[MAXDATA], otime[MAXDATA];
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA], ntime[MAXDATA];
   double trigtime;
   bool trigSig[MAXDATA];
@@ -52,6 +52,7 @@ void noGEM_Integration(THeader *run){
   t->SetBranchAddress("fiber",&fiber);
   t->SetBranchAddress("ch",&ch);
   t->SetBranchAddress("time",&time);
+  t->SetBranchAddress("origTime",&otime);
   t->SetBranchAddress("board",&board);
   t->SetBranchAddress("chip",&chip);
   t->SetBranchAddress("pmt",&pmt);
@@ -68,18 +69,19 @@ void noGEM_Integration(THeader *run){
   TFile *fOut = new TFile(fOutName,"RECREATE"); 
   TTree *tout = new TTree("dRICH","dRICH integrated data");
   
-  int tevt, tnedge, tpol[MAXDATA], tslot[MAXDATA], tfiber[MAXDATA], tch[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA];
+  int tevt, tnedge, tpol[MAXDATA], tslot[MAXDATA], tfiber[MAXDATA], tch[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA], totime[MAXDATA];
   double ttrigtime, tx[MAXDATA],ty[MAXDATA],tr[MAXDATA], tnt[MAXDATA];
   bool dataGEM, ttrigSig[MAXDATA];
 
   auto tEvt=tout->Branch("evt",&tevt,"evt/I");
-  auto tTrigtime=tout->Branch("trigtime",&ttrigtime,"trigtime/I");
+  auto tTrigtime=tout->Branch("trigtime",&ttrigtime,"trigtime/D");
   auto tNedge=tout->Branch("nedge",&tnedge,"nedge/I");
   auto tPol=tout->Branch("pol",&tpol,"pol[nedge]/I");
   auto tSlot=tout->Branch("slot",&tslot,"slot[nedge]/I");
   auto tFiber=tout->Branch("fiber",&tfiber,"fiber[nedge]/I");
   auto tCh=tout->Branch("ch",&tch,"ch[nedge]/I");
   auto tTime=tout->Branch("time",&ttime,"time[nedge]/I");
+  auto toTime=tout->Branch("otime",&totime,"original_time[nedge]/I");
   auto tPmt=tout->Branch("pmt",&tpmt,"pmt[nedge]/I");
   auto tBoard=tout->Branch("board",&tboard,"board[nedge]/I");
   auto tChip=tout->Branch("chip",&tchip,"chip[nedge]/I");
@@ -87,7 +89,7 @@ void noGEM_Integration(THeader *run){
   auto tY=tout->Branch("y",&ty,"y[nedge]/D");
   auto tR=tout->Branch("r",&tr,"r[nedge]/D");
   auto tNT=tout->Branch("nt",&tnt,"nt[nedge]/D");
-  auto tTrigSig=tout->Branch("trigSig",&ttrigSig,"trigSig[nedge]/D");
+  auto tTrigSig=tout->Branch("trigSig",&ttrigSig,"trigSig[nedge]/O");
 
   auto tGX0=tout->Branch("gx0",&gx0,"gx0/F");
   auto tGY0=tout->Branch("gy0",&gy0,"gy0/F");
@@ -116,6 +118,7 @@ void noGEM_Integration(THeader *run){
       tboard[j]=board[j];
       tchip[j]=chip[j];
       ttime[j]=time[j];
+      totime[j]=otime[j];
       tpmt[j]=pmt[j];
       tx[j]=x[j];
       ty[j]=y[j];
@@ -169,7 +172,7 @@ void TTreeIntegration(THeader *run){
   TTree *tGEM = (TTree*) fGEM->Get("gtr");
 
   uint nedge;
-  int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], slot[MAXDATA], fiber[MAXDATA], ch[MAXDATA], time[MAXDATA], marocCh[MAXDATA], pmt[MAXDATA];
+  int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], slot[MAXDATA], fiber[MAXDATA], ch[MAXDATA], time[MAXDATA], marocCh[MAXDATA], pmt[MAXDATA], otime[MAXDATA];
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA], ntime[MAXDATA];
   double trigtime;
   bool trigSig[MAXDATA];
@@ -182,6 +185,7 @@ void TTreeIntegration(THeader *run){
   t->SetBranchAddress("fiber",&fiber);
   t->SetBranchAddress("ch",&ch);
   t->SetBranchAddress("time",&time);
+  t->SetBranchAddress("origTime",&otime);
   t->SetBranchAddress("board",&board);
   t->SetBranchAddress("chip",&chip);
   t->SetBranchAddress("pmt",&pmt);
@@ -211,17 +215,18 @@ void TTreeIntegration(THeader *run){
   TFile *fOut = new TFile(fOutName,"RECREATE"); 
   TTree *tout = new TTree("dRICH","dRICH integrated data");
 
-  int tevt, tnedge, tpol[MAXDATA], tslot[MAXDATA], tfiber[MAXDATA], tch[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA];
+  int tevt, tnedge, tpol[MAXDATA], tslot[MAXDATA], tfiber[MAXDATA], tch[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA], totime[MAXDATA];
   double ttrigtime, tx[MAXDATA],ty[MAXDATA],tr[MAXDATA], tnt[MAXDATA];
   bool dataGEM, ttrigSig[MAXDATA];
   auto tEvt=tout->Branch("evt",&tevt,"evt/I");
-  auto tTrigtime=tout->Branch("trigtime",&ttrigtime,"trigtime/I");
+  auto tTrigtime=tout->Branch("trigtime",&ttrigtime,"trigtime/D");
   auto tNedge=tout->Branch("nedge",&tnedge,"nedge/I");
   auto tPol=tout->Branch("pol",&tpol,"pol[nedge]/I"); 
   auto tSlot=tout->Branch("slot",&tslot,"slot[nedge]/I");
   auto tFiber=tout->Branch("fiber",&tfiber,"fiber[nedge]/I");
   auto tCh=tout->Branch("ch",&tch,"ch[nedge]/I");
   auto tTime=tout->Branch("time",&ttime,"time[nedge]/I");
+  auto toTime=tout->Branch("otime",&totime,"original_time[nedge]/I");
   auto tPmt=tout->Branch("pmt",&tpmt,"pmt[nedge]/I");
   auto tBoard=tout->Branch("board",&tboard,"board[nedge]/I");
   auto tChip=tout->Branch("chip",&tchip,"chip[nedge]/I");
@@ -229,7 +234,7 @@ void TTreeIntegration(THeader *run){
   auto tY=tout->Branch("y",&ty,"y[nedge]/D");
   auto tR=tout->Branch("r",&tr,"r[nedge]/D");
   auto tNT=tout->Branch("nt",&tnt,"nt[nedge]/D");
-  auto tTrigSig=tout->Branch("trigSig",&ttrigSig,"trigSig[nedge]/D");
+  auto tTrigSig=tout->Branch("trigSig",&ttrigSig,"trigSig[nedge]/O");
 
   TH1D *hX0 = new TH1D("hX0","hX0",200,-100,100);
   TH1D *hY0 = new TH1D("hY0","hY0",200,-100,100);
@@ -269,6 +274,7 @@ void TTreeIntegration(THeader *run){
       tboard[j]=board[j];
       tchip[j]=chip[j];
       ttime[j]=time[j];
+      totime[j]=otime[j];
       tpmt[j]=pmt[j];
       tx[j]=x[j];
       ty[j]=y[j];

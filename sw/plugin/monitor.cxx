@@ -75,7 +75,9 @@ int main(int argc, char *argv[]){
 
   inizializePlot(&header[0]);
   for(int i = 0; i < header.size(); i++)  fillHisto(&header[i]);
+  for(int i = 0; i < header.size(); i++)  fillHistoMon(&header[i]);
   displayMonitor(&header[0]);
+  displayMonitor2(&header[0]);
 
   theApp.Run();
   exit(EXIT_SUCCESS);

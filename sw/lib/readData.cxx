@@ -46,9 +46,9 @@ void getMAPMT(THeader *runHead){
   t->SetBranchAddress("pol",&pol);
   t->SetBranchAddress("time",&time);
 
-  int evt, tPol[MAXDATA], tSlot[MAXDATA], tFiber[MAXDATA], tCh[MAXDATA] ,tTime[MAXDATA], board[MAXDATA], chip[MAXDATA];
+  int evt, tPol[MAXDATA], tSlot[MAXDATA], tFiber[MAXDATA], tCh[MAXDATA] ,tTime[MAXDATA], board[MAXDATA], chip[MAXDATA], oTime[MAXDATA];
   uint tNedge;
-  double tTrigTime;
+  double tTrigTime, trigger;
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA],nt[MAXDATA];
   int pmt[MAXDATA], channel[MAXDATA];
   bool trigSig[MAXDATA];
@@ -73,6 +73,8 @@ void getMAPMT(THeader *runHead){
   (void)tchip;
   auto ttime=tout->Branch("time",&tTime,"time[nedge]/I");
   (void)ttime;
+  auto totime=tout->Branch("origTime",&oTime,"original_time[nedge]/I");
+  (void)totime;
   auto tpmt=tout->Branch("pmt",&pmt,"pmt[nedge]/I");
   (void)tpmt;
   auto tchannel=tout->Branch("marocCh",&channel,"marocCh[nedge]/I");
@@ -86,6 +88,7 @@ void getMAPMT(THeader *runHead){
   auto tnt=tout->Branch("nt",&nt,"nt[nedge]/D");
   (void)tnt;
   auto ttrigSig=tout->Branch("trigSig",&trigSig,"trigSig[nedge]/O");
+  (void)ttrigSig;
 
   cout <<"Taking the dRICH prototype data\n";
   for(int i = 0; i < t->GetEntries(); i++){
@@ -118,18 +121,18 @@ void getMAPMT(THeader *runHead){
         }
       }
     }
-    
+
     evt=(int)evtDRICH;
     tTrigTime=trigtime;
     tNedge=nedge;
     bool wrongEvent=false;
     int ntrig=0;
-    double trigger=0;
+    trigger=0;
     for(int j = 0; j < nedge; j++){
-    	if(fiber[j]==11 && chM[j]==27 && pol[j]==0){
-		ntrig++;
-		trigger=time[j];
-	}
+      if(fiber[j]==11 && chM[j]==27 && pol[j]==0){
+        ntrig++;
+        trigger=time[j];
+      }
     }
     if(ntrig!=1)continue;
     for(uint j = 0; j < nedge; j++){
@@ -143,6 +146,7 @@ void getMAPMT(THeader *runHead){
       board[j]=getMarocBoard(fiber[j],runHead);
       upstreamMaroc(fiber[j], runHead);
       channel[j]= getMAPMT_ch(fiber[j],chM[j],board[j],chip[j],runHead->upstreamBoard);
+      oTime[j]=time[j];
       if(fiber[j]!=11 || chip[j]!=0){
         tTime[j]=time[j]-trigger + 400; //Added offset 400 to distinguish peak from trigger
         trigSig[j]=false;
@@ -155,6 +159,7 @@ void getMAPMT(THeader *runHead){
       nt[j]=timeCalibrationMAPMT(tTime[j],channel[j],pmt[j]);
     }
     if(wrongEvent==true)continue;
+    tTrigTime=trigger;
     tout->Fill();
   }
   printEnd();

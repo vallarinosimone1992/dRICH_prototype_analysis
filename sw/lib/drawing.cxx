@@ -1,8 +1,6 @@
 #define MAXDATA 10000
 #include <iostream>
 #include <vector>
-//#include <filesystem>
-//namespace fs = std::filesystem;
 
 #include <TF1.h>
 #include <TH1D.h>
@@ -43,7 +41,6 @@ static TH2D *hDnGEM;
 static TH2D *hBeam;
 static TH2D *hBeamTheta;
 
-
 static vector<TH1D*> vrsdRadius;
 static vector<TH1D*> vrsdTime;
 
@@ -70,12 +67,123 @@ static TH1D *hspSigVsPhoAero;
 static TH1D *hspnSigVsPhoAero;
 static TH1D *hcutSigVsPhoAero;
 
+static TH2D *hCalibVsTime;
+static TH2D *hCalibVsCh;
+static TH2D *hTimeVsCh;
+static TH2D *hTimeWalkVsTime;
+static TH1D *hDur;
+static TH2D *hStartVsDur;
+static TH1D *hSingPhotRad;
+static TH1D *hTimeRespectTrigger;
+
+
 static int minPhoGas=2;
 static int maxPhoGas=50;
 static int minPhoAero=2;
 static int maxPhoAero=15;
 
 
+
+void fillHistoMon(THeader *run){
+  gErrorIgnoreLevel=kWarning;
+  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
+  TFile *fIn = new TFile (fName,"READ");
+  TTree *t = (TTree*) fIn->Get("dRICH");
+
+  int evt, nedge, pol[MAXDATA], pmt[MAXDATA], spPhoton[10], spnPhoton[10], cutPhoton[10], fiber[MAXDATA], ch[MAXDATA], time[MAXDATA], otime[MAXDATA];
+  double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nt[MAXDATA], nttw[MAXDATA], dur[MAXDATA], rsdRadius[MAXDATA], rsdTime[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10];
+  float gx0, gy0, gx1, gy1, gxa, gya, gxtheta, gytheta;
+  bool trigSig[MAXDATA], goodHit[MAXDATA], goodPhoton[MAXDATA], coincPhoton[MAXDATA],outerPhoton[MAXDATA], goodSP[10], goodSPN[10], goodCUT[10];
+  t->SetBranchAddress("evt",&evt);
+  t->SetBranchAddress("nedge",&nedge);
+  t->SetBranchAddress("pol",&pol);
+  t->SetBranchAddress("fiber",&fiber);
+  t->SetBranchAddress("ch",&ch);
+  t->SetBranchAddress("pmt",&pmt);
+  t->SetBranchAddress("x",&x);
+  t->SetBranchAddress("y",&y);
+  t->SetBranchAddress("r",&r);
+  t->SetBranchAddress("time",&time);
+  t->SetBranchAddress("otime",&otime);
+  t->SetBranchAddress("nx",&nx);
+  t->SetBranchAddress("ny",&ny);
+  t->SetBranchAddress("nr",&nr);
+  t->SetBranchAddress("nt",&nt);
+  t->SetBranchAddress("nttw",&nttw);
+  t->SetBranchAddress("dur",&dur);
+  t->SetBranchAddress("trigSig",&trigSig);
+  t->SetBranchAddress("goodHit",&goodHit);
+  t->SetBranchAddress("goodPhoton",&goodPhoton);
+  t->SetBranchAddress("coincPhoton",&coincPhoton);
+  t->SetBranchAddress("outerPhoton",&outerPhoton);
+  t->SetBranchAddress("rsdRadius",&rsdRadius);
+  t->SetBranchAddress("rsdTime",&rsdTime);
+  t->SetBranchAddress("gx0",&gx0);
+  t->SetBranchAddress("gy0",&gy0);
+  t->SetBranchAddress("gx1",&gx1);
+  t->SetBranchAddress("gy1",&gy1);
+  t->SetBranchAddress("gxa",&gxa);
+  t->SetBranchAddress("gya",&gya);
+  t->SetBranchAddress("gxtheta",&gxtheta);
+  t->SetBranchAddress("gytheta",&gytheta);
+  t->SetBranchAddress("spRadius",&spRadius);
+  t->SetBranchAddress("spTime",&spTime);
+  t->SetBranchAddress("spPhoton",&spPhoton);
+  t->SetBranchAddress("goodSP",&goodSP);
+  t->SetBranchAddress("spnRadius",&spnRadius);
+  t->SetBranchAddress("spnTime",&spnTime);
+  t->SetBranchAddress("spnPhoton",&spnPhoton);
+  t->SetBranchAddress("goodSPN",&goodSPN);
+  t->SetBranchAddress("cutRadius",&cutRadius);
+  t->SetBranchAddress("cutTime",&cutTime);
+  t->SetBranchAddress("cutPhoton",&cutPhoton);
+  t->SetBranchAddress("goodCUT",&goodCUT);
+
+  cout <<Form("Filling monitoring histograms for run %d\n",run->runNum);;
+  for(int i = 0; i < t->GetEntries(); i++){
+    if(i%100==0)printProgress((double)i/t->GetEntries());
+    t->GetEntry(i);
+    hUpGEM->Fill(gx0,gy0);
+    hDnGEM->Fill(gx1,gy1);
+    hBeam->Fill(gxa,gya);
+    hBeamTheta->Fill(gxtheta,gytheta);
+    int nHit = 0;
+    for(int j = 0; j < nedge; j++){
+      if(trigSig[j]==0 && coincPhoton[j]==true){
+        hCalibVsTime->Fill(otime[j],nt[j]);
+        int reference=0;
+        if(fiber[j] == 4 || fiber[j] == 5 || fiber[j] == 6 ||  fiber[j] == 7){
+          if(ch[j] < 100) reference = 128*(fiber[j]-4)+ch[j];
+          if(ch[j] > 100) reference = 128*(fiber[j]-4)+ch[j]-64;
+
+        }else if(fiber[j] == 8 || fiber[j] == 9 || fiber[j] == 10 ||  fiber[j] == 11){
+          reference = 128*(fiber[j]-4)+ch[j]-64;
+        }
+        hCalibVsCh->Fill(reference,nt[j]);
+        hTimeVsCh->Fill(reference,time[j]);
+        hTimeWalkVsTime->Fill(otime[j],nttw[j]);
+        if(goodHit[j]==true){
+          if(pol[j]==0){
+            //hHitStart->Fill(nttw[j]);
+            hDur->Fill(dur[j]);
+            hStartVsDur->Fill(nttw[j],dur[j]);
+            nHit++;
+          }else {
+            //hHitEnd->Fill(nttw[j]);
+          }
+        }
+        if(goodPhoton[j]==1){
+          hMap->Fill(x[j],y[j]);
+          hSingPhotRad->Fill(r[j]);
+        }
+      }
+
+    }
+    if(nHit!=0)hHitReco->Fill(nHit);
+  }
+  printEnd();
+  fIn->Close();
+}
 
 void fillHisto(THeader *run){
   gErrorIgnoreLevel=kWarning;
@@ -107,7 +215,7 @@ void fillHisto(THeader *run){
   t->SetBranchAddress("outerPhoton",&outerPhoton);
   t->SetBranchAddress("rsdRadius",&rsdRadius);
   t->SetBranchAddress("rsdTime",&rsdTime);
-  
+
   t->SetBranchAddress("gx0",&gx0);
   t->SetBranchAddress("gy0",&gy0);
   t->SetBranchAddress("gx1",&gx1);
@@ -116,7 +224,7 @@ void fillHisto(THeader *run){
   t->SetBranchAddress("gya",&gya);
   t->SetBranchAddress("gxtheta",&gxtheta);
   t->SetBranchAddress("gytheta",&gytheta);
-  
+
   t->SetBranchAddress("spRadius",&spRadius);
   t->SetBranchAddress("spTime",&spTime);
   t->SetBranchAddress("spPhoton",&spPhoton);
@@ -145,8 +253,8 @@ void fillHisto(THeader *run){
     hEdge->Fill(nedge);
     for(int j = 0; j < nedge; j++){
       //if(goodSP[4]!=true && spPhoton[4] <= 2)continue;
-      if(spRadius[9]>150)continue;
-      cout <<evt <<" "<<spRadius[4] <<" " <<spRadius[9] <<" " <<j <<" " <<x[j] <<" " <<y[j] <<endl; 
+      //if(spRadius[9]>150)continue;
+      //cout <<evt <<" "<<spRadius[4] <<" " <<spRadius[9] <<" " <<j <<" " <<x[j] <<" " <<y[j] <<endl; 
       if(pol[j]==0){
         hTime->Fill(nttw[j]);
         hMapNC->Fill(x[j],y[j]);
@@ -155,14 +263,14 @@ void fillHisto(THeader *run){
         if(pol[j]==0){
           if(dur[j]>35 && trigSig[j]==false)hHitStart->Fill(nttw[j]);
           nHit++;
-	        //if(nttw[j] > run->timeMin && nttw[j] < run->timeMax) hHitDur->Fill(dur[j]);
-	        //if(nttw[j] > 360 && nttw[j] < 370)hHitDur->Fill(dur[j]);
-	        if(trigSig[j]==false)hHitDur->Fill(dur[j]);
-	        hHitCorrDur->Fill(dur[j],nttw[j]);
-          }
+          //if(nttw[j] > run->timeMin && nttw[j] < run->timeMax) hHitDur->Fill(dur[j]);
+          //if(nttw[j] > 360 && nttw[j] < 370)hHitDur->Fill(dur[j]);
+          if(trigSig[j]==false)hHitDur->Fill(dur[j]);
+          hHitCorrDur->Fill(dur[j],nttw[j]);
+        }
         else{
           if(dur[j]>35 && trigSig[j]==false)hHitEnd->Fill(nttw[j]);
-          }
+        }
       }
 
       if(coincPhoton[j]==true){
@@ -183,7 +291,7 @@ void fillHisto(THeader *run){
     hHitReco->Fill(nHit);
     for(int j = 0; j < 10; j++){
       if(goodSP[j]==true && spPhoton[j] > 2){
-      	//if(spRadius[9]>150)continue;
+        //if(spRadius[9]>150)continue;
         vspRadius[j]->Fill(spRadius[j]);
         vspTime[j]->Fill(spTime[j]);
         vspPhoton[j]->Fill(spPhoton[j]);
@@ -221,35 +329,37 @@ void fillHisto(THeader *run){
   fIn->Close();
 }
 
-void displayMonitor(THeader *run){
+void displayMonitor2(THeader *run){
   gErrorIgnoreLevel=kWarning;
   //Time distibution and coincidence peak zoom, rings before and after correction
-  string out_pdf0 = Form("%s/output/plot/%s/displayMonitor.pdf[",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf = Form("%s/output/plot/%s/displayMonitor.pdf",run->suite.c_str(),run->outputDir.c_str());
-  string out_pdf1 = Form("%s/output/plot/%s/displayMonitor.pdf]",run->suite.c_str(),run->outputDir.c_str());
-  string out_root = Form("%s/output/plot/%s/displayMonitor.root",run->suite.c_str(),run->outputDir.c_str());
-  cout <<"Check: " <<out_pdf.c_str() << endl;
+  string out_pdf0 = Form("%s/output/plot/%s/displayMonitor2.pdf[",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf = Form("%s/output/plot/%s/displayMonitor2.pdf",run->suite.c_str(),run->outputDir.c_str());
+  string out_pdf1 = Form("%s/output/plot/%s/displayMonitor2.pdf]",run->suite.c_str(),run->outputDir.c_str());
+  string out_root = Form("%s/output/plot/%s/displayMonitor2.root",run->suite.c_str(),run->outputDir.c_str());
 
+  cout <<out_root.c_str() <<endl;
   TList *save = new TList();
-  save->Add(hTime);
-  save->Add(hCoinc);
-  save->Add(hHitStart);
+  save->Add(hCalibVsTime);
+  save->Add(hCalibVsCh);
+  save->Add(hTimeVsCh);
+  save->Add(hTimeWalkVsTime);
+  save->Add(hDur);
+  save->Add(hStartVsDur);
+  save->Add(hSingPhotRad);
+  save->Add(hTimeRespectTrigger);
   save->Add(hHitEnd);
-  save->Add(hHitDur);
-  save->Add(hHitCorr);
-  save->Add(hHitCorrDur);
-  save->Add(hHitReco);
-  save->Add(hEdge);
-  save->Add(hMap);
-  save->Add(hnMap);
-  save->Add(hRadius);
-  save->Add(hnRadius);
+  save->Add(hHitStart);
 
-  TCanvas *c1 = new TCanvas("c1","c1",1600,900);
-  c1->Divide(4,2);
-  c1->Draw();
-  c1->Print(out_pdf0.c_str());
-  c1->cd(1);
+
+  TCanvas *c4 = new TCanvas("c4","c4",1600,900);
+  c4->Divide(4,2);
+  c4->Draw();
+  c4->Print(out_pdf0.c_str());
+  c4->cd(1);
+  hCalibVsTime->Draw("colz");
+  c4->cd(5);
+  hTimeWalkVsTime->Draw("colz");
+  c4->cd(2);
   THStack *hsHitTime = new THStack("hsHitTime","Hit start and End - Duration > 35;[ns]");
   hHitEnd->SetLineColor(2);
   hsHitTime->Add(hHitStart);
@@ -257,79 +367,29 @@ void displayMonitor(THeader *run){
   hsHitTime->Draw("nostack");
   hsHitTime->GetXaxis()->SetRangeUser(300,600);
   hsHitTime->Draw("nostack");
-  //hTime->Draw();
   TLine *l1 = new TLine(run->timeMin,0,run->timeMin,hTime->GetBinContent(hTime->GetMaximumBin()));
   l1->SetLineColor(3);
   l1->Draw("same");
   TLine *l2 = new TLine(run->timeMax,0,run->timeMax,hTime->GetBinContent(hTime->GetMaximumBin()));
   l2->SetLineColor(3);
   l2->Draw("same");
-  c1->Update();
-  c1->cd(5);
-  hCoinc->Draw();
-  TF1 *fcoinc = new TF1("fcoinc","gaus(0)",200,400);
-  fcoinc->SetParameters(20000,355,2);
-  hCoinc->Fit(fcoinc,"Q","",run->timeMin,run->timeMax);
-  l1->SetY2(hCoinc->GetBinContent(hCoinc->GetMaximumBin()));
-  l2->SetY2(hCoinc->GetBinContent(hCoinc->GetMaximumBin()));
-  l1->Draw("same");
-  l2->Draw("same");
-  c1->cd(2);
-  hHitDur->Draw();
-  c1->cd(3);
-  hHitCorr->Draw("colz");
-  c1->cd(6);
-  hHitReco->Draw();
-  c1->cd(7);
-  hHitCorrDur->Draw("colz");
-  c1->cd(4);
+  c4->cd(6);
+  hDur->Draw();
+  c4->cd(3);
+  hStartVsDur->Draw("colz");
+  c4->cd(7);
+  //hHitReco->Draw();
+  hTimeVsCh->Draw("colz");//hSingPhotRad->Draw();
+  c4->cd(4);
   hMap->Draw("colz");
-  c1->cd(8);
-  hMapNC->Draw("colz");
+  c4->cd(8);
+  hCalibVsCh->Draw("colz");//hSingPhotRad->Draw();
 
-  c1->Update();
-  c1->Print(out_pdf.c_str());
-
-  TCanvas *c2 = new TCanvas("c2","c2",1600,900);
-  c2->Divide(3,2);
-  c2->Draw();
-  c2->cd(2);
-  vspTime[4]->SetTitle("Mean time of the event - gas");
-  vspTime[4]->Draw();
-  c2->cd(3);
-  vspPhoton[4]->SetTitle("# photons for particle - gas");
-  vspPhoton[4]->Draw();
-  c2->cd(5);
-  vspTime[9]->SetTitle("Mean time of the event - aerogel");
-  vspTime[9]->Draw();
-  c2->cd(6);
-  vspPhoton[9]->SetTitle("# photons for particle - aerogel");
-  vspPhoton[9]->GetXaxis()->SetRangeUser(0,25);
-  vspPhoton[9]->Draw();
-  c2->Update();
+  c4->Update();
+  c4->Print(out_pdf.c_str());
 
 
-  c2->cd(1);
-  gStyle->SetOptStat(0);
-  gStyle->SetOptFit(1);
-  vspRadius[4]->SetTitle("Single particle radius - gas");
-  TH1D *cp0 = (TH1D*)vspRadius[4]->Clone("hspRadius_fitIn");
-  TF1 *fspRadius_4=new TF1();
-  save->Add(fspRadius_4);
-  applyFit(cp0,fspRadius_4,"fspRadius_4",false);
-  cp0->Draw(); 
-  c2->cd(4); 
-  vspRadius[9]->SetTitle("Single particle radius - aerogel");
-  TH1D *cp1 = (TH1D*)vspRadius[9]->Clone("hspRadius_fitOut");
-  TF1 *fspRadius_9 = new TF1();
-  save->Add(fspRadius_9);
-  applyFit(cp1,fspRadius_9,"fspRadius_4",true);
-  cp1->Draw();
-
-  c2->Update();
-  c2->Print(out_pdf.c_str());
-
-  TCanvas *c3 = new TCanvas("c3","GEM canvas",1600,900);
+/*  TCanvas *c3 = new TCanvas("c5","GEM canvas",1600,900);
   c3->Draw();
   c3->Divide(2,2);
   c3->cd(1);
@@ -342,13 +402,146 @@ void displayMonitor(THeader *run){
   hBeamTheta->Draw("colz");
   c3->Update();
   c3->Print(out_pdf.c_str());
-
-  c2->Print(out_pdf1.c_str());
+*/
+  c4->Print(out_pdf1.c_str());
 
   TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
   save->Write();
   fOut->Close();
   ////c1->Close();
+}
+
+
+
+
+void displayMonitor(THeader *run){
+  gErrorIgnoreLevel=kWarning;
+//Time distibution and coincidence peak zoom, rings before and after correction
+string out_pdf0 = Form("%s/output/plot/%s/displayMonitor.pdf[",run->suite.c_str(),run->outputDir.c_str());
+string out_pdf = Form("%s/output/plot/%s/displayMonitor.pdf",run->suite.c_str(),run->outputDir.c_str());
+string out_pdf1 = Form("%s/output/plot/%s/displayMonitor.pdf]",run->suite.c_str(),run->outputDir.c_str());
+string out_root = Form("%s/output/plot/%s/displayMonitor.root",run->suite.c_str(),run->outputDir.c_str());
+cout <<"Check: " <<out_pdf.c_str() << endl;
+
+TList *save = new TList();
+save->Add(hTime);
+save->Add(hCoinc);
+save->Add(hHitStart);
+save->Add(hHitEnd);
+save->Add(hHitDur);
+save->Add(hHitCorr);
+save->Add(hHitCorrDur);
+save->Add(hHitReco);
+save->Add(hEdge);
+save->Add(hMap);
+save->Add(hnMap);
+save->Add(hRadius);
+save->Add(hnRadius);
+
+TCanvas *c1 = new TCanvas("c1","c1",1600,900);
+c1->Divide(4,2);
+c1->Draw();
+c1->Print(out_pdf0.c_str());
+c1->cd(1);
+THStack *hsHitTime = new THStack("hsHitTime","Hit start and End - Duration > 35;[ns]");
+hHitEnd->SetLineColor(2);
+hsHitTime->Add(hHitStart);
+hsHitTime->Add(hHitEnd);
+hsHitTime->Draw("nostack");
+hsHitTime->GetXaxis()->SetRangeUser(300,600);
+hsHitTime->Draw("nostack");
+//hTime->Draw();
+TLine *l1 = new TLine(run->timeMin,0,run->timeMin,hTime->GetBinContent(hTime->GetMaximumBin()));
+l1->SetLineColor(3);
+l1->Draw("same");
+TLine *l2 = new TLine(run->timeMax,0,run->timeMax,hTime->GetBinContent(hTime->GetMaximumBin()));
+l2->SetLineColor(3);
+l2->Draw("same");
+c1->Update();
+c1->cd(5);
+hCoinc->Draw();
+TF1 *fcoinc = new TF1("fcoinc","gaus(0)",200,400);
+fcoinc->SetParameters(20000,355,2);
+hCoinc->Fit(fcoinc,"Q","",run->timeMin,run->timeMax);
+l1->SetY2(hCoinc->GetBinContent(hCoinc->GetMaximumBin()));
+l2->SetY2(hCoinc->GetBinContent(hCoinc->GetMaximumBin()));
+l1->Draw("same");
+l2->Draw("same");
+c1->cd(2);
+hHitDur->Draw();
+c1->cd(3);
+hHitCorr->Draw("colz");
+c1->cd(6);
+hHitReco->Draw();
+c1->cd(7);
+hHitCorrDur->Draw("colz");
+c1->cd(4);
+hMap->Draw("colz");
+c1->cd(8);
+hMapNC->Draw("colz");
+
+c1->Update();
+c1->Print(out_pdf.c_str());
+
+TCanvas *c2 = new TCanvas("c2","c2",1600,900);
+c2->Divide(3,2);
+c2->Draw();
+c2->cd(2);
+vspTime[4]->SetTitle("Mean time of the event - gas");
+vspTime[4]->Draw();
+c2->cd(3);
+vspPhoton[4]->SetTitle("# photons for particle - gas");
+vspPhoton[4]->Draw();
+c2->cd(5);
+vspTime[9]->SetTitle("Mean time of the event - aerogel");
+vspTime[9]->Draw();
+c2->cd(6);
+vspPhoton[9]->SetTitle("# photons for particle - aerogel");
+vspPhoton[9]->GetXaxis()->SetRangeUser(0,25);
+vspPhoton[9]->Draw();
+c2->Update();
+
+
+c2->cd(1);
+gStyle->SetOptStat(0);
+gStyle->SetOptFit(1);
+vspRadius[4]->SetTitle("Single particle radius - gas");
+TH1D *cp0 = (TH1D*)vspRadius[4]->Clone("hspRadius_fitIn");
+TF1 *fspRadius_4=new TF1();
+save->Add(fspRadius_4);
+applyFit(cp0,fspRadius_4,"fspRadius_4",false);
+cp0->Draw(); 
+c2->cd(4); 
+vspRadius[9]->SetTitle("Single particle radius - aerogel");
+TH1D *cp1 = (TH1D*)vspRadius[9]->Clone("hspRadius_fitOut");
+TF1 *fspRadius_9 = new TF1();
+save->Add(fspRadius_9);
+applyFit(cp1,fspRadius_9,"fspRadius_4",true);
+cp1->Draw();
+
+c2->Update();
+c2->Print(out_pdf.c_str());
+
+TCanvas *c3 = new TCanvas("c3","GEM canvas",1600,900);
+c3->Draw();
+c3->Divide(2,2);
+c3->cd(1);
+hUpGEM->Draw("colz");
+c3->cd(2);
+hDnGEM->Draw("colz");
+c3->cd(3);
+hBeam->Draw("colz");
+c3->cd(4);
+hBeamTheta->Draw("colz");
+c3->Update();
+c3->Print(out_pdf.c_str());
+
+c2->Print(out_pdf1.c_str());
+
+TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
+save->Write();
+fOut->Close();
+////c1->Close();
 }
 
 void displayPhotonAnalysis(THeader *run){
@@ -917,4 +1110,19 @@ void inizializePlot(THeader *run){
   hspSigVsPhoAero = new TH1D("hspSigVsPhoAero","#sigma_{r} vs photon per particle - Aerogel;Photon/particle [#];#sigma_{r} [mRad]",maxPhoAero+1,-0.5,maxPhoAero+0.5);
   hspnSigVsPhoAero= new TH1D("hsnpSigVsPhoAero","#sigma_{r} vs photon per particle - Aerogel;Photon/particle [#];#sigma_{r} [mRad]",maxPhoAero+1,-0.5,maxPhoAero+0.5);
   hcutSigVsPhoAero = new TH1D("hcutSigVsPhoAero","#sigma_{r} vs photon per particle - Aerogel;Photon/particle [#];#sigma_{r} [mRad]",maxPhoAero+1,-0.5,maxPhoAero+0.5);
+
+
+
+  hCoinc = new TH1D("hCoinc","Coincidence peak",5*(int)(run->timeMax-run->timeMin)+10,run->timeMin-5,run->timeMax+5);
+
+  ////// MONITORING PLOT DEFINITION
+  //hCalibVsTime = new TH2D("hCalibVsTime","Calibrated time vs acquired time",(int)(run->timeMax-run->timeMin)+11,run->timeMin-5.5,run->timeMax+5.5,(int)(run->timeMax-run->timeMin)+11,run->timeMin-5.5,run->timeMax+5.5);
+  //hTimeWalkVsTime = new TH2D("hTimeWalkVsTime","TimeWalk corrected time vs acquired time",(int)(run->timeMax-run->timeMin)+11,run->timeMin-5.5,run->timeMax+5.5,5*(int)(run->timeMax-run->timeMin)+50,run->timeMin-5,run->timeMax+5);
+  hCalibVsTime = new TH2D("hCalibVsTime","Calibrated time vs acquired time",51,349.5,400.1,(int)(run->timeMax-run->timeMin)+11,run->timeMin-5.5,run->timeMax+5.5);
+  hCalibVsCh = new TH2D("hCalibVsCh","#Delta time calibrated - trigger time Vs Channel",1026,-0.5,1025.5,70,330,400);
+  hTimeVsCh = new TH2D("hTimeVsCh","#Delta time not calibrated - trigger time Vs Channel",1026,-0.5,1025.5,70,330,400);
+  hTimeWalkVsTime = new TH2D("hTimeWalkVsTime","TimeWalk corrected time vs acquired time",51,349.5,401.5,5*(int)(run->timeMax-run->timeMin)+50,run->timeMin-5,run->timeMax+5);
+  hDur = new TH1D("hDur","Hit duration",101,-.50,100.5);
+  hStartVsDur = new TH2D("hStartVsDur","DuratioVsStart; Start [ns]; Duration[ns]",(int)(run->timeMax-run->timeMin)+11,run->timeMin-5.5,run->timeMax+5.5,101,-.5,100.5); 
+  hSingPhotRad = new TH1D("hSingPhotRad","Single photon radius; Radius [mRad]",400,0,200);
 }

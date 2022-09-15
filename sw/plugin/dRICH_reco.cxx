@@ -83,8 +83,9 @@ int main(int argc, char *argv[]){
   findTimeCoincidence(&header); //selection.cxx
 
   //Select the photons inside the time coincidence window and distinguish between inner and outer (waiting a better way to do this, based also on time).
+  coincidence(&header); //selection.cxx
   selectPhotons(&header); //selection.cxx
-  
+
   //Add radiant branch.
   //Computing.cxx
   convertToRadiant(&header);
