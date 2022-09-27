@@ -212,5 +212,15 @@ void readHeaders(int run, THeader *runHeader){
     auto prz = sscanf(line,"%f",&tmp1);
     runHeader->outerCorrectionY=tmp1;
   }
+  if(fgets(line,10000,file)!=NULL){
+    double tmp1;
+    auto prz = sscanf(line,"%lf",&tmp1);
+    if(tmp1!=0)runHeader->geoCut=tmp1;
+  }
+  if(fgets(line,10000,file)!=NULL){
+    double tmp1;
+    auto prz = sscanf(line,"%lf",&tmp1);
+    if(tmp1!=0)runHeader->radCut=tmp1;
+  }
   cout <<"Header and setup file read\n";
 }

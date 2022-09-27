@@ -911,6 +911,10 @@ void displayMonitor(THeader *run){
 	c10->Draw();
 	c10->cd(1);
 	hMap->Draw("colz");
+  TEllipse *geoCutRing = new TEllipse(0,0,run->geoCut);
+  geoCutRing->SetLineColor(2);
+  geoCutRing->SetFillStyle(0);
+  geoCutRing->Draw("same");
 	c10->cd(2);
 	hnMap->Draw("colz");
 	c10->Update();

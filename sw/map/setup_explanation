@@ -16,3 +16,5 @@ InnerCorrectionX //if 0 it will be computed using run data.
 InnerCorrectionY //if 0 it will be computed using run data.
 OuterCorrectionX //if 0 it will be computed using run data.
 OuterCorrectionY //if 0 it will be computed using run data.
+geoCut //Cut based on ring radius, expressed in millimeter.
+radCut //Cut based on ring angle, expressed in mRad.
