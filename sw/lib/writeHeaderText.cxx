@@ -91,6 +91,7 @@ void readHeaderShort(THeader *run){
   if(fgets(line,MAXLINEA,f))sscanf(line,"%f",&(run->DnGEMz));
   if(fgets(line,MAXLINEA,f))sscanf(line,"%f",&(run->zAerogel));
   if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->geoCut));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->radCut));
   if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->cutRadiusInRMS));
   if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->cutTimeInRMS));
   if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->cutRadiusOutRMS));
@@ -103,8 +104,18 @@ void readHeaderShort(THeader *run){
   if(fgets(line,MAXLINEA,f))sscanf(line,"%f",&(run->UpGEMyRunOff));
   if(fgets(line,MAXLINEA,f))sscanf(line,"%f",&(run->DnGEMxRunOff));
   if(fgets(line,MAXLINEA,f))sscanf(line,"%f",&(run->DnGEMyRunOff));
-  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->timeMin));
-  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->timeMax));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->timeInMin));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->timeInMax));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->timeOuMin));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->timeOuMax));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->px474));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->px519));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->px537));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%d",&(run->beamChLogic));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%d",&(run->lookbackDAQ));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->MaxHitLength));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->GlobalTimeOff));
+  
   fclose(f);
 }
 
@@ -159,6 +170,7 @@ void writeHeaderShort(THeader *run){
   fprintf(f,"%f\n",(run->DnGEMz));
   fprintf(f,"%f\n",(run->zAerogel));
   fprintf(f,"%lf\n",(run->geoCut));
+  fprintf(f,"%lf\n",(run->radCut));
   fprintf(f,"%lf\n",(run->cutRadiusInRMS));
   fprintf(f,"%lf\n",(run->cutTimeInRMS));
   fprintf(f,"%lf\n",(run->cutRadiusOutRMS));
@@ -171,8 +183,18 @@ void writeHeaderShort(THeader *run){
   fprintf(f,"%f\n",(run->UpGEMyRunOff));
   fprintf(f,"%f\n",(run->DnGEMxRunOff));
   fprintf(f,"%f\n",(run->DnGEMyRunOff));
-  fprintf(f,"%lf\n",(run->timeMin));
-  fprintf(f,"%lf\n",(run->timeMax));
+  fprintf(f,"%lf\n",(run->timeInMin));
+  fprintf(f,"%lf\n",(run->timeInMax));
+  fprintf(f,"%lf\n",(run->timeOuMin));
+  fprintf(f,"%lf\n",(run->timeOuMax));
+  fprintf(f,"%lf\n",(run->px474));
+  fprintf(f,"%lf\n",(run->px519));
+  fprintf(f,"%lf\n",(run->px537));
+  fprintf(f,"%d\n",(run->beamChLogic));
+  fprintf(f,"%d\n",(run->lookbackDAQ));
+  
+  fprintf(f,"%lf\n",(run->MaxHitLength));
+  fprintf(f,"%lf\n",(run->GlobalTimeOff));
 
   fclose(f);
   cout <<"Header recap wrote\n";
@@ -239,8 +261,10 @@ void writeHeaderShort(THeader *run){
   fout <<run->UpGEMyRunOff<<endl;
   fout <<run->DnGEMxRunOff<<endl;
   fout <<run->DnGEMyRunOff<<endl;
-  fout <<run->timeMin<<endl;
-  fout <<run->timeMax<<endl;
+  fout <<run->timeInMin<<endl;
+  fout <<run->timeInMax<<endl;
+  fout <<run->timeOuMin<<endl;
+  fout <<run->timeOuMax<<endl;
   fout.close();
   cout <<"Header recap wrote\n";
 }*/
@@ -261,7 +285,7 @@ void writeHeaderExtended(THeader *run){
   fprintf(f,"The reconstruction was performed using the %s setup file\n\n",run->setupFile.c_str());
 
   fprintf(f,"General run variables\n");
-  fprintf(f,"Time coincidence window extremes: %lf %lf\n",run->timeMin,run->timeMax);
+  fprintf(f,"Time coincidence window extremes In: %lf %lf Ou: %lf %lf\n",run->timeInMin,run->timeInMax,run->timeOuMin,run->timeOuMax);
   fprintf(f,"Upstream GEM on-beam centering offsets: %f %f\n",run->UpGEMxRunOff,run->UpGEMyRunOff);
   fprintf(f,"Downstream GEM on-beam centering offsets: %f %f\n",run->DnGEMxRunOff,run->DnGEMyRunOff); 
 

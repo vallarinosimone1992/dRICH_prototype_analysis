@@ -46,8 +46,8 @@
 using namespace std;
 
 int main(int argc, char *argv[]){
-  TApplication theApp("App",&argc,argv);
-  gROOT->SetBatch(kFALSE);
+  //TApplication theApp("App",&argc,argv);
+  //gROOT->SetBatch(kTRUE);
   gStyle->SetPalette(55);
   vector<THeader> header;
   
@@ -68,17 +68,24 @@ int main(int argc, char *argv[]){
       tmpHeader.outputDir=Form("%s",output_Name.c_str());
       readHeaderShort(&tmpHeader);
       header.push_back(tmpHeader);
+      cout <<"Analyze run " <<argv[i] <<endl;
+      sleep(1);
     }
   }else printUsageMon();
 
 
 
   inizializePlot(&header[0]);
-  for(int i = 0; i < header.size(); i++)  fillHisto(&header[i]);
-  for(int i = 0; i < header.size(); i++)  fillHistoMon(&header[i]);
+  //for(int i = 0; i < header.size(); i++)  fillHisto(&header[i]);
+  for(int i = 0; i < header.size(); i++){
+	  cout <<"Fill the run " <<header[i].runNum;
+      	  sleep(1);
+	  fillHistoMon(&header[i]);
+  }
   displayMonitor(&header[0]);
-  displayMonitor2(&header[0]);
+  //displayMonitor2(&header[0]);
 
-  theApp.Run();
+  //theApp.Run();
+  printf("Son qua \n");
   exit(EXIT_SUCCESS);
 }

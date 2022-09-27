@@ -107,13 +107,14 @@ void readHeaders(int run, THeader *runHeader){
   file=fopen(headerName.c_str(),"r");
   char line0[10000];
   char line[10000];
-  int tRunNum=-1, tEnergyGeV, tExpEvents, tPowerHV, tRunNumGEM, tPedestalGEM;
+  int tRunNum=-1, tEnergyGeV, tExpEvents, tPowerHV, tRunNumGEM, tPedestalGEM, tlookbackDAQ, tbeamChLogic;
   char tDay[200], tStartTime[200],tEndTime[200],tBeam[200], tSensor[200], tTrigger[200],tRunType[200], tSetupFile[2000],tNote[2000];
   float tFirstMirrorPosition, tSecondMirrorPosition, tTemperature;
   auto n =fgets(line0,10000,file);
   bool headerFound=false;
+  double tpx474, tpx519, tpx537;
   while(fgets(line,10000,file)!=NULL){
-    sscanf(line,"%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s %s",&tRunNum,tDay,tStartTime,tEndTime,tBeam,&tEnergyGeV,&tExpEvents,tSensor,&tFirstMirrorPosition,&tSecondMirrorPosition,&tTemperature,&tPowerHV,tTrigger,tRunType,&tRunNumGEM,&tPedestalGEM,tSetupFile,tNote);
+    sscanf(line,"%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s %lf %lf %lf %d %d %s",&tRunNum,tDay,tStartTime,tEndTime,tBeam,&tEnergyGeV,&tExpEvents,tSensor,&tFirstMirrorPosition,&tSecondMirrorPosition,&tTemperature,&tPowerHV,tTrigger,tRunType,&tRunNumGEM,&tPedestalGEM,tSetupFile,&tpx474,&tpx519,&tpx537,&tbeamChLogic,&tlookbackDAQ,tNote);
     if(run == tRunNum){
       runHeader->runNum = tRunNum;
       runHeader->day=tDay;
@@ -130,9 +131,16 @@ void readHeaders(int run, THeader *runHeader){
       runHeader->trigger=tTrigger;
       runHeader->runType=tRunType;
       runHeader->runNumGEM=tRunNumGEM;
+      //runHeader->runNumGEM=0;
       runHeader->pedestalGEM=tPedestalGEM;
       runHeader->setupFile=tSetupFile;
+      runHeader->px474=tpx474;
+      runHeader->px519=tpx519;
+      runHeader->px537=tpx537;
+      runHeader->beamChLogic=tbeamChLogic;
+      runHeader->lookbackDAQ=tlookbackDAQ;
       runHeader->note=tNote;
+      runHeader->GlobalTimeOff = 2945-tlookbackDAQ;
 
       headerFound=true;
       break;

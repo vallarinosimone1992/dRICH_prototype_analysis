@@ -91,7 +91,7 @@ int main(int argc, char *argv[]){
   //cout <<"Integration done\n";
 
   findTimeCoincidence(&runHeader);
-  //cout <<"Time coincidence window extremes: " <<runHeader.timeMin <<" " <<runHeader.timeMax <<endl;
+  //cout <<"Time coincidence window extremes: " <<runHeader.timeInMin <<" " <<runHeader.timeOuMax <<endl;
   selectPhotons(&runHeader);
   //cout <<"Photon selected\n";
   singleParticle(&runHeader);

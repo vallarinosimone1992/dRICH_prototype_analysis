@@ -6,6 +6,7 @@
 void printProgress(double progress);
 void printEnd();
 
+int reference(int i, int j);
 void printUsageReco();
 void printUsageAna();
 void printUsageMon();

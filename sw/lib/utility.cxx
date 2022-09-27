@@ -87,7 +87,7 @@ void writeHeader(THeader *run){
   fprintf(f,"The reconstruction was performed using the %s setup file\n\n",run->setupFile.c_str());
 
   fprintf(f,"General run variables\n");
-  fprintf(f,"Time coincidence window extremes: %lf %lf\n",run->timeMin,run->timeMax);
+  fprintf(f,"Time coincidence window extremes In: %lf %lf  Ou: %lf %lf\n",run->timeInMin,run->timeInMax,run->timeOuMin,run->timeOuMax);
   fprintf(f,"Upstream GEM on-beam centering offsets: %f %f\n",run->UpGEMxRunOff,run->UpGEMyRunOff);
   fprintf(f,"Downstream GEM on-beam centering offsets: %f %f\n",run->DnGEMxRunOff,run->DnGEMyRunOff); 
 
@@ -103,4 +103,11 @@ void writeHeader(THeader *run){
   fprintf(f,"Cut on time: %lf\n",run->cutTimeOutRMS);
 
   fclose(f); 
+}
+
+
+
+int reference(int i, int j){
+  int k=i*256+j;
+  return k;
 }

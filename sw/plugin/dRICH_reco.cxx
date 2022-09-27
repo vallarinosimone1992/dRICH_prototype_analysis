@@ -82,15 +82,15 @@ int main(int argc, char *argv[]){
   //Find the time coincidence window extreme
   findTimeCoincidence(&header); //selection.cxx
 
-  //Select the photons inside the time coincidence window and distinguish between inner and outer (waiting a better way to do this, based also on time).
-  coincidence(&header); //selection.cxx
-  selectPhotons(&header); //selection.cxx
+  //Select the photons inside the time coincidence window 
+  //selectInTimePhotons(&header); //selection.cxx
+  //Apply duration and distinguish between inner and outer (waiting a better way to do this, based also on time).
+  selectGoodPhotons(&header); //selection.cxx
 
   //Add radiant branch.
-  //Computing.cxx
-  convertToRadiant(&header);
+  //convertToRadiant(&header); //computing.cxx
 
-  //Compute the mean quantities for the single particle.
+  //Compute the mean quantities for the single particle (good photons)
   singleParticle(&header); //computing.cxx
 
   //IMPORTANT! The Y axis correction must be computed befor the X axis correction.
@@ -98,15 +98,19 @@ int main(int argc, char *argv[]){
   opticalCenterY(&header); //correction.cxx
   opticalCenterX(&header); //correction.cxx
 
-  //Apply the position correction.
+  //Apply the position correction to generate nr[] in mrad
   positionCorrection(&header); //correction.cxx
-                               //Compute the mean quantities for the single particle after the position correction
+
+  //Compute the mean quantities for the single particle after the position correction
   newSingleParticle(&header); //computing.cxx
-                              //Calculate the time and radius rms, and the residue for each photon.
-  computeRMS(&header); //computing.cxx
-                       //Apply the cut based on rms
+
+  //Calculate the time and radius rms, and the residue for each photon.
+  computeRMS(&header,-1); //computing.cxx
+
+  //Apply the cut based on rms
   rmsCutSelection(&header); //selection.cxx
-                            //Compute the mean quantities for the single particle after the rms cut application
+
+  //Compute the mean quantities for the single particle after the rms cut application
   computeCutSingleParticle(&header); //computing.cxx
 
   writeHeaderShort(&header);

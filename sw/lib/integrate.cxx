@@ -39,13 +39,16 @@ void noGEM_Integration(THeader *run){
   t->SetTitle("dRICH and GEM data");
 
   uint nedge;
-  int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], slot[MAXDATA], fiber[MAXDATA], ch[MAXDATA], time[MAXDATA], marocCh[MAXDATA], pmt[MAXDATA], otime[MAXDATA];
+  int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], slot[MAXDATA], fiber[MAXDATA], ch[MAXDATA], time[MAXDATA], anode[MAXDATA], pmt[MAXDATA], otime[MAXDATA];
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA], ntime[MAXDATA];
-  double trigtime;
+  double trigtime, x474time, x519time, x537time;
   bool trigSig[MAXDATA];
 
   t->SetBranchAddress("evt",&evt);
   t->SetBranchAddress("trigtime",&trigtime);
+  t->SetBranchAddress("x474time",&x474time);
+  t->SetBranchAddress("x519time",&x519time);
+  t->SetBranchAddress("x537time",&x537time);
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
   t->SetBranchAddress("slot",&slot);
@@ -56,7 +59,7 @@ void noGEM_Integration(THeader *run){
   t->SetBranchAddress("board",&board);
   t->SetBranchAddress("chip",&chip);
   t->SetBranchAddress("pmt",&pmt);
-  t->SetBranchAddress("marocCh",&marocCh);
+  t->SetBranchAddress("anode",&anode);
   t->SetBranchAddress("x",&x);
   t->SetBranchAddress("y",&y);
   t->SetBranchAddress("radius",&radius);
@@ -70,11 +73,14 @@ void noGEM_Integration(THeader *run){
   TTree *tout = new TTree("dRICH","dRICH integrated data");
   
   int tevt, tnedge, tpol[MAXDATA], tslot[MAXDATA], tfiber[MAXDATA], tch[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA], totime[MAXDATA];
-  double ttrigtime, tx[MAXDATA],ty[MAXDATA],tr[MAXDATA], tnt[MAXDATA];
+  double ttrigtime, tx474time, tx519time, tx537time, tx[MAXDATA],ty[MAXDATA],tr[MAXDATA], tnt[MAXDATA];
   bool dataGEM, ttrigSig[MAXDATA];
 
   auto tEvt=tout->Branch("evt",&tevt,"evt/I");
   auto tTrigtime=tout->Branch("trigtime",&ttrigtime,"trigtime/D");
+  auto tX474time=tout->Branch("x474time",&tx474time,"x474time/D");
+  auto tX519time=tout->Branch("x519time",&tx519time,"x519time/D");
+  auto tX537time=tout->Branch("x537time",&tx537time,"x537time/D");
   auto tNedge=tout->Branch("nedge",&tnedge,"nedge/I");
   auto tPol=tout->Branch("pol",&tpol,"pol[nedge]/I");
   auto tSlot=tout->Branch("slot",&tslot,"slot[nedge]/I");
@@ -109,12 +115,15 @@ void noGEM_Integration(THeader *run){
     //Copy the dRICH info
     tevt=(int)evt;
     ttrigtime=trigtime;
+    tx474time=x474time;
+    tx519time=x519time;
+    tx537time=x537time;
     tnedge=(int)nedge;
     for(int j = 0; j < nedge; j++){
       tpol[j]=pol[j];
       tslot[j]=slot[j];
       tfiber[j]=fiber[j];
-      tch[j]=marocCh[j];
+      tch[j]=anode[j];
       tboard[j]=board[j];
       tchip[j]=chip[j];
       ttime[j]=time[j];
@@ -172,13 +181,16 @@ void TTreeIntegration(THeader *run){
   TTree *tGEM = (TTree*) fGEM->Get("gtr");
 
   uint nedge;
-  int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], slot[MAXDATA], fiber[MAXDATA], ch[MAXDATA], time[MAXDATA], marocCh[MAXDATA], pmt[MAXDATA], otime[MAXDATA];
+  int evt, board[MAXDATA], chip[MAXDATA], pol[MAXDATA], slot[MAXDATA], fiber[MAXDATA], ch[MAXDATA], time[MAXDATA], anode[MAXDATA], pmt[MAXDATA], otime[MAXDATA];
   double x[MAXDATA], y[MAXDATA], radius[MAXDATA], ntime[MAXDATA];
-  double trigtime;
+  double trigtime, x474time, x519time, x537time;
   bool trigSig[MAXDATA];
 
   t->SetBranchAddress("evt",&evt);
   t->SetBranchAddress("trigtime",&trigtime);
+  t->SetBranchAddress("x474time",&x474time);
+  t->SetBranchAddress("x519time",&x519time);
+  t->SetBranchAddress("x537time",&x537time);
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
   t->SetBranchAddress("slot",&slot);
@@ -189,7 +201,7 @@ void TTreeIntegration(THeader *run){
   t->SetBranchAddress("board",&board);
   t->SetBranchAddress("chip",&chip);
   t->SetBranchAddress("pmt",&pmt);
-  t->SetBranchAddress("marocCh",&marocCh);
+  t->SetBranchAddress("anode",&anode);
   t->SetBranchAddress("x",&x);
   t->SetBranchAddress("y",&y);
   t->SetBranchAddress("radius",&radius);
@@ -216,10 +228,13 @@ void TTreeIntegration(THeader *run){
   TTree *tout = new TTree("dRICH","dRICH integrated data");
 
   int tevt, tnedge, tpol[MAXDATA], tslot[MAXDATA], tfiber[MAXDATA], tch[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA], totime[MAXDATA];
-  double ttrigtime, tx[MAXDATA],ty[MAXDATA],tr[MAXDATA], tnt[MAXDATA];
+  double ttrigtime, tx474time, tx519time, tx537time, tx[MAXDATA],ty[MAXDATA],tr[MAXDATA], tnt[MAXDATA];
   bool dataGEM, ttrigSig[MAXDATA];
   auto tEvt=tout->Branch("evt",&tevt,"evt/I");
   auto tTrigtime=tout->Branch("trigtime",&ttrigtime,"trigtime/D");
+  auto tX474time=tout->Branch("x474time",&tx474time,"x474time/D");
+  auto tX519time=tout->Branch("x519time",&tx519time,"x519time/D");
+  auto tX537time=tout->Branch("x537time",&tx537time,"x537time/D");
   auto tNedge=tout->Branch("nedge",&tnedge,"nedge/I");
   auto tPol=tout->Branch("pol",&tpol,"pol[nedge]/I"); 
   auto tSlot=tout->Branch("slot",&tslot,"slot[nedge]/I");
@@ -265,12 +280,15 @@ void TTreeIntegration(THeader *run){
     //Copy the dRICH info
     tevt=(int)evt;
     ttrigtime=trigtime;
+    tx474time=x474time;
+    tx519time=x519time;
+    tx537time=x537time;
     tnedge=(int)nedge;
     for(int j = 0; j < nedge; j++){
       tpol[j]=pol[j];
       tslot[j]=slot[j];
       tfiber[j]=fiber[j];
-      tch[j]=marocCh[j];
+      tch[j]=anode[j];
       tboard[j]=board[j];
       tchip[j]=chip[j];
       ttime[j]=time[j];
@@ -282,10 +300,12 @@ void TTreeIntegration(THeader *run){
       double zMir=0;
       if(radius[j] > run->geoCut){
         inPath=run->firstPath;
-        zMir=run->firstMirrorPosition;
+        //zMir=run->firstMirrorPosition;
+        zMir=run->secondMirrorPosition; //SWAP TO CHECK THE GEM
       }else{
         inPath=run->secondPath;
-        zMir=run->secondMirrorPosition;
+        zMir=run->firstMirrorPosition;//SWAP TO CHECK THE GEM
+        //zMir=run->secondMirrorPosition;
       }
       tr[j]=mmTomRad(radius[j],inPath,zMir);
       //    tr[j]=radius[j];
@@ -293,10 +313,11 @@ void TTreeIntegration(THeader *run){
       ttrigSig[j]=trigSig[j];
     }
     //Compute GEM info
-    float tmpx0=x0;
-    float tmpy0=y0;
-    float tmpx1=x1;
-    float tmpy1=y1;
+    ///////// ATTENTION! I SWAP THE GEM TO CHECK IT.
+    float tmpx0=x1;
+    float tmpy0=y1;
+    float tmpx1=x0;
+    float tmpy1=y0;
     GEM_relative(&tmpx0,&tmpy0,&tmpx1,&tmpy1);
     hX0->Fill(tmpx0);
     hY0->Fill(tmpy0);
@@ -305,10 +326,14 @@ void TTreeIntegration(THeader *run){
     tout->Fill();
   }
   printEnd();
-  run->UpGEMxRunOff=GEM_getBeamlineOffset(hX0);
-  run->UpGEMyRunOff=GEM_getBeamlineOffset(hY0);
-  run->DnGEMxRunOff=GEM_getBeamlineOffset(hX1);
-  run->DnGEMyRunOff=GEM_getBeamlineOffset(hY1);
+  run->UpGEMxRunOff=GEM_getBeamlineOffset(hX0,0);
+  run->UpGEMyRunOff=GEM_getBeamlineOffset(hY0,0);
+  run->DnGEMxRunOff=GEM_getBeamlineOffset(hX1,0);
+  run->DnGEMyRunOff=GEM_getBeamlineOffset(hY1,1);
+  /*run->UpGEMxRunOff=0;
+  run->UpGEMyRunOff=0;
+  run->DnGEMxRunOff=0;
+  run->DnGEMyRunOff=0;*/
 
   auto tGX0=tout->Branch("gx0",&gx0,"gx0/F");
   auto tGY0=tout->Branch("gy0",&gy0,"gy0/F");
@@ -319,18 +344,24 @@ void TTreeIntegration(THeader *run){
   auto tGXtheta=tout->Branch("gxtheta",&gxtheta,"gxtheta/F");
   auto tGYtheta=tout->Branch("gytheta",&gytheta,"gytheta/F");
 
+  ///////// ATTENTION! I SWAP THE GEM TO CHECK IT.
   cout <<"Prototype and tracking data integration\n";
   for(int i = 0; i < tout->GetEntries(); i++){
     if(i%100==0)printProgress((double)i/t->GetEntries());
     tout->GetEntry(i);
     tGEM->GetEntry(vGEMentry[i]);
-    gx0=x0;
-    gy0=y0;
-    gx1=x1;
-    gy1=y1;
+    ///////// ATTENTION! I SWAP THE GEM TO CHECK IT.
+    gx0=x1;
+    gy0=y1;
+    gx1=x0;
+    gy1=y0;
     GEM_relative(&gx0,&gy0,&gx1,&gy1);
     GEM_position(run,&gx0,&gy0,&gx1,&gy1);
     AERO_computing(run,&gxa,&gya,&gxtheta,&gytheta,gx0,gy0,gx1,gy1);
+    /*gx0=gx0;
+    gy0=gy0;
+    gx1=gx1;
+    gy1=gy1;*/
     tGX0->Fill();
     tGY0->Fill();
     tGX1->Fill();
@@ -339,6 +370,7 @@ void TTreeIntegration(THeader *run){
     tGYA->Fill();
     tGXtheta->Fill();
     tGYtheta->Fill();
+    cout <<Form("%lf %lf %lf %lf\n",gx0,gy0,gx1,gy1);
   }
   printEnd();
 

@@ -11,8 +11,8 @@
 
 using namespace std;
 
-double min1MAPMT=29.25;
-double min2MAPMT=24.25;
+double minRMAPMT=29.25;
+double halfMAPMT=24.25;
 double passoMAPMT = 3.03125;
 
 double min1MPPC=30.4;
@@ -41,31 +41,34 @@ int FiberToPhDet(int fiber, int cmp[8]){
 }
 
 
+//---------------------------------------------------
 void MAPMTposition(int channel, int place, double *x, double *y, double *r){
-  double ratio = (channel-1)/16;
-  double remainder = (channel-1)%16;
-  if(place == 0){//NORD
-    double iX=-(min2MAPMT-0.5*passoMAPMT), iY=min1MAPMT+.5*passoMAPMT;
-    *x=-(iX+ratio*passoMAPMT);
-    *y=iY+remainder*passoMAPMT;
-  }
-  if(place == 1){//EST
-    double iX=min1MAPMT+0.5*passoMAPMT, iY=min2MAPMT-.5*passoMAPMT;
-    *x=iX+remainder*passoMAPMT;
-    *y=-(iY-ratio*passoMAPMT);
-  }
-  if(place == 2){//SUD
-    double iX=min2MAPMT-.5*passoMAPMT, iY=-(min1MAPMT+.5*passoMAPMT);
-    *x=-(iX-ratio*passoMAPMT);
-    *y=iY-remainder*passoMAPMT;
-  }
-  if(place == 3){//WEST
-    double iX=-(min1MAPMT+.5*passoMAPMT), iY=(-min2MAPMT+.5*passoMAPMT);
-    *x=iX-remainder*passoMAPMT;
-    *y=-(iY+ratio*passoMAPMT);
-  }
-  *r = sqrt((*x)*(*x)+(*y)*(*y));
+//---------------------------------------------------
+    double row = (channel-1)/16;
+    double col = (channel-1)%16;
+    if(place == 0){//NORD
+        double iX=-halfMAPMT+0.5*passoMAPMT, iY=minRMAPMT+0.5*passoMAPMT;
+        *x=iX+row*passoMAPMT;
+        *y=iY+col*passoMAPMT;
+    }
+    if(place == 1){//EST
+        double iX=minRMAPMT+0.5*passoMAPMT, iY=halfMAPMT-0.5*passoMAPMT;
+        *x=iX+col*passoMAPMT;
+        *y=iY-row*passoMAPMT;
+    }
+    if(place == 2){//SUD
+        double iX=halfMAPMT-0.5*passoMAPMT, iY=-minRMAPMT-0.5*passoMAPMT;
+        *x=iX-row*passoMAPMT;
+        *y=iY-col*passoMAPMT;
+    }
+    if(place == 3){//WEST
+        double iX=-minRMAPMT-0.5*passoMAPMT, iY=-halfMAPMT+0.5*passoMAPMT;
+        *x=iX-col*passoMAPMT;
+        *y=iY+row*passoMAPMT;
+    }
+    *r = sqrt((*x)*(*x)+(*y)*(*y));
 }
+
 
 void MPPCposition(int CHANNEL, int place,  double *x, double *y, double *r){
   int ratio = (CHANNEL-1)/16;

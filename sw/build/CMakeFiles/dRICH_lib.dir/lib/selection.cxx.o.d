@@ -249,7 +249,19 @@ CMakeFiles/dRICH_lib.dir/lib/selection.cxx.o: \
  /usr/include/root/TMath.h /usr/include/root/TError.h \
  /usr/include/root/DllImport.h /usr/include/c++/11/math.h \
  /usr/include/root/Math/Types.h /usr/include/root/Math/ParamFunctor.h \
- /usr/include/root/TMath.h /usr/include/root/TString.h \
+ /usr/include/root/TMath.h /usr/include/root/TCanvas.h \
+ /usr/include/root/TPad.h /usr/include/root/TVirtualPad.h \
+ /usr/include/root/TAttPad.h /usr/include/root/TQObject.h \
+ /usr/include/root/TVirtualQConnection.h /usr/include/root/GuiTypes.h \
+ /usr/include/c++/11/climits \
+ /usr/lib/gcc/x86_64-redhat-linux/11/include/limits.h \
+ /usr/lib/gcc/x86_64-redhat-linux/11/include/syslimits.h \
+ /usr/include/limits.h /usr/include/bits/posix1_lim.h \
+ /usr/include/bits/local_lim.h /usr/include/linux/limits.h \
+ /usr/include/bits/posix2_lim.h /usr/include/bits/xopen_lim.h \
+ /usr/include/bits/uio_lim.h /usr/include/root/Buttons.h \
+ /usr/include/root/TAttBBox2D.h /usr/include/root/TAttCanvas.h \
+ /usr/include/root/TString.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/definition.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/utility.h \
  /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/correction.h

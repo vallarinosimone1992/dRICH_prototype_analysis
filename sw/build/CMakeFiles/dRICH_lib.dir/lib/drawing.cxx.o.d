@@ -265,6 +265,8 @@ CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o: \
  /usr/include/root/TBranchCacheInfo.h /usr/include/root/TList.h \
  /usr/include/root/TError.h /usr/include/root/TStyle.h \
  /usr/include/root/TAttText.h /usr/include/root/TColor.h \
+ /usr/include/root/TProfile.h /usr/include/root/TLegend.h \
+ /usr/include/root/TPave.h /usr/include/root/TBox.h \
  /usr/include/root/TSystem.h /usr/include/fcntl.h \
  /usr/include/bits/fcntl.h /usr/include/bits/fcntl-linux.h \
  /usr/include/bits/types/struct_iovec.h /usr/include/linux/falloc.h \
