@@ -38,14 +38,14 @@ void positionCorrection(THeader *run){
     int nedge;
     float gxtheta, gytheta;
     double x[MAXDATA], y[MAXDATA];
-    bool coincPhoton[MAXDATA],outerPhoton[MAXDATA];
+    bool coincPhoton[MAXDATA],externalPhoton[MAXDATA];
     t->SetBranchAddress("gxtheta",&gxtheta);
     t->SetBranchAddress("gytheta",&gytheta);
     t->SetBranchAddress("nedge",&nedge);
     t->SetBranchAddress("x",&x);
     t->SetBranchAddress("y",&y);
     t->SetBranchAddress("coincPhoton",&coincPhoton);
-    t->SetBranchAddress("outerPhoton",&outerPhoton);
+    t->SetBranchAddress("externalPhoton",&externalPhoton);
 
     double nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nrRad[MAXDATA];
     auto tNx = t->Branch("nx",&nx,"nx[nedge]/D");
@@ -77,7 +77,7 @@ void positionCorrection(THeader *run){
             //nrRad[j]=0;
             if(coincPhoton[j]==true){
                 double inPath=0, zMir;
-                if(outerPhoton[j]==false){
+                if(externalPhoton[j]==false){
                     nx[j]=x[j]-xNCin;
                     ny[j]=y[j]-yNCin;
                     inPath=run->secondPath;

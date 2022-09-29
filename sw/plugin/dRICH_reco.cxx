@@ -98,9 +98,13 @@ int main(int argc, char *argv[]){
   opticalCenterY(&header); //correction.cxx
   opticalCenterX(&header); //correction.cxx
 
+
   //Apply the position correction to generate nr[] in mrad
   positionCorrection(&header); //correction.cxx
 
+  //Select inner and outer photon
+  selectRingsPhotons(&header);
+  
   //Compute the mean quantities for the single particle after the position correction
   newSingleParticle(&header); //computing.cxx
 

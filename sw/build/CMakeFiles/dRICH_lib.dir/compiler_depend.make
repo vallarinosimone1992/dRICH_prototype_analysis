@@ -3466,7 +3466,8 @@ CMakeFiles/dRICH_lib.dir/lib/selection.cxx.o: ../lib/selection.cxx \
   /usr/include/root/TString.h \
   ../lib/definition.h \
   ../lib/utility.h \
-  ../lib/correction.h
+  ../lib/correction.h \
+  ../lib/computing.h
 
 CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.o: ../lib/tracking.cxx \
   /usr/include/stdc-predef.h \

@@ -39,10 +39,10 @@ double mmTomRad(double r, double inPath, double zMir){
     TTree *t = (TTree*) fIn->Get("dRICH");
     int nedge;
     double nr[MAXDATA];
-    bool cutPhotonFlag[MAXDATA],outerPhoton[MAXDATA];
+    bool cutPhotonFlag[MAXDATA],externalPhoton[MAXDATA];
     t->SetBranchAddress("nedge",&nedge);
     t->SetBranchAddress("nr",&nr);
-    t->SetBranchAddress("outerPhoton",&outerPhoton);
+    t->SetBranchAddress("externalPhoton",&externalPhoton);
 
     double rRad[MAXDATA];
     auto trRad=t->Branch("rRad",&rRad,"&rRad[nedge]/D");
@@ -53,7 +53,7 @@ double mmTomRad(double r, double inPath, double zMir){
         t->GetEntry(i);
         for(int j = 0; j < nedge; j++){
             double path=0;
-            if(outerPhoton[j]==true){
+            if(externalPhoton[j]==true){
                 path = run->firstPath - run->firstMirrorPosition;
             }else{
                 path = run->secondPath - run->secondMirrorPosition;
@@ -142,7 +142,7 @@ void computeRMS(THeader *run, int recompute=-1)
     int nedge, pmt[MAXDATA], time[MAXDATA], pol[MAXDATA], evt;
     double r[MAXDATA], spRadius[10], spTime[10];
     double nr[MAXDATA], nttw[MAXDATA], spnRadius[10], spnTime[10];
-    bool coincPhoton[MAXDATA],outerPhoton[MAXDATA], goodPhoton[MAXDATA];
+    bool coincPhoton[MAXDATA],externalPhoton[MAXDATA], goodPhoton[MAXDATA];
     t->SetBranchAddress("evt",&evt);
     t->SetBranchAddress("nedge",&nedge);
     t->SetBranchAddress("pmt",&pmt);
@@ -152,7 +152,7 @@ void computeRMS(THeader *run, int recompute=-1)
     t->SetBranchAddress("nr",&nr);
     t->SetBranchAddress("nttw",&nttw);
     t->SetBranchAddress("coincPhoton",&coincPhoton);
-    t->SetBranchAddress("outerPhoton",&outerPhoton);
+    t->SetBranchAddress("externalPhoton",&externalPhoton);
     t->SetBranchAddress("goodPhoton",&goodPhoton);
     t->SetBranchAddress("spRadius",&spRadius);
     t->SetBranchAddress("spTime",&spTime);
@@ -200,7 +200,7 @@ void computeRMS(THeader *run, int recompute=-1)
 		for(int k = 0; k < nedge; k++){
                     if(k==j)continue;
 		    if(goodPhoton[k]==false)continue;
-		    if(outerPhoton[k]==false){
+		    if(externalPhoton[k]==false){
 		    	rMeanIn+=nr[k];
 			tMeanIn+=nttw[k];
 			countIn++;
@@ -220,12 +220,12 @@ void computeRMS(THeader *run, int recompute=-1)
 		}
                 for(int k = 0; k < nedge; k++){
                     if(k==j)continue;
-                    if(goodPhoton[k]==true && outerPhoton[k]==false){//I'M USING THE SINGLE PARTICLE QUANTITIES, NOT CORRECTED
+                    if(goodPhoton[k]==true && externalPhoton[k]==false){//I'M USING THE SINGLE PARTICLE QUANTITIES, NOT CORRECTED
                         tmpRMSrIn+=pow(nr[k]-rMeanIn,2);
                         tmpRMStIn+=pow(nttw[k]-tMeanIn,2);
                         tmpCountIn++;
                     }
-                    if(goodPhoton[k]==true && outerPhoton[k]==true){
+                    if(goodPhoton[k]==true && externalPhoton[k]==true){
                         tmpRMSrOut+=pow(nr[k]-rMeanOut,2);
                         tmpRMStOut+=pow(nttw[k]-tMeanOut,2);
                         tmpCountOut++;
@@ -243,16 +243,16 @@ void computeRMS(THeader *run, int recompute=-1)
 		    if(tmpRMSrIn<RMS_ANGLE_AER)tmpRMSrIn=RMS_ANGLE_AER;
 		    if(tmpRMSrIn<RMS_TIME_AER)tmpRMSrIn=RMS_TIME_AER;
 		}
-                if(outerPhoton[j]==true   && tmpCountOut >= 2){
+                if(externalPhoton[j]==true   && tmpCountOut >= 2){
                     double rsdR=nr[j]-rMeanOut;
                     double rsdT=nttw[j]-tMeanOut;
                     if(abs(rsdR) < 3*tmpRMSrOut && abs(rsdT) < 3*tmpRMStOut) countIt[j]=true;
-                }else   if(outerPhoton[j]==false && tmpCountIn >= 2){
+                }else   if(externalPhoton[j]==false && tmpCountIn >= 2){
                     double rsdR=nr[j]-rMeanIn;
                     double rsdT=nttw[j]-tMeanIn;
                     if(abs(rsdR) < 3*tmpRMSrIn && abs(rsdT) < 3*tmpRMStIn) countIt[j]=true;
                 }
-		if(i<10 && outerPhoton[j]==true)
+		if(i<10 && externalPhoton[j]==true)
                     printf(" e %3d r  %7.2f vs %7.2f %7.2f  (%7.2f x3) t %7.2f vs %7.2f %7.2f  (%7.2f x3) --> %3d\n",
                         j,nr[j],rMeanOut,nr[j]-rMeanOut,tmpRMSrOut,nttw[j],tMeanOut,nttw[j]-tMeanOut,tmpRMStOut,countIt[j]);
             }
@@ -267,7 +267,7 @@ void computeRMS(THeader *run, int recompute=-1)
         //cin.get();
         if(countIt[j]==false)continue;
         int k=0;
-        if(outerPhoton[j]==true) k = 1;
+        if(externalPhoton[j]==true) k = 1;
         int refPMT = pmt[j]+5*k;
         int refTOT = 4+5*k;
         rsdRadius[j]=-1000;
@@ -314,11 +314,13 @@ void computeCutSingleParticle(THeader *run){
   TTree *t = (TTree*) fIn->Get("dRICH");
   int nedge, pmt[MAXDATA];
   double nr[MAXDATA], nttw[MAXDATA];
-  bool cutPhotonFlag[MAXDATA],outerPhoton[MAXDATA];
+  bool cutPhotonFlag[MAXDATA],externalPhoton[MAXDATA], innerPhoton[MAXDATA], outerPhoton[MAXDATA];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pmt",&pmt);
   t->SetBranchAddress("nr",&nr);
   t->SetBranchAddress("nttw",&nttw);
+  t->SetBranchAddress("externalPhoton",&externalPhoton);
+  t->SetBranchAddress("innerPhoton",&innerPhoton);
   t->SetBranchAddress("outerPhoton",&outerPhoton);
   t->SetBranchAddress("cutPhotonFlag",&cutPhotonFlag);
 
@@ -349,6 +351,7 @@ void computeCutSingleParticle(THeader *run){
     //if(sqrt(gxtheta*gxtheta+gytheta*gytheta) > GEM_CUT_R)continue;
     for(int j = 0; j < nedge; j++){
       int k=0;
+      if(innerPhoton[j]==false && outerPhoton[j]==false)continue;
       if(outerPhoton[j]==true) k = 1;
       int refPMT = pmt[j]+5*k;
       int refTOT = 4+5*k;
@@ -391,12 +394,14 @@ void newSingleParticle(THeader *run){
   TTree *t = (TTree*) fIn->Get("dRICH");
   int nedge, pmt[MAXDATA];
   double nr[MAXDATA], nttw[MAXDATA];
-  bool goodPhoton[MAXDATA],outerPhoton[MAXDATA];
+  bool goodPhoton[MAXDATA],externalPhoton[MAXDATA],innerPhoton[MAXDATA],outerPhoton[MAXDATA];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pmt",&pmt);
   t->SetBranchAddress("nr",&nr);
   t->SetBranchAddress("nttw",&nttw);
   t->SetBranchAddress("goodPhoton",&goodPhoton);
+  t->SetBranchAddress("externalPhoton",&externalPhoton);
+  t->SetBranchAddress("innerPhoton",&innerPhoton);
   t->SetBranchAddress("outerPhoton",&outerPhoton);
 
   float gxa, gya, gxtheta, gytheta;
@@ -428,6 +433,7 @@ void newSingleParticle(THeader *run){
     //if(sqrt(gxtheta*gxtheta+gytheta*gytheta) > GEM_CUT_R)continue;
     for(int j = 0; j < nedge; j++){
       int k=0;
+      if(innerPhoton[j]==false && outerPhoton[j]==false)continue;
       if(outerPhoton[j]==true) k = 1;
       int refPMT = pmt[j]+5*k;
       int refTOT = 4+5*k;
@@ -472,7 +478,7 @@ void singleParticle(THeader *run)
 
     int nedge, pol[MAXDATA], pmt[MAXDATA];
     double x[MAXDATA],y[MAXDATA],r[MAXDATA], nttw[MAXDATA];
-    bool goodPhoton[MAXDATA], outerPhoton[MAXDATA];
+    bool goodPhoton[MAXDATA], externalPhoton[MAXDATA];
 
     t->SetBranchAddress("nedge",&nedge);
     t->SetBranchAddress("pol",&pol);
@@ -482,7 +488,7 @@ void singleParticle(THeader *run)
     t->SetBranchAddress("y",&y);
     t->SetBranchAddress("r",&r);
     t->SetBranchAddress("goodPhoton",&goodPhoton);
-    t->SetBranchAddress("outerPhoton",&outerPhoton);
+    t->SetBranchAddress("externalPhoton",&externalPhoton);
 
     float gxa, gya, gxtheta, gytheta;
     t->SetBranchAddress("gxa",&gxa);
@@ -514,7 +520,7 @@ void singleParticle(THeader *run)
         for(int j = 0; j < nedge; j++){
             if(goodPhoton[j]==true){
                 int k=0;
-                if(outerPhoton[j]==true) k = 1;
+                if(externalPhoton[j]==true) k = 1;
                 int refPMT = pmt[j]+5*k;
                 int refTOT = 4+5*k;
                 spRadius[refPMT]+=r[j];
