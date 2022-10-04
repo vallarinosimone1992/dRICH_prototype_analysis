@@ -73,7 +73,7 @@ void noGEM_Integration(THeader *run){
   TTree *tout = new TTree("dRICH","dRICH integrated data");
   
   int tevt, tnedge, tpol[MAXDATA], tslot[MAXDATA], tfiber[MAXDATA], tch[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA], totime[MAXDATA];
-  double ttrigtime, tx474time, tx519time, tx537time, tx[MAXDATA],ty[MAXDATA],tr[MAXDATA], tnt[MAXDATA];
+  double ttrigtime, tx474time, tx519time, tx537time, tx[MAXDATA],ty[MAXDATA],trMM[MAXDATA], tr[MAXDATA], tnt[MAXDATA];
   bool dataGEM, ttrigSig[MAXDATA];
 
   auto tEvt=tout->Branch("evt",&tevt,"evt/I");
@@ -94,6 +94,7 @@ void noGEM_Integration(THeader *run){
   auto tX=tout->Branch("x",&tx,"x[nedge]/D");
   auto tY=tout->Branch("y",&ty,"y[nedge]/D");
   auto tR=tout->Branch("r",&tr,"r[nedge]/D");
+  auto tRmm=tout->Branch("rmm",&trMM,"rmm[nedge]/D");
   auto tNT=tout->Branch("nt",&tnt,"nt[nedge]/D");
   auto tTrigSig=tout->Branch("trigSig",&ttrigSig,"trigSig[nedge]/O");
 
@@ -140,6 +141,7 @@ void noGEM_Integration(THeader *run){
         inPath=run->secondPath;
         zMir=run->secondMirrorPosition;
       }
+      trMM[j]=radius[j];
       tr[j]=mmTomRad(radius[j],inPath,zMir);
       tnt[j]=ntime[j];
       ttrigSig[j]=trigSig[j];
@@ -228,7 +230,7 @@ void TTreeIntegration(THeader *run){
   TTree *tout = new TTree("dRICH","dRICH integrated data");
 
   int tevt, tnedge, tpol[MAXDATA], tslot[MAXDATA], tfiber[MAXDATA], tch[MAXDATA], tboard[MAXDATA], tchip[MAXDATA],ttime[MAXDATA],tpmt[MAXDATA], tchannel[MAXDATA], totime[MAXDATA];
-  double ttrigtime, tx474time, tx519time, tx537time, tx[MAXDATA],ty[MAXDATA],tr[MAXDATA], tnt[MAXDATA];
+  double ttrigtime, tx474time, tx519time, tx537time, tx[MAXDATA],ty[MAXDATA],trMM[MAXDATA], tr[MAXDATA], tnt[MAXDATA];
   bool dataGEM, ttrigSig[MAXDATA];
   auto tEvt=tout->Branch("evt",&tevt,"evt/I");
   auto tTrigtime=tout->Branch("trigtime",&ttrigtime,"trigtime/D");
@@ -248,6 +250,7 @@ void TTreeIntegration(THeader *run){
   auto tX=tout->Branch("x",&tx,"x[nedge]/D");
   auto tY=tout->Branch("y",&ty,"y[nedge]/D");
   auto tR=tout->Branch("r",&tr,"r[nedge]/D");
+  auto tRmm=tout->Branch("rmm",&trMM,"rmm[nedge]/D");
   auto tNT=tout->Branch("nt",&tnt,"nt[nedge]/D");
   auto tTrigSig=tout->Branch("trigSig",&ttrigSig,"trigSig[nedge]/O");
 
@@ -307,8 +310,8 @@ void TTreeIntegration(THeader *run){
         zMir=run->firstMirrorPosition;//SWAP TO CHECK THE GEM
         //zMir=run->secondMirrorPosition;
       }
+      trMM[j]=radius[j];
       tr[j]=mmTomRad(radius[j],inPath,zMir);
-      //    tr[j]=radius[j];
       tnt[j]=ntime[j];
       ttrigSig[j]=trigSig[j];
     }

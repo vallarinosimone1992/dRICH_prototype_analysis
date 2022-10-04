@@ -223,10 +223,24 @@ CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/drawing.cxx -o CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.s
 
+CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.o: CMakeFiles/dRICH_lib.dir/flags.make
+CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.o: ../lib/eventDisplay.cxx
+CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.o: CMakeFiles/dRICH_lib.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.o -MF CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.o.d -o CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.o -c /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/eventDisplay.cxx
+
+CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/eventDisplay.cxx > CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.i
+
+CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/eventDisplay.cxx -o CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.s
+
 CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o: CMakeFiles/dRICH_lib.dir/flags.make
 CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o: ../lib/writeHeaderText.cxx
 CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o: CMakeFiles/dRICH_lib.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building CXX object CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o -MF CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o.d -o CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o -c /home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/lib/writeHeaderText.cxx
 
 CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.i: cmake_force
@@ -250,6 +264,7 @@ dRICH_lib_OBJECTS = \
 "CMakeFiles/dRICH_lib.dir/lib/readData.cxx.o" \
 "CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.o" \
 "CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o" \
+"CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.o" \
 "CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o"
 
 # External object files for target dRICH_lib
@@ -266,10 +281,11 @@ libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/readData.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/tracking.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.o
+libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/build.make
 libdRICH_lib.a: CMakeFiles/dRICH_lib.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX static library libdRICH_lib.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Linking CXX static library libdRICH_lib.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/dRICH_lib.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/dRICH_lib.dir/link.txt --verbose=$(VERBOSE)
 

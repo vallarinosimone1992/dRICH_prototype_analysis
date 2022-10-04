@@ -243,11 +243,11 @@ void selectRingsPhotons(THeader *run)
 
   int nedge, pol[MAXDATA],evt;
   double nr[MAXDATA];
-  bool goodPhoton[MAXDATA];
+  bool goodHit[MAXDATA];
   t->SetBranchAddress("evt",&evt);
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("nr",&nr);
-  t->SetBranchAddress("goodPhoton",&goodPhoton);
+  t->SetBranchAddress("goodHit",&goodHit);
 
   bool outerPhoton[MAXDATA], innerPhoton[MAXDATA];
   auto tOuterPhoton= t->Branch("outerPhoton",&outerPhoton,"outerPhoton[nedge]/O");
@@ -285,11 +285,9 @@ void selectRingsPhotons(THeader *run)
     for(int j = 0; j < nedge; j++){
       outerPhoton[j]=false;
       innerPhoton[j]=false;
-      if(goodPhoton[j]==false)continue;
-      if(nr[j]>rMinIn && nr[j]<rMaxIn)innerPhoton[j]==true;
-      if(nr[j]>rMinOut && nr[j]<rMaxOut)outerPhoton[j]==true;
-      cout <<rMinIn <<" " <<nr[j] <<" " <<rMaxIn <<" " <<innerPhoton[j] <<endl;
-      cout <<rMinOut <<" " <<nr[j] <<" " <<rMaxOut <<" " <<outerPhoton[j] <<endl <<endl;
+      if(goodHit[j]==false)continue;
+      if(nr[j]>rMinIn && nr[j]<rMaxIn)innerPhoton[j]=true;
+      if(nr[j]>rMinOut && nr[j]<rMaxOut)outerPhoton[j]=true;
     }
     tOuterPhoton->Fill();
     tInnerPhoton->Fill();

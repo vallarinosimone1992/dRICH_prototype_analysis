@@ -22,7 +22,8 @@ add_library(dRICH_lib
       lib/integrate.cxx
       lib/readData.cxx
       lib/tracking.cxx
-       lib/drawing.cxx
+      lib/drawing.cxx
+      lib/eventDisplay.cxx
       lib/writeHeaderText.cxx
 )
 
@@ -63,6 +64,18 @@ add_executable(mon
 )
 
 target_link_libraries(mon
+      PRIVATE
+      dRICH_lib
+      PUBLIC
+      ${ROOT_LIBRARIES}
+      ${ROOT_EXE_LINKER_FLAGS}
+)
+
+add_executable(event
+     plugin/event.cxx
+)
+
+target_link_libraries(event
       PRIVATE
       dRICH_lib
       PUBLIC

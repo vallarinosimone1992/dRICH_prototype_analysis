@@ -107,7 +107,7 @@ int main(int argc, char *argv[]){
   
   //Compute the mean quantities for the single particle after the position correction
   newSingleParticle(&header); //computing.cxx
-
+  
   //Calculate the time and radius rms, and the residue for each photon.
   computeRMS(&header,-1); //computing.cxx
 

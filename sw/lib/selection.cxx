@@ -172,7 +172,7 @@ void selectGoodPhotons(THeader *run)
 
   int nedge, pol[MAXDATA],evt;
   double x[MAXDATA],y[MAXDATA],r[MAXDATA],nttw[MAXDATA], dur[MAXDATA];
-  bool goodHit[MAXDATA],trigSig[MAXDATA],outerPhoton[MAXDATA];
+  bool goodHit[MAXDATA],trigSig[MAXDATA],externalPhoton[MAXDATA];
   t->SetBranchAddress("evt",&evt);
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
@@ -183,7 +183,7 @@ void selectGoodPhotons(THeader *run)
   t->SetBranchAddress("dur",&dur);
   t->SetBranchAddress("goodHit",&goodHit);
   t->SetBranchAddress("trigSig",&trigSig);
-  t->SetBranchAddress("outerPhoton",&outerPhoton);
+  t->SetBranchAddress("externalPhoton",&externalPhoton);
 
   float gxa, gya, gxtheta, gytheta;
   t->SetBranchAddress("gxa",&gxa);
@@ -209,7 +209,7 @@ void selectGoodPhotons(THeader *run)
 
       double timeMin = run->timeInMin;
       double timeMax = run->timeInMax;
-      if(outerPhoton[j]==true){
+      if(externalPhoton[j]==true){
         timeMin = run->timeOuMin;
         timeMax = run->timeOuMax;
       }
@@ -217,7 +217,7 @@ void selectGoodPhotons(THeader *run)
         coincPhoton[j]=true;
         if(dur[j] > run->durMin) goodPhoton[j]=true;
       }
-      if(i<10 && pol[j]==0)printf(" sele pho %3d  time %7.2f (%7.2f : %7.2f) dur %7.2f  r %7.2f %3d --> %3d %3d \n", j,nttw[j],timeMin,timeMax,dur[j],r[j],outerPhoton[j],coincPhoton[j],goodPhoton[j]);
+      if(i<10 && pol[j]==0)printf(" sele pho %3d  time %7.2f (%7.2f : %7.2f) dur %7.2f  r %7.2f %3d --> %3d %3d \n", j,nttw[j],timeMin,timeMax,dur[j],r[j],externalPhoton[j],coincPhoton[j],goodPhoton[j]);
     }
     tCoincPhoton->Fill();
     tGoodPhoton->Fill();

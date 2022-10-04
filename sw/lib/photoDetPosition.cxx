@@ -11,14 +11,82 @@
 
 using namespace std;
 
-double minRMAPMT=29.25;
-double halfMAPMT=24.25;
-double passoMAPMT = 3.03125;
+double minRMAPMT  = 29.25;
+double frameMAPMT = (51.8-48.5)/2.;  // PMT frame structure
+double halfMAPMT  = 48.5/2.;         // active area
+double firstMAPMT = (48.5-42)/2.;    // first pixel
+double passoMAPMT = 3.0;             // inner pixels
 
 double min1MPPC=30.4;
 double max1MPPC=81.6;
 double min2MPPC=25.6;
 double passoMPPC = 3.2;
+
+
+
+//---------------------------------------------------
+void MAPMTposition(int channel, int place, double *x, double *y, double *r){
+  //---------------------------------------------------
+  double row = (channel-1)/16;
+  double col = (channel-1)%16;
+  double step = passoMAPMT;
+  //if(row==0 || row==15) step = (firstMAPMT+passoMAPMT)/2.;
+  //if(col==0 || col==15) step = (firstMAPMT+passoMAPMT)/2.;
+  double step0 = (firstMAPMT+passoMAPMT)/2;
+
+  if(place == 0){//NORD
+    //double iX=-halfMAPMT+0.5*firstMAPMT, iY=minRMAPMT+frameMAPMT+0.5*firstMAPMT;
+    double iX=-halfMAPMT+0.5*firstMAPMT, iY=minRMAPMT+0.5*firstMAPMT;
+    if(row == 0) *x = iX;
+    else if(row == 15) *x=iX+2*step0+(row-2)*step;
+    else *x = iX+step0+(row-1)*step;
+    //*x=iX+row*step;
+     if(col == 0) *y = iY;
+    else if(col == 15) *y=iY+2*step0+(col-2)*step;
+    else *y = iY+step0+(col-1)*step;
+    //*y=iY+col*step;
+  }
+  if(place == 1){//EST
+    //double iX=minRMAPMT+frameMAPMT+0.5*firstMAPMT, iY=halfMAPMT-0.5*firstMAPMT;
+    //*x=iX+col*step;
+    //*y=iY-row*step;
+    double iX=minRMAPMT+0.5*firstMAPMT, iY=halfMAPMT-0.5*firstMAPMT;
+    if(col==0)*x=iX;
+    else if(col==15)*x=iX+2*step0+(col-2)*step;
+    else *x = iX+step0+(col-1)*step;
+    if(row==0)*y=iY;
+    else if(row==15)*y=iY-2*step0-(row-2)*step;
+    else *y=iY-step0-(row-1)*step;
+  }
+  if(place == 2){//SUD
+    //double iX=halfMAPMT-0.5*firstMAPMT, iY=-minRMAPMT-frameMAPMT-0.5*firstMAPMT;
+    //*x=iX-row*step;
+    //*y=iY-col*step;
+    double iX=halfMAPMT-0.5*firstMAPMT, iY=-minRMAPMT-0.5*firstMAPMT;
+    if(row==0)*x=iX;
+    else if(row==15)*x=iX-2*step0-(row-2)*step;
+    else *x=iX-step0-(row-1)*step;
+    if(col==0) *y=iY;
+    else if(col==15) *y=iY-2*step0-(col-2)*step;
+    else *y=iY-step0-(col-1)*step;
+  }
+  if(place == 3){//WEST
+    //double iX=-minRMAPMT-frameMAPMT-0.5*firstMAPMT, iY=-halfMAPMT+0.5*firstMAPMT;
+    //*x=iX-col*step;
+    //*y=iY+row*step;
+    double iX=-minRMAPMT-0.5*firstMAPMT, iY=-halfMAPMT+0.5*firstMAPMT;
+    if(col==0)*x=iX;
+    else if(col==15)*x=iX-2*step0-(col-2)*step;
+    else *x=iX-step0-(col-1)*step;
+    if(row==0) *y=iY;
+    else if(row==15)*y=iY+2*step0+(row-2)*step;
+    else *y=iY+step0+(row-1)*step;
+  }
+  *r = sqrt((*x)*(*x)+(*y)*(*y));
+}
+
+
+
 
 int FiberToPhDet(int fiber, int cmp[8]){
   //PLACE LEGEND:
@@ -39,36 +107,6 @@ int FiberToPhDet(int fiber, int cmp[8]){
   }
   return place;
 }
-
-
-//---------------------------------------------------
-void MAPMTposition(int channel, int place, double *x, double *y, double *r){
-//---------------------------------------------------
-    double row = (channel-1)/16;
-    double col = (channel-1)%16;
-    if(place == 0){//NORD
-        double iX=-halfMAPMT+0.5*passoMAPMT, iY=minRMAPMT+0.5*passoMAPMT;
-        *x=iX+row*passoMAPMT;
-        *y=iY+col*passoMAPMT;
-    }
-    if(place == 1){//EST
-        double iX=minRMAPMT+0.5*passoMAPMT, iY=halfMAPMT-0.5*passoMAPMT;
-        *x=iX+col*passoMAPMT;
-        *y=iY-row*passoMAPMT;
-    }
-    if(place == 2){//SUD
-        double iX=halfMAPMT-0.5*passoMAPMT, iY=-minRMAPMT-0.5*passoMAPMT;
-        *x=iX-row*passoMAPMT;
-        *y=iY-col*passoMAPMT;
-    }
-    if(place == 3){//WEST
-        double iX=-minRMAPMT-0.5*passoMAPMT, iY=-halfMAPMT+0.5*passoMAPMT;
-        *x=iX-col*passoMAPMT;
-        *y=iY+row*passoMAPMT;
-    }
-    *r = sqrt((*x)*(*x)+(*y)*(*y));
-}
-
 
 void MPPCposition(int CHANNEL, int place,  double *x, double *y, double *r){
   int ratio = (CHANNEL-1)/16;
@@ -94,8 +132,8 @@ void MPPCposition(int CHANNEL, int place,  double *x, double *y, double *r){
     double iX=-min2MPPC+0.5*passoMPPC, iY=-min1MPPC-0.5*passoMPPC;
     *x=iX+remainder*passoMPPC;
     *y=iY-ratio*passoMPPC;
-//    cout <<"Channel " <<CHANNEL <<" " <<ratio <<" " <<remainder <<"; X: " <<iX <<" " <<*x <<"; Y: " <<iY <<" " <<*y <<endl;
-//    cin.get();
+    //    cout <<"Channel " <<CHANNEL <<" " <<ratio <<" " <<remainder <<"; X: " <<iX <<" " <<*x <<"; Y: " <<iY <<" " <<*y <<endl;
+    //    cin.get();
   }
   *r = sqrt((*x)*(*x)+(*y)*(*y));
 }

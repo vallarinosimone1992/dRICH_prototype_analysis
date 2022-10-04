@@ -477,7 +477,7 @@ void singleParticle(THeader *run)
     TTree *t = (TTree*) fIn->Get("dRICH");
 
     int nedge, pol[MAXDATA], pmt[MAXDATA];
-    double x[MAXDATA],y[MAXDATA],r[MAXDATA], nttw[MAXDATA];
+    double x[MAXDATA],y[MAXDATA],r[MAXDATA], nttw[MAXDATA], rmm[MAXDATA];
     bool goodPhoton[MAXDATA], externalPhoton[MAXDATA];
 
     t->SetBranchAddress("nedge",&nedge);
@@ -487,6 +487,7 @@ void singleParticle(THeader *run)
     t->SetBranchAddress("x",&x);
     t->SetBranchAddress("y",&y);
     t->SetBranchAddress("r",&r);
+    t->SetBranchAddress("rmm",&rmm);
     t->SetBranchAddress("goodPhoton",&goodPhoton);
     t->SetBranchAddress("externalPhoton",&externalPhoton);
 
@@ -496,11 +497,12 @@ void singleParticle(THeader *run)
     t->SetBranchAddress("gxtheta",&gxtheta);
     t->SetBranchAddress("gytheta",&gytheta);
 
-    double spRadius[10], spTime[10];
+    double spRadius[10], spTime[10], spRadiusmm[10] ;
     int spPhoton[10];
     bool goodSP[10];
     
     auto tSPRadius=t->Branch("spRadius",&spRadius,"spRadius[10]/D");
+    auto tSPRadiusmm=t->Branch("spRadiusmm",&spRadiusmm,"spRadiusmm[10]/D");
     auto tSPPhoton=t->Branch("spPhoton",&spPhoton,"spPhoton[10]/I");
     auto tSPTime=t->Branch("spTime",&spTime,"spTime[10]/D");
     auto tgoodSP=t->Branch("goodSP",&goodSP,"goodSP[10]/O");
@@ -511,6 +513,7 @@ void singleParticle(THeader *run)
         t->GetEntry(i);
         for(int j = 0; j < 10; j++){
             spRadius[j]=0;
+            spRadiusmm[j]=0;
             spPhoton[j]=0;
             spTime[j]=0;
             goodSP[j]=false;
@@ -524,9 +527,11 @@ void singleParticle(THeader *run)
                 int refPMT = pmt[j]+5*k;
                 int refTOT = 4+5*k;
                 spRadius[refPMT]+=r[j];
+                spRadiusmm[refPMT]+=rmm[j];
                 spPhoton[refPMT]+=1;
                 spTime[refPMT]+=nttw[j];
                 spRadius[refTOT]+=r[j];
+                spRadiusmm[refTOT]+=rmm[j];
                 spPhoton[refTOT]+=1;
                 spTime[refTOT]+=nttw[j];
             }
@@ -534,15 +539,18 @@ void singleParticle(THeader *run)
         for(int j = 0; j < 10; j++){
             if(spPhoton[j]!=0){
                 spRadius[j]/=spPhoton[j];
+                spRadiusmm[j]/=spPhoton[j];
                 spTime[j]/=spPhoton[j];
                 goodSP[j]=true;
                 //cout <<j<<" " <<spRadius[j]<<" " <<spTime[j] <<" "<<spPhoton[j] <<endl;
             }else{
                 spRadius[j]=0;
+                spRadiusmm[j]=0;
                 spTime[j]=0;
             }
         }
         tSPRadius->Fill();
+        tSPRadiusmm->Fill();
         tSPPhoton->Fill();
         tSPTime->Fill();
         tgoodSP->Fill();

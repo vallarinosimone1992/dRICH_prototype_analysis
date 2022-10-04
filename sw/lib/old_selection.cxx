@@ -37,11 +37,11 @@ void recoHit(THeader *run)
     t->SetBranchAddress("r",&r);
     t->SetBranchAddress("nt",&nt);
 
-    bool goodHit[MAXDATA], outerPhoton[MAXDATA];;
+    bool goodHit[MAXDATA], externalPhoton[MAXDATA];;
     auto tgoodHit= t->Branch("goodHit",&goodHit,"goodHit[nedge]/O");
     auto tdur = t->Branch("dur",&dur,"dur[nedge]/D");
     auto tnttw = t->Branch("nttw",&nttw,"nttw[nedge]/D");
-    auto tOuterPhoton= t->Branch("outerPhoton",&outerPhoton,"outerPhoton[nedge]/O");
+    auto tExternalPhoton= t->Branch("externalPhoton",&externalPhoton,"externalPhoton[nedge]/O");
 
     cout <<"Applying selection based on time and radius RMS\n";
     for(int i = 0; i < t->GetEntries(); i++){
@@ -58,8 +58,8 @@ void recoHit(THeader *run)
             printf(" HIT event %3d \n",i);
         }
         for(int j = 0; j < nedge; j++){
-	    outerPhoton[j]=false;
-            if(r[j] > run->radCut)outerPhoton[j]=true;
+	    externalPhoton[j]=false;
+            if(r[j] > run->radCut)externalPhoton[j]=true;
             //cout <<pol[j] <<endl;
             if(pol[j]!=0)continue;
             for(int k = 0; k < nedge; k++){
@@ -80,9 +80,9 @@ void recoHit(THeader *run)
                     dur[j] = nt[k]-nt[j];
                     dur[k] = nt[k]-nt[j];
                     nttw[j] = timeWalkCorrection(nt[j],nt[k]);
-		    outerPhoton[j]=false;
-                    //if(r[j] > run->geoCut)outerPhoton[j]=true;
-                    if(r[j] > run->radCut)outerPhoton[j]=true;
+		    externalPhoton[j]=false;
+                    //if(r[j] > run->geoCut)externalPhoton[j]=true;
+                    if(r[j] > run->radCut)externalPhoton[j]=true;
 	            if(i<10)printf(" h %3d %3d  %7.2f %7.2f %7.2f \n",j,k,nt[j],nttw[j],dur[j]);
                     break;
                 }
@@ -91,7 +91,7 @@ void recoHit(THeader *run)
         tgoodHit->Fill();
         tdur->Fill();
         tnttw->Fill();
-        tOuterPhoton->Fill();
+        tExternalPhoton->Fill();
     }
     printEnd();
     t->Write("",TObject::kOverwrite);
@@ -108,14 +108,14 @@ void rmsCutSelection(THeader *run){
     TTree *t = (TTree*) fIn->Get("dRICH");
 
     int nedge, pmt[MAXDATA];
-    bool goodPhoton[MAXDATA],outerPhoton[MAXDATA];
+    bool goodPhoton[MAXDATA],externalPhoton[MAXDATA];
     double rsdRadius[MAXDATA], rsdTime[MAXDATA];
     bool goodRMS[10];
     bool goodHit[MAXDATA];
     t->SetBranchAddress("nedge",&nedge);
     t->SetBranchAddress("pmt",&pmt);
     t->SetBranchAddress("goodPhoton",&goodPhoton);
-    t->SetBranchAddress("outerPhoton",&outerPhoton);
+    t->SetBranchAddress("externalPhoton",&externalPhoton);
     t->SetBranchAddress("rsdRadius",&rsdRadius);
     t->SetBranchAddress("rsdTime",&rsdTime);
     t->SetBranchAddress("goodRMS",&goodRMS);
@@ -142,7 +142,7 @@ void rmsCutSelection(THeader *run){
         int k=0;
         double cmpRadius = run->cutRadiusInRMS;
         double cmpTime = run->cutTimeInRMS;
-        if(outerPhoton[j]==true) {
+        if(externalPhoton[j]==true) {
           k = 1;
           cmpRadius = run->cutRadiusOutRMS;
           cmpTime = run->cutTimeOutRMS;
@@ -171,7 +171,7 @@ void selectGoodPhotons(THeader *run)
 
       int nedge, pol[MAXDATA],evt;
       double x[MAXDATA],y[MAXDATA],r[MAXDATA],nttw[MAXDATA], dur[MAXDATA];
-      bool goodHit[MAXDATA],trigSig[MAXDATA],outerPhoton[MAXDATA];
+      bool goodHit[MAXDATA],trigSig[MAXDATA],externalPhoton[MAXDATA];
       t->SetBranchAddress("evt",&evt);
       t->SetBranchAddress("nedge",&nedge);
       t->SetBranchAddress("pol",&pol);
@@ -182,7 +182,7 @@ void selectGoodPhotons(THeader *run)
       t->SetBranchAddress("dur",&dur);
       t->SetBranchAddress("goodHit",&goodHit);
       t->SetBranchAddress("trigSig",&trigSig);
-      t->SetBranchAddress("outerPhoton",&outerPhoton);
+      t->SetBranchAddress("externalPhoton",&externalPhoton);
 
       float gxa, gya, gxtheta, gytheta;
       t->SetBranchAddress("gxa",&gxa);
@@ -208,7 +208,7 @@ void selectGoodPhotons(THeader *run)
 
 	      double timeMin = run->timeInMin;
 	      double timeMax = run->timeInMax;
-	      if(outerPhoton[j]==true){
+	      if(externalPhoton[j]==true){
 	          timeMin = run->timeOuMin;
 	          timeMax = run->timeOuMax;
 	      }
@@ -217,7 +217,7 @@ void selectGoodPhotons(THeader *run)
                   if(dur[j] > run->durMin) goodPhoton[j]=true;
 	      }
 	      if(i<10 && pol[j]==0)printf(" sele pho %3d  time %7.2f (%7.2f : %7.2f) dur %7.2f  r %7.2f  %3d --> %3d %3d \n",
-			     j,nttw[j],timeMin,timeMax,dur[j],r[j],outerPhoton[j],coincPhoton[j],goodPhoton[j]);
+			     j,nttw[j],timeMin,timeMax,dur[j],r[j],externalPhoton[j],coincPhoton[j],goodPhoton[j]);
           }
           tCoincPhoton->Fill();
           tGoodPhoton->Fill();
@@ -252,9 +252,9 @@ void selectGoodPhotons(THeader *run)
       t->SetBranchAddress("coincPhoton",&coincPhoton);
       t->SetBranchAddress("trigSig",&trigSig);
 
-      bool goodPhoton[MAXDATA], outerPhoton[MAXDATA];
+      bool goodPhoton[MAXDATA], externalPhoton[MAXDATA];
       auto tGoodPhoton= t->Branch("goodPhoton",&goodPhoton,"goodPhoton[nedge]/O");
-      //auto tOuterPhoton= t->Branch("outerPhoton",&outerPhoton,"outerPhoton[nedge]/O");
+      //auto tExternalPhoton= t->Branch("externalPhoton",&externalPhoton,"externalPhoton[nedge]/O");
 
       cout <<"Selecting the photon in the time goodidence window and dividing rings\n";
       for(int i = 0; i < t->GetEntries(); i++){
@@ -262,15 +262,15 @@ void selectGoodPhotons(THeader *run)
           t->GetEntry(i);
           for(int j = 0; j < nedge; j++){
               goodPhoton[j]=false;
-              //outerPhoton[j]=false;
+              //externalPhoton[j]=false;
               if(coincPhoton[j]==false)continue;
               if(dur[j] > run->durMin) goodPhoton[j]=true;
-              //if(r[j] > run->geoCut)outerPhoton[j]=true;
-              //if(r[j] > run->radCut)outerPhoton[j]=true;
+              //if(r[j] > run->geoCut)externalPhoton[j]=true;
+              //if(r[j] > run->radCut)externalPhoton[j]=true;
               //Attention, if you refine the cut you should check the conversion to milliradiant.
           }
           tGoodPhoton->Fill();
-          //tOuterPhoton->Fill();
+          //tExternalPhoton->Fill();
       }
       printEnd();
       t->Write("",TObject::kOverwrite);
@@ -289,13 +289,13 @@ void findTimeCoincidence(THeader *run)
     TTree *t = (TTree*) fIn->Get("dRICH");
 
     int nedge, pol[MAXDATA];
-    bool outerPhoton[MAXDATA], goodHit[MAXDATA], trigSig[MAXDATA];
+    bool externalPhoton[MAXDATA], goodHit[MAXDATA], trigSig[MAXDATA];
     double nttw[MAXDATA], dur[MAXDATA];
     t->SetBranchAddress("nedge",&nedge);
     t->SetBranchAddress("pol",&pol);
     t->SetBranchAddress("dur",&dur);
     t->SetBranchAddress("goodHit",&goodHit);
-    t->SetBranchAddress("outerPhoton",&outerPhoton);
+    t->SetBranchAddress("externalPhoton",&externalPhoton);
     t->SetBranchAddress("trigSig",&trigSig);
     t->SetBranchAddress("nttw",&nttw);
 
@@ -311,8 +311,8 @@ void findTimeCoincidence(THeader *run)
             if(goodHit[j]==false)continue;
             if(trigSig[j]==true)continue;
             if(dur[j]<CUT_MIN_DUR)continue;
-            if(outerPhoton[j]==false) hint->Fill(nttw[j]);
-            if(outerPhoton[j]==true) hout->Fill(nttw[j]);
+            if(externalPhoton[j]==false) hint->Fill(nttw[j]);
+            if(externalPhoton[j]==true) hout->Fill(nttw[j]);
         }
     }
     if(SHOW_PROGRESS==true)printEnd();

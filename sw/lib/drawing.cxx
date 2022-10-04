@@ -721,16 +721,20 @@ void displayMonitor(THeader *run){
   c4->Divide(2,2);
   c4->Draw();
   c4->cd(1);
-  hUpGEM->GetXaxis()->SetRangeUser(-60,60);
-  hUpGEM->GetYaxis()->SetRangeUser(-60,60);
+  gPad->SetGrid();
+  hUpGEM->GetXaxis()->SetRangeUser(-30,30);
+  hUpGEM->GetYaxis()->SetRangeUser(-30,30);
   hUpGEM->Draw("colz");
   c4->cd(2);
-  hDnGEM->GetXaxis()->SetRangeUser(-60,60);
-  hDnGEM->GetYaxis()->SetRangeUser(-60,60);
+  gPad->SetGrid();
+  hDnGEM->GetXaxis()->SetRangeUser(-30,30);
+  hDnGEM->GetYaxis()->SetRangeUser(-30,30);
   hDnGEM->Draw("colz");
   c4->cd(3);
+  gPad->SetGrid();
   hBeam->Draw("colz");
   c4->cd(4);
+  gPad->SetGrid();
   hBeamTheta->Draw("colz");
   c4->Update();
   c4->Print(out_pdf.c_str());
@@ -967,6 +971,7 @@ void displayMonitor(THeader *run){
   gStyle->SetOptStat(1); 
   c10->Draw();
   c10->cd(1);
+  gPad->SetLogz();
   hMap->Draw("colz");
   TEllipse *geoCutRing = new TEllipse(0,0,run->geoCut);
   geoCutRing->SetLineColor(2);
@@ -1007,11 +1012,11 @@ void displayMonitor(THeader *run){
   vGasRadPMT[0]->SetTitle("PMT north - Gas");
   vGasRadPMT[0]->Draw();
   c12->cd(2);
-  vGasRadPMT[1]->SetTitle("PMT est - Gas");
-  vGasRadPMT[1]->Draw();
-  c12->cd(3);
-  vGasRadPMT[2]->SetTitle("PMT south - Gas");
+  vGasRadPMT[2]->SetTitle("PMT est - Gas");
   vGasRadPMT[2]->Draw();
+  c12->cd(3);
+  vGasRadPMT[1]->SetTitle("PMT south - Gas");
+  vGasRadPMT[1]->Draw();
   c12->cd(4);
   vGasRadPMT[3]->SetTitle("PMT west - Gas");
   vGasRadPMT[3]->Draw();
@@ -1019,11 +1024,11 @@ void displayMonitor(THeader *run){
   vAeroRadPMT[0]->SetTitle("PMT north - Aero");
   vAeroRadPMT[0]->Draw();
   c12->cd(6);
-  vAeroRadPMT[1]->SetTitle("PMT est - Aero");
-  vAeroRadPMT[1]->Draw();
-  c12->cd(7);
-  vAeroRadPMT[2]->SetTitle("PMT south - Aero");
+  vAeroRadPMT[2]->SetTitle("PMT est - Aero");
   vAeroRadPMT[2]->Draw();
+  c12->cd(7);
+  vAeroRadPMT[1]->SetTitle("PMT south - Aero");
+  vAeroRadPMT[1]->Draw();
   c12->cd(8);
   vAeroRadPMT[3]->SetTitle("PMT west - Aero");
   vAeroRadPMT[3]->Draw();
@@ -1841,7 +1846,7 @@ void inizializePlot(THeader *run){
     hBeamTheta = new TH2D("hBeamTheta","Beam divergence; x_0[mm];y_0[mm]",100,-.002,.002,100,-.002,.002);*/
   hUpGEM = new TH2D("hUpGEM","Upstream GEM; x_0[mm];y_0[mm]",3000,-600,600,3000,-600,600);
   hDnGEM = new TH2D("hDnGEM","Dnstream GEM; x_0[mm];y_0[mm]",3000,-600,600,3000,-600,600);
-  hBeam = new TH2D("hBeam","Beam profile at aerogel; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
+  hBeam = new TH2D("hBeam","Beam profile at aerogel; x_0[mm];y_0[mm]",150,-30,30,150,-30,30);
   hBeamTheta = new TH2D("hBeamTheta","Beam divergence; x_0[mm];y_0[mm]",400,-.002,.002,400,-.002,.002);
 
 

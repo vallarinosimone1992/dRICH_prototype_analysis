@@ -40,6 +40,7 @@
 #include "../lib/computing.h"
 #include "../lib/readData.h"
 #include "../lib/drawing.h"
+#include "../lib/eventDisplay.h"
 #include "../lib/writeHeaderText.h"
 
 
@@ -50,43 +51,30 @@ int main(int argc, char *argv[]){
   //gROOT->SetBatch(kTRUE);
   gStyle->SetPalette(55);
   vector<THeader> header;
-  
+
   if(argc != 3){
-    cout <<"[ERROR] the evente display requirese"
-    }
-    cout <<Form("Analyzing run %d\n",atoi(argv[1]));
+    cout <<"[ERROR] the evente display require two arguments: run_number and event_number.\n";
+    exit(EXIT_FAILURE);
+  }else{
+    cout <<Form("Analyzing event %d of run %d\n",atoi(argv[2]),atoi(argv[1]));
     THeader tmpHeader;
     readHeaders(atoi(argv[1]),&tmpHeader);
-    tmpHeader.outputDir=Form("run%04d",atoi(argv[1]));
+    tmpHeader.outputDir=Form("run%04d_event%06d",atoi(argv[1]),atoi(argv[2]));
     readHeaderShort(&tmpHeader);
     header.push_back(tmpHeader);
-  }else if(argc >= 3){
-    cout <<"Here\n";
-    string output_Name=Form("%s",argv[1]);
-    for(int i = 2; i < argc; i++){
-      THeader tmpHeader;
-      readHeaders(atoi(argv[i]),&tmpHeader);
-      tmpHeader.outputDir=Form("%s",output_Name.c_str());
-      readHeaderShort(&tmpHeader);
-      header.push_back(tmpHeader);
-      cout <<"Analyze run " <<argv[i] <<endl;
-      sleep(1);
-    }
-  }else printUsageMon();
-
-
-
-  inizializePlot(&header[0]);
-  //for(int i = 0; i < header.size(); i++)  fillHisto(&header[i]);
-  for(int i = 0; i < header.size(); i++){
-	  cout <<"Fill the run " <<header[i].runNum;
-      	  sleep(1);
-	  fillHistoMon(&header[i]);
   }
-  displayMonitor(&header[0]);
-  //displayMonitor2(&header[0]);
 
-  //theApp.Run();
-  printf("Son qua \n");
+  
+
+  //Inizialize the event plot
+  //inizializeEvent(&header[0]);
+  //Fill the single event plot
+  //fillEvent(&header[0]);
+  //Show the single event plot
+  inizializeEventDisplay(&header[0]);
+  fillEventDisplay(&header[0], atoi(argv[2]));
+  displayEvent(&header[0], atoi(argv[2]));
+
+  theApp.Run();
   exit(EXIT_SUCCESS);
 }

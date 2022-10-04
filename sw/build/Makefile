@@ -168,6 +168,19 @@ mon/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/mon.dir/build.make CMakeFiles/mon.dir/build
 .PHONY : mon/fast
 
+#=============================================================================
+# Target rules for targets named event
+
+# Build rule for target.
+event: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 event
+.PHONY : event
+
+# fast build rule for target.
+event/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/event.dir/build.make CMakeFiles/event.dir/build
+.PHONY : event/fast
+
 lib/computing.o: lib/computing.cxx.o
 .PHONY : lib/computing.o
 
@@ -239,6 +252,30 @@ lib/drawing.s: lib/drawing.cxx.s
 lib/drawing.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/drawing.cxx.s
 .PHONY : lib/drawing.cxx.s
+
+lib/eventDisplay.o: lib/eventDisplay.cxx.o
+.PHONY : lib/eventDisplay.o
+
+# target to build an object file
+lib/eventDisplay.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.o
+.PHONY : lib/eventDisplay.cxx.o
+
+lib/eventDisplay.i: lib/eventDisplay.cxx.i
+.PHONY : lib/eventDisplay.i
+
+# target to preprocess a source file
+lib/eventDisplay.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.i
+.PHONY : lib/eventDisplay.cxx.i
+
+lib/eventDisplay.s: lib/eventDisplay.cxx.s
+.PHONY : lib/eventDisplay.s
+
+# target to generate assembly for a file
+lib/eventDisplay.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/dRICH_lib.dir/build.make CMakeFiles/dRICH_lib.dir/lib/eventDisplay.cxx.s
+.PHONY : lib/eventDisplay.cxx.s
 
 lib/fillMAPS.o: lib/fillMAPS.cxx.o
 .PHONY : lib/fillMAPS.o
@@ -504,6 +541,30 @@ plugin/dRICH_reco.cxx.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/reco.dir/build.make CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.s
 .PHONY : plugin/dRICH_reco.cxx.s
 
+plugin/event.o: plugin/event.cxx.o
+.PHONY : plugin/event.o
+
+# target to build an object file
+plugin/event.cxx.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/event.dir/build.make CMakeFiles/event.dir/plugin/event.cxx.o
+.PHONY : plugin/event.cxx.o
+
+plugin/event.i: plugin/event.cxx.i
+.PHONY : plugin/event.i
+
+# target to preprocess a source file
+plugin/event.cxx.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/event.dir/build.make CMakeFiles/event.dir/plugin/event.cxx.i
+.PHONY : plugin/event.cxx.i
+
+plugin/event.s: plugin/event.cxx.s
+.PHONY : plugin/event.s
+
+# target to generate assembly for a file
+plugin/event.cxx.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/event.dir/build.make CMakeFiles/event.dir/plugin/event.cxx.s
+.PHONY : plugin/event.cxx.s
+
 plugin/monitor.o: plugin/monitor.cxx.o
 .PHONY : plugin/monitor.o
 
@@ -538,6 +599,7 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... ana"
 	@echo "... dRICH_lib"
+	@echo "... event"
 	@echo "... mon"
 	@echo "... reco"
 	@echo "... lib/computing.o"
@@ -549,6 +611,9 @@ help:
 	@echo "... lib/drawing.o"
 	@echo "... lib/drawing.i"
 	@echo "... lib/drawing.s"
+	@echo "... lib/eventDisplay.o"
+	@echo "... lib/eventDisplay.i"
+	@echo "... lib/eventDisplay.s"
 	@echo "... lib/fillMAPS.o"
 	@echo "... lib/fillMAPS.i"
 	@echo "... lib/fillMAPS.s"
@@ -582,6 +647,9 @@ help:
 	@echo "... plugin/dRICH_reco.o"
 	@echo "... plugin/dRICH_reco.i"
 	@echo "... plugin/dRICH_reco.s"
+	@echo "... plugin/event.o"
+	@echo "... plugin/event.i"
+	@echo "... plugin/event.s"
 	@echo "... plugin/monitor.o"
 	@echo "... plugin/monitor.i"
 	@echo "... plugin/monitor.s"
