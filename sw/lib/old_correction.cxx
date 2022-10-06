@@ -308,10 +308,6 @@ void opticalCenterY(THeader *run)
 	  cout <<"[WARNING] Outer correction y larger than 10. Fixed to 0. Check it\n";
 	  run->outerCorrectionY=0;
     }
-    if(run->runNumGEM==0){
-      run->innerCorrectionY=0;
-      run->outerCorrectionY=0;
-    }
   fIn->Close();
   //cin.get();
   

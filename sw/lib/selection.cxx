@@ -12,7 +12,6 @@
 #include "definition.h"
 #include "utility.h"
 #include "correction.h"
-#include "computing.h"
 
 using namespace std;
 
@@ -217,7 +216,8 @@ void selectGoodPhotons(THeader *run)
         coincPhoton[j]=true;
         if(dur[j] > run->durMin) goodPhoton[j]=true;
       }
-      if(i<10 && pol[j]==0)printf(" sele pho %3d  time %7.2f (%7.2f : %7.2f) dur %7.2f  r %7.2f %3d --> %3d %3d \n", j,nttw[j],timeMin,timeMax,dur[j],r[j],externalPhoton[j],coincPhoton[j],goodPhoton[j]);
+      if(i<10 && pol[j]==0)printf(" sele pho %3d  time %7.2f (%7.2f : %7.2f) dur %7.2f  r %7.2f  %3d --> %3d %3d \n",
+          j,nttw[j],timeMin,timeMax,dur[j],r[j],externalPhoton[j],coincPhoton[j],goodPhoton[j]);
     }
     tCoincPhoton->Fill();
     tGoodPhoton->Fill();
@@ -226,75 +226,6 @@ void selectGoodPhotons(THeader *run)
   t->Write("",TObject::kOverwrite);
   fIn->Close();
 
-}
-
-
-
-
-
-//---------------------------------------------------
-void selectRingsPhotons(THeader *run)
-  //---------------------------------------------------
-{
-
-  TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
-  TFile *fIn = new TFile (fName,"UPDATE");
-  TTree *t = (TTree*) fIn->Get("dRICH");
-
-  int nedge, pol[MAXDATA],evt;
-  double nr[MAXDATA];
-  bool goodHit[MAXDATA];
-  t->SetBranchAddress("evt",&evt);
-  t->SetBranchAddress("nedge",&nedge);
-  t->SetBranchAddress("nr",&nr);
-  t->SetBranchAddress("goodHit",&goodHit);
-
-  bool outerPhoton[MAXDATA], innerPhoton[MAXDATA];
-  auto tOuterPhoton= t->Branch("outerPhoton",&outerPhoton,"outerPhoton[nedge]/O");
-  auto tInnerPhoton= t->Branch("innerPhoton",&innerPhoton,"innerPhoton[nedge]/O");
-
-  TCanvas *c0 = new TCanvas("c0","c0",1600,900);
-  c0->Draw();
-  TH1D *h = new TH1D("h","h",400,0,200);
-  t->Draw("nr>>h","fiber!=11 || chip!=0 && nr>1","goff");
-  TF1 *f0 = new TF1("f0","gaus(0)",0,200);
-  h->Fit(f0,"","",25,50);
-  h->Draw();
-  c0->Update();
-  c0->Print("c0_1.root");
-
-  TF1 *f1 = new TF1("f1","gaus(0)",0,200);
-  h->Fit(f1,"","",150,170);
-  h->Draw();
-  c0->Update();
-  c0->Print("c0_2.root");
-  c0->Close();
-
-  double pix = 3.03125; //MAPMT pixel
-  double bandIn = mmTomRad(2*pix,run->secondPath,run->secondMirrorPosition);
-  double rMinIn = f0->GetParameter(1)-bandIn;
-  double rMaxIn = f0->GetParameter(1)+bandIn;
-  double bandOut = mmTomRad(2*pix,run->firstPath,run->firstMirrorPosition);
-  double rMinOut = f1->GetParameter(1)-bandOut;
-  double rMaxOut = f1->GetParameter(1)+bandOut;
-
-  cout <<"Selecting the inner and outer photon\n";
-  for(int i = 0; i < t->GetEntries(); i++){
-    if(SHOW_PROGRESS==true && i%100==0)printProgress((double)i/t->GetEntries());
-    t->GetEntry(i);
-    for(int j = 0; j < nedge; j++){
-      outerPhoton[j]=false;
-      innerPhoton[j]=false;
-      if(goodHit[j]==false)continue;
-      if(nr[j]>rMinIn && nr[j]<rMaxIn)innerPhoton[j]=true;
-      if(nr[j]>rMinOut && nr[j]<rMaxOut)outerPhoton[j]=true;
-    }
-    tOuterPhoton->Fill();
-    tInnerPhoton->Fill();
-  }
-  printEnd();
-  t->Write("",TObject::kOverwrite);
-  fIn->Close();
 }
 
 
@@ -422,3 +353,6 @@ void findTimeCoincidence(THeader *run)
   fIn->Close();
 
 }
+
+
+void selectRingsPhotons(THeader *run){}

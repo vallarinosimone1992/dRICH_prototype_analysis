@@ -66,10 +66,10 @@ void positionCorrection(THeader *run){
     for(int i = 0; i < t->GetEntries(); i++){
         if(SHOW_PROGRESS==true && i%100==0)printProgress((double)i/t->GetEntries());
         t->GetEntry(i);
-        xNCin = gxtheta*run->secondPath+run->innerCorrectionX/2; //CHECK DIFFERENCIES mm-mRad.
-        yNCin = gytheta*run->secondPath+run->innerCorrectionY/2;
-        xNCout = gxtheta*run->firstPath+run->outerCorrectionX/2;
-        yNCout = gytheta*run->firstPath+run->outerCorrectionY/2;
+        xNCin = gxtheta*run->secondPath+run->innerCorrectionX;
+        yNCin = gytheta*run->secondPath+run->innerCorrectionY;
+        xNCout = gxtheta*run->firstPath+run->outerCorrectionX;
+        yNCout = gytheta*run->firstPath+run->outerCorrectionY;
         for(int j = 0; j < nedge; j++){
             nx[j]=0;
             ny[j]=0;
@@ -119,19 +119,19 @@ void opticalCenterX(THeader *run)
     TTree *t = (TTree*) fIn->Get("dRICH");
 
     float gxtheta, gytheta;
-    double spRadius[10], spTime[10];
+    double spRadiusmm[10], spTime[10];
     int spPhoton[10];
 
     t->SetBranchAddress("gxtheta",&gxtheta);
     t->SetBranchAddress("gytheta",&gytheta);
-    t->SetBranchAddress("spRadius",&spRadius);
+    t->SetBranchAddress("spRadiusmm",&spRadiusmm);
     t->SetBranchAddress("spPhoton",&spPhoton);
     t->SetBranchAddress("spTime",&spTime);
 
     TH1D *hOut = new TH1D("hOut","hOut",100,-20,20); 
     TH1D *hIn = new TH1D("hIn","hIn",100,-20,20); 
-    t->Draw("(spRadius[1]-spRadius[3])/2>>hIn","spPhoton[1]>0 && spPhoton[3]>0 && gxtheta<0.0005 && gytheta < 0.0005","goff");
-    t->Draw("(spRadius[6]-spRadius[8])/2>>hOut","spPhoton[6]>0 && spPhoton[8]>0 && gxtheta<0.0005 && gytheta < 0.0005","goff");
+    t->Draw("(spRadiusmm[1]-spRadiusmm[3])/2>>hIn","spPhoton[1]>0 && spPhoton[3]>0 && gxtheta<0.0005 && gytheta < 0.0005","goff");
+    t->Draw("(spRadiusmm[6]-spRadiusmm[8])/2>>hOut","spPhoton[6]>0 && spPhoton[8]>0 && gxtheta<0.0005 && gytheta < 0.0005","goff");
     if(1>0){
         TCanvas *c0 = new TCanvas("c0","c0",1600,900);
         c0->Draw();
@@ -150,10 +150,10 @@ void opticalCenterX(THeader *run)
     TH1D *h5 = new TH1D("h5","h5",400,-100,100);
     TH1D *h6 = new TH1D("h6","h6",400,-100,100);
 
-    t->Draw("spRadius[0]>>h0","spPhoton[0] > 0","goff");
-    t->Draw("spRadius[1]>>h1","spPhoton[1] > 0","goff");
-    t->Draw("spRadius[5]>>h5","spPhoton[5] > 0","goff");
-    t->Draw("spRadius[6]>>h6","spPhoton[6] > 0","goff");
+    t->Draw("spRadiusmm[0]>>h0","spPhoton[0] > 0","goff");
+    t->Draw("spRadiusmm[1]>>h1","spPhoton[1] > 0","goff");
+    t->Draw("spRadiusmm[5]>>h5","spPhoton[5] > 0","goff");
+    t->Draw("spRadiusmm[6]>>h6","spPhoton[6] > 0","goff");
 
     cout <<"Computing the x corrections\n";
     if(run->sensor == "MAPMT"){
@@ -248,20 +248,20 @@ void opticalCenterY(THeader *run)
     TTree *t = (TTree*) fIn->Get("dRICH");
 
     float gxtheta, gytheta;
-    double spRadius[10], spTime[10];
+    double spRadiusmm[10], spTime[10];
     int spPhoton[10];
 
     t->SetBranchAddress("gxtheta",&gxtheta);
     t->SetBranchAddress("gytheta",&gytheta);
-    t->SetBranchAddress("spRadius",&spRadius);
+    t->SetBranchAddress("spRadiusmm",&spRadiusmm);
     t->SetBranchAddress("spPhoton",&spPhoton);
     t->SetBranchAddress("spTime",&spTime);
 
     TH1D *hOut = new TH1D("hOut","hOut",80,-20,20); 
     TH1D *hIn = new TH1D("hIn","hIn",80,-20,20); 
 
-    t->Draw("(spRadius[0]-spRadius[2])/2>>hIn","spPhoton[0]>0 && spPhoton[2]>0 && gxtheta<0.0005 && gytheta < 0.0005","goff");
-    t->Draw("(spRadius[5]-spRadius[7])/2>>hOut","spPhoton[5]>0 && spPhoton[7]>0 && gxtheta<0.0005 && gytheta < 0.0005","goff");
+    t->Draw("(spRadiusmm[0]-spRadiusmm[2])/2>>hIn","spPhoton[0]>0 && spPhoton[2]>0 && gxtheta<0.0005 && gytheta < 0.0005","goff");
+    t->Draw("(spRadiusmm[5]-spRadiusmm[7])/2>>hOut","spPhoton[5]>0 && spPhoton[7]>0 && gxtheta<0.0005 && gytheta < 0.0005","goff");
 
     cout <<"Computing the y corrections\n";
     if(run->innerCorrectionY == 0){

@@ -90,7 +90,6 @@ void positionCorrection(THeader *run){
                 }
                 nrmm[j]=sqrt(pow(nx[j],2)+pow(ny[j],2));
                 nr[j]=mmTomRad(nrmm[j],inPath,zMir);
-                //nr[j]=sqrt(pow(nx[j],2)+pow(ny[j],2));
             }
         }
         tNx->Fill();
@@ -130,8 +129,8 @@ void opticalCenterX(THeader *run)
 
     TH1D *hOut = new TH1D("hOut","hOut",100,-20,20); 
     TH1D *hIn = new TH1D("hIn","hIn",100,-20,20); 
-    t->Draw("(spRadiusmm[1]-spRadiusmm[3])/2>>hIn","spPhoton[1]>0 && spPhoton[3]>0 && gxtheta<0.0005 && gytheta < 0.0005","goff");
-    t->Draw("(spRadiusmm[6]-spRadiusmm[8])/2>>hOut","spPhoton[6]>0 && spPhoton[8]>0 && gxtheta<0.0005 && gytheta < 0.0005","goff");
+    t->Draw("(spRadiusmm[1]-spRadiusmm[3])/2>>hIn","spPhoton[1]>0 && spPhoton[3]>0 && gxtheta<0.001 && gytheta < 0.001","goff");
+    t->Draw("(spRadiusmm[6]-spRadiusmm[8])/2>>hOut","spPhoton[6]>0 && spPhoton[8]>0 && gxtheta<0.001 && gytheta < 0.001","goff");
     if(1>0){
         TCanvas *c0 = new TCanvas("c0","c0",1600,900);
         c0->Draw();
@@ -217,7 +216,7 @@ void opticalCenterX(THeader *run)
       cout <<"It is " <<run->sensor.c_str() <<endl;
       exit(EXIT_FAILURE);
   }
-  printf(" CENTER X: %7.2f %7.2f \n",run->innerCorrectionX,run->outerCorrectionX);
+  printf(" CENTER X: %7.2f %7.2f \n",run->innerCorrectionX,run->outerCorrectionX); 
   if(abs(run->innerCorrectionX) > 10){
       cout <<"[WARNING] Inner correction X larger than 10. Fixed to 0. Check it\n";
       run->innerCorrectionX=0;
@@ -226,10 +225,10 @@ void opticalCenterX(THeader *run)
       cout <<"[WARNING] Outer correction X larger than 10. Fixed to 0. Check it\n";
       run->outerCorrectionX=0;
   }
-  /*if(run->runNumGEM==0){
+  if(run->runNumGEM==0){
       run->innerCorrectionX=0;
       run->outerCorrectionX=0;
-  }*/
+  }
   fIn->Close();
   //cin.get();
   
@@ -260,8 +259,8 @@ void opticalCenterY(THeader *run)
     TH1D *hOut = new TH1D("hOut","hOut",80,-20,20); 
     TH1D *hIn = new TH1D("hIn","hIn",80,-20,20); 
 
-    t->Draw("(spRadiusmm[0]-spRadiusmm[2])/2>>hIn","spPhoton[0]>0 && spPhoton[2]>0 && gxtheta<0.0005 && gytheta < 0.0005","goff");
-    t->Draw("(spRadiusmm[5]-spRadiusmm[7])/2>>hOut","spPhoton[5]>0 && spPhoton[7]>0 && gxtheta<0.0005 && gytheta < 0.0005","goff");
+    t->Draw("(spRadiusmm[0]-spRadiusmm[2])/2>>hIn","spPhoton[0]>0 && spPhoton[2]>0 && gxtheta<0.001 && gytheta < 0.001","goff");
+    t->Draw("(spRadiusmm[5]-spRadiusmm[7])/2>>hOut","spPhoton[5]>0 && spPhoton[7]>0 && gxtheta<0.001 && gytheta < 0.001","goff");
 
     cout <<"Computing the y corrections\n";
     if(run->innerCorrectionY == 0){
@@ -309,10 +308,6 @@ void opticalCenterY(THeader *run)
 	  cout <<"[WARNING] Outer correction y larger than 10. Fixed to 0. Check it\n";
 	  run->outerCorrectionY=0;
     }
-    /*if(run->runNumGEM==0){
-      run->innerCorrectionY=0;
-      run->outerCorrectionY=0;
-    }*/
   fIn->Close();
   //cin.get();
   

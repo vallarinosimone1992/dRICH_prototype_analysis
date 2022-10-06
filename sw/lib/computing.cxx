@@ -314,14 +314,12 @@ void computeCutSingleParticle(THeader *run){
   TTree *t = (TTree*) fIn->Get("dRICH");
   int nedge, pmt[MAXDATA];
   double nr[MAXDATA], nttw[MAXDATA];
-  bool cutPhotonFlag[MAXDATA],externalPhoton[MAXDATA], innerPhoton[MAXDATA], outerPhoton[MAXDATA];
+  bool cutPhotonFlag[MAXDATA],externalPhoton[MAXDATA];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pmt",&pmt);
   t->SetBranchAddress("nr",&nr);
   t->SetBranchAddress("nttw",&nttw);
   t->SetBranchAddress("externalPhoton",&externalPhoton);
-  t->SetBranchAddress("innerPhoton",&innerPhoton);
-  t->SetBranchAddress("outerPhoton",&outerPhoton);
   t->SetBranchAddress("cutPhotonFlag",&cutPhotonFlag);
 
   float gxa, gya, gxtheta, gytheta;
@@ -351,8 +349,7 @@ void computeCutSingleParticle(THeader *run){
     //if(sqrt(gxtheta*gxtheta+gytheta*gytheta) > GEM_CUT_R)continue;
     for(int j = 0; j < nedge; j++){
       int k=0;
-      if(innerPhoton[j]==false && outerPhoton[j]==false)continue;
-      if(outerPhoton[j]==true) k = 1;
+      if(externalPhoton[j]==true) k = 1;
       int refPMT = pmt[j]+5*k;
       int refTOT = 4+5*k;
       if(cutPhotonFlag[j]==true){
@@ -394,15 +391,13 @@ void newSingleParticle(THeader *run){
   TTree *t = (TTree*) fIn->Get("dRICH");
   int nedge, pmt[MAXDATA];
   double nr[MAXDATA], nttw[MAXDATA];
-  bool goodPhoton[MAXDATA],externalPhoton[MAXDATA],innerPhoton[MAXDATA],outerPhoton[MAXDATA];
+  bool goodPhoton[MAXDATA],externalPhoton[MAXDATA];
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pmt",&pmt);
   t->SetBranchAddress("nr",&nr);
   t->SetBranchAddress("nttw",&nttw);
   t->SetBranchAddress("goodPhoton",&goodPhoton);
   t->SetBranchAddress("externalPhoton",&externalPhoton);
-  t->SetBranchAddress("innerPhoton",&innerPhoton);
-  t->SetBranchAddress("outerPhoton",&outerPhoton);
 
   float gxa, gya, gxtheta, gytheta;
   t->SetBranchAddress("gxa",&gxa);
@@ -433,8 +428,7 @@ void newSingleParticle(THeader *run){
     //if(sqrt(gxtheta*gxtheta+gytheta*gytheta) > GEM_CUT_R)continue;
     for(int j = 0; j < nedge; j++){
       int k=0;
-      if(innerPhoton[j]==false && outerPhoton[j]==false)continue;
-      if(outerPhoton[j]==true) k = 1;
+      if(externalPhoton[j]==true) k = 1;
       int refPMT = pmt[j]+5*k;
       int refTOT = 4+5*k;
       if(goodPhoton[j]==true){
@@ -497,7 +491,7 @@ void singleParticle(THeader *run)
     t->SetBranchAddress("gxtheta",&gxtheta);
     t->SetBranchAddress("gytheta",&gytheta);
 
-    double spRadius[10], spTime[10], spRadiusmm[10] ;
+    double spRadius[10], spTime[10], spRadiusmm[10];
     int spPhoton[10];
     bool goodSP[10];
     
