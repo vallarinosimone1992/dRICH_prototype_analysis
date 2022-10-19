@@ -113,7 +113,7 @@ void readHeaders(int run, THeader *runHeader){
   auto n =fgets(line0,10000,file);
   bool headerFound=false;
   double tpx474, tpx519, tpx537;
-  while(fgets(line,10000,file)!=NULL){
+  while(fgets(line,10000,file)!=NULL){  
     sscanf(line,"%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s %lf %lf %lf %d %d %s",&tRunNum,tDay,tStartTime,tEndTime,tBeam,&tEnergyGeV,&tExpEvents,tSensor,&tFirstMirrorPosition,&tSecondMirrorPosition,&tTemperature,&tPowerHV,tTrigger,tRunType,&tRunNumGEM,&tPedestalGEM,tSetupFile,&tpx474,&tpx519,&tpx537,&tbeamChLogic,&tlookbackDAQ,tNote);
     if(run == tRunNum){
       runHeader->runNum = tRunNum;
@@ -215,12 +215,12 @@ void readHeaders(int run, THeader *runHeader){
   if(fgets(line,10000,file)!=NULL){
     double tmp1;
     auto prz = sscanf(line,"%lf",&tmp1);
-    if(tmp1!=0)runHeader->geoCut=tmp1;
+    runHeader->geoCut=tmp1;
   }
   if(fgets(line,10000,file)!=NULL){
     double tmp1;
     auto prz = sscanf(line,"%lf",&tmp1);
-    if(tmp1!=0)runHeader->radCut=tmp1;
+    runHeader->radCut=tmp1;
   }
   cout <<"Header and setup file read\n";
 }

@@ -9,6 +9,8 @@
 #include <TMath.h>
 #include <TSystem.h>
 #include <TFile.h>
+#include <TStyle.h>
+#include <TCanvas.h>
 
 #include "integrate.h"
 #include "utility.h"
@@ -274,7 +276,7 @@ void TTreeIntegration(THeader *run){
         vGEMentry.push_back(j);
         break;
       }
-      if(evt < evtGEM+1){
+      if(evt < evtGEM+2){
         startCycle = max(0,j - 2);
         break; 
       }
@@ -303,12 +305,12 @@ void TTreeIntegration(THeader *run){
       double zMir=0;
       if(radius[j] > run->geoCut){
         inPath=run->firstPath;
-        //zMir=run->firstMirrorPosition;
-        zMir=run->secondMirrorPosition; //SWAP TO CHECK THE GEM
+        zMir=run->firstMirrorPosition;
+        //zMir=run->secondMirrorPosition; //SWAP TO CHECK THE GEM
       }else{
         inPath=run->secondPath;
-        zMir=run->firstMirrorPosition;//SWAP TO CHECK THE GEM
-        //zMir=run->secondMirrorPosition;
+        //zMir=run->firstMirrorPosition;//SWAP TO CHECK THE GEM
+        zMir=run->secondMirrorPosition;
       }
       trMM[j]=radius[j];
       tr[j]=mmTomRad(radius[j],inPath,zMir);
@@ -321,6 +323,10 @@ void TTreeIntegration(THeader *run){
     float tmpy0=y1;
     float tmpx1=x0;
     float tmpy1=y0;
+    /*float tmpx0=x0;
+    float tmpy0=y0;
+    float tmpx1=x1;
+    float tmpy1=y1;*/
     GEM_relative(&tmpx0,&tmpy0,&tmpx1,&tmpy1);
     hX0->Fill(tmpx0);
     hY0->Fill(tmpy0);
@@ -331,8 +337,24 @@ void TTreeIntegration(THeader *run){
   printEnd();
   run->UpGEMxRunOff=GEM_getBeamlineOffset(hX0,0);
   run->UpGEMyRunOff=GEM_getBeamlineOffset(hY0,0);
-  run->DnGEMxRunOff=GEM_getBeamlineOffset(hX1,0);
-  run->DnGEMyRunOff=GEM_getBeamlineOffset(hY1,1);
+  run->DnGEMxRunOff=GEM_getBeamlineOffset(hX1,1);
+  run->DnGEMyRunOff=GEM_getBeamlineOffset(hY1,0);
+  gStyle->SetOptStat(0);
+  gStyle->SetOptFit(1);
+  TCanvas *cGEM = new TCanvas("cGEM","cGEM",1600,900);
+  cGEM->Divide(2,2);
+  cGEM->cd(1);
+  hX0->Draw();
+  cGEM->cd(2);
+  hY0->Draw();
+  cGEM->cd(3);
+  hX1->Draw();
+  cGEM->cd(4);
+  hY1->Draw();
+  cGEM->Update();
+  cGEM->Print("cGEM.pdf");
+  cGEM->Print("cGEM.root");
+  cGEM->Close();
   /*run->UpGEMxRunOff=0;
   run->UpGEMyRunOff=0;
   run->DnGEMxRunOff=0;
@@ -358,6 +380,10 @@ void TTreeIntegration(THeader *run){
     gy0=y1;
     gx1=x0;
     gy1=y0;
+/*    gx0=x0;
+    gy0=y0;
+    gx1=x1;
+    gy1=y1;*/
     GEM_relative(&gx0,&gy0,&gx1,&gy1);
     GEM_position(run,&gx0,&gy0,&gx1,&gy1);
     AERO_computing(run,&gxa,&gya,&gxtheta,&gytheta,gx0,gy0,gx1,gy1);

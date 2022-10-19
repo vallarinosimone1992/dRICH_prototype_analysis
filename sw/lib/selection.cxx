@@ -24,7 +24,7 @@ void recoHit(THeader *run)
   TTree *t = (TTree*) fIn->Get("dRICH");
 
   int evt,nedge, pmt[MAXDATA], pol[MAXDATA], slot[MAXDATA], fiber[MAXDATA], ch[MAXDATA];
-  double x[MAXDATA], y[MAXDATA], r[MAXDATA], nt[MAXDATA], dur[MAXDATA], nttw[MAXDATA];
+  double x[MAXDATA], y[MAXDATA], r[MAXDATA], rmm[MAXDATA], nt[MAXDATA], dur[MAXDATA], nttw[MAXDATA];
   t->SetBranchAddress("evt",&evt);
   t->SetBranchAddress("nedge",&nedge);
   t->SetBranchAddress("pol",&pol);
@@ -35,6 +35,7 @@ void recoHit(THeader *run)
   t->SetBranchAddress("x",&x);
   t->SetBranchAddress("y",&y);
   t->SetBranchAddress("r",&r);
+  t->SetBranchAddress("rmm",&rmm);
   t->SetBranchAddress("nt",&nt);
 
   bool goodHit[MAXDATA], externalPhoton[MAXDATA];;
@@ -81,7 +82,7 @@ void recoHit(THeader *run)
           dur[k] = nt[k]-nt[j];
           nttw[j] = timeWalkCorrection(nt[j],nt[k]);
           externalPhoton[j]=false;
-          //if(r[j] > run->geoCut)externalPhoton[j]=true;
+          //if(rmm[j] > run->geoCut)externalPhoton[j]=true;
           if(r[j] > run->radCut)externalPhoton[j]=true;
           if(i<10)printf(" h %3d %3d  %7.2f %7.2f %7.2f \n",j,k,nt[j],nttw[j],dur[j]);
           break;

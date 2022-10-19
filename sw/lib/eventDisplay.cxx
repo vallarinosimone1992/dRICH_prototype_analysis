@@ -71,8 +71,8 @@ void fillEventDisplay(THeader *run, int ev){
   t->SetBranchAddress("goodPhoton",&goodPhoton);
   t->SetBranchAddress("coincPhoton",&coincPhoton);
   t->SetBranchAddress("externalPhoton",&externalPhoton);
-  t->SetBranchAddress("innerPhoton",&innerPhoton);
-  t->SetBranchAddress("outerPhoton",&outerPhoton);
+  //t->SetBranchAddress("innerPhoton",&innerPhoton);
+  //t->SetBranchAddress("outerPhoton",&outerPhoton);
   t->SetBranchAddress("rsdRadius",&rsdRadius);
   t->SetBranchAddress("rsdTime",&rsdTime);
   t->SetBranchAddress("gx0",&gx0);
@@ -114,11 +114,11 @@ void fillEventDisplay(THeader *run, int ev){
   for(int i = 0; i < nedge; i++){
     if(goodPhoton[i]==true){
       hMap->Fill(x[i],y[i]);
-      if(innerPhoton[i]==true){
+      if(externalPhoton[i]==false){
         hRadiusIn->Fill(r[i]);
         hnRadiusIn->Fill(nr[i]);
         hTimeIn->Fill(nttw[i]);
-      }else if(outerPhoton[i] == true){
+      }else{
         hRadiusOut->Fill(r[i]);
         hnRadiusOut->Fill(nr[i]);
         hTimeOut->Fill(nttw[i]);

@@ -1,6 +1,5 @@
 file(REMOVE_RECURSE
   "CMakeFiles/mon.dir/plugin/monitor.cxx.o"
-  "CMakeFiles/mon.dir/plugin/monitor.cxx.o.d"
   "mon"
   "mon.pdb"
 )

@@ -76,9 +76,9 @@ static const double RMS_TIME_GAS    = 3.0;  // min RMS iin time to exclude bad p
 static const double RMS_ANGLE_AER   = 6.0;  // min RMS in angle to exclude bad photons 
 static const double RMS_TIME_AER    = 3.0;  // min RMS iin time to exclude bad photons 
 
-static const double GEM_CUT_X=10; //Maximum X for GEM
-static const double GEM_CUT_Y=10; //Maximum Y for GEM
-static const double GEM_CUT_R=.0005; //Maximum theta for GEM
+static const double GEM_CUT_X=5; //Maximum X for GEM
+static const double GEM_CUT_Y=5; //Maximum Y for GEM
+static const double GEM_CUT_R=.001; //Maximum theta for GEM
 
 static const double mPi = 0.1396;
 static const double mK = 0.49368; 

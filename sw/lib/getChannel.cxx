@@ -83,7 +83,10 @@ double timeCalibrationMAPMT(double time, int channel, int pmt){
   if(m8.empty())getMaps();
   int place = pmt*256+channel;
   double correction = m8.at(place);
-  double newTime = time + correction;
+  //double newTime = time + correction;
+  double newTime;
+  if(correction!=0) newTime = time - correction+390; //Nicola calibration
+  else newTime = time - correction; //Nicola calibration
   //if(channel<10)cout <<"Place: "<<pmt<<place<<" Correcion:  "<<time <<" + "<<correction <<" = " <<newTime <<endl;
   //if(channel<10)printf("Place (%2d, %3d)  %4d corr %7.2f %7.2f = %7.2f \n",pmt,channel,place,time,correction,newTime);
   //cin.get();

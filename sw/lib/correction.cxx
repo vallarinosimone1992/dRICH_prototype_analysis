@@ -66,10 +66,14 @@ void positionCorrection(THeader *run){
     for(int i = 0; i < t->GetEntries(); i++){
         if(SHOW_PROGRESS==true && i%100==0)printProgress((double)i/t->GetEntries());
         t->GetEntry(i);
-        xNCin = gxtheta*run->secondPath+run->innerCorrectionX;
-        yNCin = gytheta*run->secondPath+run->innerCorrectionY;
-        xNCout = gxtheta*run->firstPath+run->outerCorrectionX;
-        yNCout = gytheta*run->firstPath+run->outerCorrectionY;
+        xNCin = -gxtheta*(run->secondPath-run->secondMirrorPosition)+run->innerCorrectionX;
+        yNCin = gytheta*(run->secondPath-run->secondMirrorPosition)+run->innerCorrectionY;
+        xNCout = -gxtheta*(run->firstPath+run->firstMirrorPosition)+run->outerCorrectionX;
+        yNCout = gytheta*(run->firstPath+run->firstMirrorPosition)+run->outerCorrectionY;
+        /*xNCin = run->innerCorrectionX;
+        yNCin = run->innerCorrectionY;
+        xNCout = run->outerCorrectionX;
+        yNCout = run->outerCorrectionY;*/
         for(int j = 0; j < nedge; j++){
             nx[j]=0;
             ny[j]=0;

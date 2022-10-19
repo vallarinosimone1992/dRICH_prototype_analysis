@@ -33,7 +33,10 @@ static vector <TH2D*> hCalibVsCh;
 
 static vector <TH1D*> vGasRadPMT;
 static vector <TH1D*> vAeroRadPMT;
+static vector <TH1D*> vGasnRadPMT;
+static vector <TH1D*> vAeronRadPMT;
 
+static int countEvent;
 
 static TH2D *hHitCorr;
 static TH2D *hMap;
@@ -43,14 +46,22 @@ static vector<TH2D*> vPiMap;
 static vector<TH2D*> vKMap;
 static vector<TH2D*> vPrMap;
 static TH1D *hRadius;
+static vector<TH1D*> vRadiusMM;
+static vector<TH1D*> vnRadiusMM;
 static vector<TH1D*> vnRadius;
 static vector<TH1D*> vPiRadius;
 static vector<TH1D*> vKRadius;
 static vector<TH1D*> vPrRadius;
-static vector<TH1D*> vCutPiRadius;
-static vector<TH1D*> vCutKRadius;
-static vector<TH1D*> vCutPrRadius;
+static vector<TH1D*> vSpnPiRadius;
+static vector<TH1D*> vSpnKRadius;
+static vector<TH1D*> vSpnPrRadius;
 
+static TH2D *hNewCenterGas;
+static TH2D *hNewCenterAero;
+static TH2D *hGasdXVsAngle;
+static TH2D *hGasdYVsAngle;
+static TH2D *hAerodXVsAngle;
+static TH2D *hAerodYVsAngle;
 
 static TH1D *hPiRad;
 static TH1D *hKRad;
@@ -115,7 +126,7 @@ const char *labelCh[3]={"Pi","K","Pr"};
 
 //---------------------------------------------------
 void fillHistoMon(THeader *run){
-//---------------------------------------------------
+	//---------------------------------------------------
 
 	gErrorIgnoreLevel=kWarning;
 	TString fName=Form("%s/processed_data/integrated_dRICH_GEM_data/run_%04d_integrated.root",run->suite.c_str(),run->runNum);
@@ -123,7 +134,7 @@ void fillHistoMon(THeader *run){
 	TTree *t = (TTree*) fIn->Get("dRICH");
 
 	int evt, nedge, pol[MAXDATA], pmt[MAXDATA], spPhoton[10], spnPhoton[10], cutPhoton[10], fiber[MAXDATA], ch[MAXDATA], time[MAXDATA], otime[MAXDATA];
-	double y[MAXDATA], x[MAXDATA], r[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nt[MAXDATA], nttw[MAXDATA], dur[MAXDATA], rsdRadius[MAXDATA], rsdTime[MAXDATA], spRadius[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10];
+	double y[MAXDATA], x[MAXDATA], r[MAXDATA], rmm[MAXDATA], nx[MAXDATA], ny[MAXDATA], nr[MAXDATA], nrmm[MAXDATA], nt[MAXDATA], nttw[MAXDATA], dur[MAXDATA], rsdRadius[MAXDATA], rsdTime[MAXDATA], spRadius[10], spRadiusmm[10], spTime[10], spnRadius[10], spnTime[10], cutRadius[10], cutTime[10], xNCin, yNCin, xNCout, yNCout;
 	float gx0, gy0, gx1, gy1, gxa, gya, gxtheta, gytheta;
 	bool trigSig[MAXDATA], goodHit[MAXDATA], goodPhoton[MAXDATA], coincPhoton[MAXDATA],externalPhoton[MAXDATA], goodSP[10], goodSPN[10], goodCUT[10];
 	double trigtime, x474time, x519time, x537time;
@@ -140,11 +151,13 @@ void fillHistoMon(THeader *run){
 	t->SetBranchAddress("x",&x);
 	t->SetBranchAddress("y",&y);
 	t->SetBranchAddress("r",&r);
+	t->SetBranchAddress("rmm",&rmm);
 	t->SetBranchAddress("time",&time);
 	t->SetBranchAddress("otime",&otime);
 	t->SetBranchAddress("nx",&nx);
 	t->SetBranchAddress("ny",&ny);
 	t->SetBranchAddress("nr",&nr);
+	t->SetBranchAddress("nrmm",&nrmm);
 	t->SetBranchAddress("nt",&nt);
 	t->SetBranchAddress("nttw",&nttw);
 	t->SetBranchAddress("dur",&dur);
@@ -164,6 +177,7 @@ void fillHistoMon(THeader *run){
 	t->SetBranchAddress("gxtheta",&gxtheta);
 	t->SetBranchAddress("gytheta",&gytheta);
 	t->SetBranchAddress("spRadius",&spRadius);
+	t->SetBranchAddress("spRadiusmm",&spRadiusmm);
 	t->SetBranchAddress("spTime",&spTime);
 	t->SetBranchAddress("spPhoton",&spPhoton);
 	t->SetBranchAddress("goodSP",&goodSP);
@@ -175,6 +189,11 @@ void fillHistoMon(THeader *run){
 	t->SetBranchAddress("cutTime",&cutTime);
 	t->SetBranchAddress("cutPhoton",&cutPhoton);
 	t->SetBranchAddress("goodCUT",&goodCUT);
+	t->SetBranchAddress("xNCin",&xNCin);
+	t->SetBranchAddress("yNCin",&yNCin);
+	t->SetBranchAddress("xNCout",&xNCout);
+	t->SetBranchAddress("yNCout",&yNCout);
+
 
 
 	double n[3] = {1+run->px474*(nN2-1), 1+run->px519*(nCO2-1), 1+run->px537*(nCO2-1)};
@@ -202,15 +221,33 @@ void fillHistoMon(THeader *run){
 	cout <<Form("Pr thresholds: %lf %lf %lf Status %d %d %d\n",thsPr[0],thsPr[1],thsPr[2],x474Pr,x519Pr,x537Pr);
 	//cin.get();
 
+	countEvent=0;
 	cout <<Form("Filling monitoring histograms for run %d\n",run->runNum);
 	for(int i = 0; i < t->GetEntries(); i++){
+		//for(int i = 0; i < 10000; i++){
 		if(SHOW_PROGRESS==true && i%100==0)printProgress((double)i/t->GetEntries());
 		t->GetEntry(i);
 		//GEM CUTS
-		printf("GEM %7.2f [%7.2f] %7.2f [%7.2f] %7.3f [%7.3f] \n",
-                     abs(gxa),GEM_CUT_X,abs(gya),GEM_CUT_Y,sqrt(gxtheta*gxtheta+gytheta*gytheta),GEM_CUT_R);
-		if(abs(gxa) > GEM_CUT_X || abs(gya) > GEM_CUT_Y)continue;
-		if(sqrt(gxtheta*gxtheta+gytheta*gytheta) > GEM_CUT_R)continue;
+		//printf("GEM %7.2f [%7.2f] %7.2f [%7.2f] %7.3f [%7.3f] \n",abs(gxa),GEM_CUT_X,abs(gya),GEM_CUT_Y,sqrt(gxtheta*gxtheta+gytheta*gytheta),GEM_CUT_R);
+		//cout <<"Run Event "
+		if(spPhoton[1]>1 && spPhoton[3]>1)hGasdXVsAngle->Fill(gxtheta,((spRadiusmm[1]-spRadiusmm[3])/2));
+		if(spPhoton[0]>1 && spPhoton[2]>1)hGasdYVsAngle->Fill(gytheta,((spRadiusmm[0]-spRadiusmm[2])/2));
+		if(spPhoton[6]>1 && spPhoton[8]>1)hAerodXVsAngle->Fill(gxtheta,((spRadiusmm[6]-spRadiusmm[8])/2));
+		if(spPhoton[5]>1 && spPhoton[7]>1)hAerodYVsAngle->Fill(gytheta,((spRadiusmm[5]-spRadiusmm[7])/2));
+		hNewCenterGas->Fill(xNCin,yNCin);
+		hNewCenterAero->Fill(xNCout,yNCout);;
+		//if(abs(gxa) > 2*GEM_CUT_X || abs(gya) > GEM_CUT_Y)continue;
+		//if(sqrt(gxtheta*gxtheta+gytheta*gytheta) > GEM_CUT_R)continue;
+
+
+		/*auto kRadius=sqrt(pow(spRadiusmm[5]-spRadiusmm[7],2)+pow(spRadiusmm[6]-spRadiusmm[8],2));
+		  auto kAngle=sqrt(gxtheta*gxtheta+gytheta*gytheta);
+		  if(spPhoton[5]>0 && spPhoton[7]>0 && spPhoton[6]>0 && spPhoton[8]>0)hAerodYVsAngle->Fill(kAngle,kRadius);*/
+
+		//if(abs(gxa) > GEM_CUT_X || abs(gya) > GEM_CUT_Y)continue;
+		//if(sqrt(gxtheta*gxtheta+gytheta*gytheta) > GEM_CUT_R)continue;
+
+		countEvent++;
 
 		bool isPion   = false;
 		bool isKaon   = false;
@@ -241,10 +278,57 @@ void fillHistoMon(THeader *run){
 				hBeamCh->Fill(2.,1);
 				isProton = true;
 			}
+		}else if(run->beamChLogic==4){
+			if(x474Pi && x474time && (x519Pi && x519time)){
+				hBeamCh->Fill(0.,1);
+				isPion=true;
+			}else{
+				hBeamCh->Fill(2.,1);
+				isProton=true;
+			}
+		}else if(run->beamChLogic==5){
+			if(x474Pi && x474time && (x519Pi && x519time)){
+				hBeamCh->Fill(0.,1);
+				isPion=true;
+			}				
+			if(!x519K && !x519time && (x474K && x474time)){
+				hBeamCh->Fill(1.,1);
+				isKaon=true;
+			}				
+			if(!x474Pr && !x474time && (!x519Pr && !x519time)){
+				hBeamCh->Fill(2.,1);
+				isProton=true;
+			}
+		}else if(run->beamChLogic==6){
+			if(x474Pi && x474time){
+				hBeamCh->Fill(0.,1);
+				isPion=true;
+			}				
+			if(!x474Pr && !x474time){
+				hBeamCh->Fill(2.,1);
+				isProton=true;
+			}
+
+		}else if(run->beamChLogic==7){
+			if((x474Pi && x474time) || (x519Pi && x519time)){
+				hBeamCh->Fill(0.,1);
+				isPion=true;
+			}else{
+				hBeamCh->Fill(2.,1);
+				isProton=true;
+			}
+		}else if(run->beamChLogic==8){
+			if(x519Pi && x519time){
+				hBeamCh->Fill(0.,1);
+				isPion=true;
+			}else{
+				hBeamCh->Fill(2.,1);
+				isProton=true;
+			}
 		}else cout <<"No beam cherenkov available for this run\n";
-		if(isPion==true)printf("Is_pion!\n");
-		if(isKaon==true)printf("Is_kaon!\n");
-		if(isProton==true)printf("Is_proton!\n");
+		//	if(isPion==true)printf("Is_pion!\n");
+		//	if(isKaon==true)printf("Is_kaon!\n");
+		//	if(isProton==true)printf("Is_proton!\n");
 
 		hUpGEM->Fill(gx0,gy0);
 		hDnGEM->Fill(gx1,gy1);
@@ -261,16 +345,17 @@ void fillHistoMon(THeader *run){
 		if(goodCUT[4]==true && cutPhoton[4] > minPhoGas && cutPhoton[4]<maxPhoGas) vcutSigPhoGas[cutPhoton[4]]->Fill(cutRadius[4]);
 		if(goodCUT[9]==true && cutPhoton[9] > minPhoAero && cutPhoton[9]<maxPhoAero) vcutSigPhoAero[cutPhoton[9]]->Fill(cutRadius[9]); 
 
-                if(goodCUT[9] == true && cutRadius[9]<145){
-		   printf(" Plotta eve %3d %4d \n",i,evt);
-		   for(int j = 0; j < nedge; j++){
-		      if(goodPhoton[j] && externalPhoton[j]) printf("%3d %3d %3d %3d (%4d, %4d) %7.2f %7.2f %lf \n",evt,j,externalPhoton[j],pol[j],fiber[j],ch[j],nttw[j],dur[j],nr[j]);
-		   }
-		   //cin.get();
+		/* if(goodCUT[9] == true && cutRadius[9]<145){
+		//printf(" Plotta eve %3d %4d \n",i,evt);
+		for(int j = 0; j < nedge; j++){
+		if(goodPhoton[j] && externalPhoton[j]) //printf("%3d %3d %3d %3d (%4d, %4d) %7.2f %7.2f %lf \n",evt,j,externalPhoton[j],pol[j],fiber[j],ch[j],nttw[j],dur[j],nr[j]);
 		}
+		//cin.get();
+		}*/
 		for(int j = 0; j < 10; j++){
 			if(goodSP[j]==true && spPhoton[j] > 2){
 				vspRadius[j]->Fill(spRadius[j]);
+				//if(j==9 && abs(spRadius[j]-185)<2) cout <<"Watch run " <<run->runNum  <<" event: " <<evt <<endl;
 				vspTime[j]->Fill(spTime[j]);
 				vspPhoton[j]->Fill(spPhoton[j]);
 			}
@@ -286,43 +371,43 @@ void fillHistoMon(THeader *run){
 			}
 		}
 
-		if(goodCUT[4]==true){
-			if(isPion==true)vCutPiRadius[1]->Fill(cutRadius[4]);
-			if(isPion==true)vCutPiRadius[0]->Fill(cutRadius[4]);
-			if(isKaon==true)vCutKRadius[1]->Fill(cutRadius[4]);
-			if(isKaon==true)vCutKRadius[0]->Fill(cutRadius[4]);
-			if(isProton==true)vCutPrRadius[1]->Fill(cutRadius[4]);
-			if(isProton==true)vCutPrRadius[0]->Fill(cutRadius[4]);
+		if(goodSPN[4]==true && spnPhoton[4]>2){
+			if(isPion==true)vSpnPiRadius[1]->Fill(spnRadius[4]);
+			if(isPion==true)vSpnPiRadius[0]->Fill(spnRadius[4]);
+			if(isKaon==true)vSpnKRadius[1]->Fill(spnRadius[4]);
+			if(isKaon==true)vSpnKRadius[0]->Fill(spnRadius[4]);
+			if(isProton==true)vSpnPrRadius[1]->Fill(spnRadius[4]);
+			if(isProton==true)vSpnPrRadius[0]->Fill(spnRadius[4]);
 		}
-		if(goodCUT[9]==true){
-			if(isPion==true)vCutPiRadius[2]->Fill(cutRadius[9]);
-			if(isPion==true)vCutPiRadius[0]->Fill(cutRadius[9]);
-			if(isKaon==true)vCutKRadius[2]->Fill(cutRadius[9]);
-			if(isKaon==true)vCutKRadius[0]->Fill(cutRadius[9]);
-			if(isProton==true)vCutPrRadius[2]->Fill(cutRadius[9]);
-			if(isProton==true)vCutPrRadius[0]->Fill(cutRadius[9]);
+		if(goodSPN[9]==true && spnPhoton[9]>2){
+			if(isPion==true)vSpnPiRadius[2]->Fill(spnRadius[9]);
+			if(isPion==true)vSpnPiRadius[0]->Fill(spnRadius[9]);
+			if(isKaon==true)vSpnKRadius[2]->Fill(spnRadius[9]);
+			if(isKaon==true)vSpnKRadius[0]->Fill(spnRadius[9]);
+			if(isProton==true)vSpnPrRadius[2]->Fill(spnRadius[9]);
+			if(isProton==true)vSpnPrRadius[0]->Fill(spnRadius[9]);
 		}
-	
 
 
-                if(i<10)printf(" Plotta eve %3d %4d \n",i,evt);
+
+		//if(i<10)printf(" Plotta eve %3d %4d \n",i,evt);
 		int nHit = 0;
 		for(int j = 0; j < nedge; j++){
-                        if(i<10)printf(" %3d %3d (%4d, %4d) %7.2f %7.2f %2d ",j,pol[j],fiber[j],ch[j],nttw[j],dur[j],pol[j]);
+			//if(i<10)printf(" %3d %3d (%4d, %4d) %7.2f %7.2f %2d ",j,pol[j],fiber[j],ch[j],nttw[j],dur[j],pol[j]);
 			if(dur[j]>CUT_MIN_DUR && trigSig[j]==false){
 				if(pol[j]==0)hHitStart[0]->Fill(nttw[j]);
 				if(pol[j]==1)hHitEnd[0]->Fill(nttw[j]);
 				if(externalPhoton[j]==false){
 					if(pol[j]==0)hHitStart[1]->Fill(nttw[j]);
 					if(pol[j]==1)hHitEnd[1]->Fill(nttw[j]);
-                                        if(i<10)printf(" --> in\n");
+					//if(i<10)printf(" --> in\n");
 				}else{
 					if(pol[j]==0)hHitStart[2]->Fill(nttw[j]);
 					if(pol[j]==1)hHitEnd[2]->Fill(nttw[j]);
-                                        if(i<10)printf(" --> out \n");
+					//if(i<10)printf(" --> out \n");
 				}
 			}else{
-                            if(i<10)printf("bad \n");
+				//                            if(i<10)printf("bad \n");
 			}
 			if(goodHit[j]==true && trigSig[j]==false && pol[j]==0){
 				hHitDur[0]->Fill(dur[j]);
@@ -352,6 +437,8 @@ void fillHistoMon(THeader *run){
 				if(externalPhoton[j]==false){
 					hHitCoinc[1]->Fill(nttw[j]);
 					vnRadius[1]->Fill(nr[j]);
+					vRadiusMM[1]->Fill(rmm[j]);
+					vnRadiusMM[1]->Fill(nrmm[j]);
 					if(isPion==true){
 						vPiRadius[1]->Fill(nr[j]);
 						vPiMap[1]->Fill(x[j],y[j]);
@@ -367,6 +454,8 @@ void fillHistoMon(THeader *run){
 				}else{
 					hHitCoinc[2]->Fill(nttw[j]);
 					vnRadius[2]->Fill(nr[j]);
+					vRadiusMM[2]->Fill(rmm[j]);
+					vnRadiusMM[2]->Fill(nrmm[j]);
 					if(isPion==true){
 						vPiRadius[2]->Fill(nr[j]);
 						vPiMap[2]->Fill(x[j],y[j]);
@@ -384,8 +473,16 @@ void fillHistoMon(THeader *run){
 				hnMap->Fill(nx[j],ny[j]);
 				hRadius->Fill(r[j]);
 				vnRadius[0]->Fill(nr[j]);
-        if(externalPhoton[j]==false)vGasRadPMT[pmt[j]]->Fill(nr[j]);
-        else vAeroRadPMT[pmt[j]]->Fill(nr[j]);
+				vRadiusMM[0]->Fill(rmm[j]);
+				vnRadiusMM[0]->Fill(nrmm[j]);
+				if(externalPhoton[j]==false){
+					vGasRadPMT[pmt[j]]->Fill(r[j]);
+					vGasnRadPMT[pmt[j]]->Fill(nr[j]);
+				}
+				else{
+					vAeroRadPMT[pmt[j]]->Fill(r[j]);
+					vAeronRadPMT[pmt[j]]->Fill(nr[j]);
+				}
 				if(isPion==true){
 					vPiRadius[0]->Fill(nr[j]);
 					vPiMap[0]->Fill(x[j],y[j]);
@@ -400,579 +497,683 @@ void fillHistoMon(THeader *run){
 				}
 			}
 		}
-	 }
+	}
 	printEnd();
 	fIn->Close();
-}
+	}
 
-//---------------------------------------------------
-void displayMonitor(THeader *run){
 	//---------------------------------------------------
+	void displayMonitor(THeader *run){
+		//---------------------------------------------------
 
-	gErrorIgnoreLevel=kWarning;
-	string out_pdf0 = Form("%s/output/plot/%s/displayMonitor.pdf[",run->suite.c_str(),run->outputDir.c_str());
-	string out_pdf  = Form("%s/output/plot/%s/displayMonitor.pdf",run->suite.c_str(),run->outputDir.c_str());
-	string out_pdf1 = Form("%s/output/plot/%s/displayMonitor.pdf]",run->suite.c_str(),run->outputDir.c_str());
-	string out_root = Form("%s/output/plot/%s/displayMonitor.root",run->suite.c_str(),run->outputDir.c_str());
+		gErrorIgnoreLevel=kWarning;
+		string out_pdf0 = Form("%s/output/plot/%s/displayMonitor.pdf[",run->suite.c_str(),run->outputDir.c_str());
+		string out_pdf  = Form("%s/output/plot/%s/displayMonitor.pdf",run->suite.c_str(),run->outputDir.c_str());
+		string out_pdf1 = Form("%s/output/plot/%s/displayMonitor.pdf]",run->suite.c_str(),run->outputDir.c_str());
+		string out_root = Form("%s/output/plot/%s/displayMonitor.root",run->suite.c_str(),run->outputDir.c_str());
 
-	TList *save = new TList();
+		TList *save = new TList();
 
-	TCanvas *c1 = new TCanvas("c1","Timing gas",1600,900);
-	c1->Divide(4,2);
-	c1->Draw();
-	c1->Print(out_pdf0.c_str());
-	for (int irad=1; irad<3; irad++){
+		TCanvas *c1 = new TCanvas("c1","Timing gas",1600,900);
+		c1->Divide(4,2);
+		c1->Draw();
+		c1->Print(out_pdf0.c_str());
+		for (int irad=1; irad<3; irad++){
 
-		double tmin = run->timeInMin;
-		if(run->timeOuMin<tmin)tmin=run->timeOuMin;
-		double tmax = run->timeInMax;
-		if(run->timeOuMax>tmax)tmax=run->timeOuMax;
+			double tmin = run->timeInMin;
+			if(run->timeOuMin<tmin)tmin=run->timeOuMin;
+			double tmax = run->timeInMax;
+			if(run->timeOuMax>tmax)tmax=run->timeOuMax;
 
-		double tmin_rad = run->timeInMin; 
-		double tmax_rad = run->timeInMax; 
-		if(irad==2){ 
-			tmin_rad = run->timeOuMin;
-			tmax_rad = run->timeOuMax;
+			double tmin_rad = run->timeInMin; 
+			double tmax_rad = run->timeInMax; 
+			if(irad==2){ 
+				tmin_rad = run->timeOuMin;
+				tmax_rad = run->timeOuMax;
+			}
+			double dmin = CUT_MIN_DUR;
+			//printf("Time ref (%7.2f:%7.2f) gas (%7.2f:%7.2f)   aerogel (%7.2f:%7.2f)",tmin,tmax,
+			//		run->timeInMin,run->timeInMax,run->timeOuMin,run->timeOuMax);
+
+			c1->cd(1);
+			//Hit start and end, showing coincidence window extremes
+			THStack *hsHitTime = new THStack("hsHitTime","Hit start and End - Duration > 35;[ns]");
+			hHitEnd[irad]->SetLineColor(2);
+			hsHitTime->Add(hHitStart[irad]);
+			hsHitTime->Add(hHitEnd[irad]);
+			hsHitTime->Draw("nostack");
+			hsHitTime->GetXaxis()->SetRangeUser(run->timeOuMin-0.1*run->timeOuMin,run->timeInMax+110);
+			//hsHitTime->GetXaxis()->SetRangeUser(300,600);
+			hsHitTime->Draw("nostack");
+			TLine *l1 = new TLine(tmin_rad,0,tmin_rad,hHitStart[0]->GetBinContent(hHitStart[0]->GetMaximumBin()));
+			l1->SetLineColor(3);
+			l1->Draw("same");
+			TLine *l2 = new TLine(tmax_rad,0,tmax_rad,hHitStart[0]->GetBinContent(hHitStart[0]->GetMaximumBin()));
+			l2->SetLineColor(3);
+			l2->Draw("same");
+			c1->Update();
+
+			c1->cd(5);
+			//Zoom on coincidence peak, fitted. Showing coincidence window extremes.
+			gStyle->SetOptStat(0);
+			gStyle->SetOptFit(1);
+			hHitCoinc[irad]->Draw();
+			TF1 *fcoinc = new TF1("fcoinc","gaus(0)",200,400);
+			fcoinc->SetParameters(20000,355,2);
+			hHitCoinc[irad]->Fit(fcoinc,"Q","",run->timeOuMin,run->timeInMax);
+			l1->SetY2(hHitCoinc[irad]->GetBinContent(hHitCoinc[irad]->GetMaximumBin())/2);
+			l2->SetY2(hHitCoinc[irad]->GetBinContent(hHitCoinc[irad]->GetMaximumBin())/2);
+			l1->Draw("same");
+			l2->Draw("same");
+			c1->Update();
+
+			c1->cd(2);
+			gStyle->SetOptStat(1);
+			gStyle->SetOptFit(0);
+			hx474->SetLineColor(2);
+			hx519->SetLineColor(3);
+			hx537->SetLineColor(4);
+			THStack *hsBeamCherenkov= new THStack("hsBeamCherenkov","Beam cherenkov;time [ns];counts [#]");
+			gPad->SetLogy();	
+			hsBeamCherenkov->Add(hx474);
+			hsBeamCherenkov->Add(hx519);
+			hsBeamCherenkov->Add(hx537);
+			hsBeamCherenkov->Draw("nostack");
+			//hsBeamCherenkov->GetXaxis()->SetRangeUser(0,460);
+			hsBeamCherenkov->Draw("nostack");
+			gPad->BuildLegend(.3,.7,.7,.9);
+
+			c1->cd(6);
+			htrig->GetXaxis()->SetRangeUser(htrig->GetBinCenter(htrig->FindFirstBinAbove(1))-10,htrig->GetBinCenter(htrig->FindLastBinAbove(1))+10);
+			htrig->Draw();
+
+			c1->cd(3);
+			//Trigger time plot. If I can, start and end.
+			hHitDur[irad]->GetXaxis()->SetRangeUser(0,hHitDur[irad]->GetBinCenter(hHitDur[irad]->FindLastBinAbove(1))+5);
+			hHitDur[irad]->Draw();
+			TLine *l3 = new TLine(dmin,0,dmin,hHitDur[irad]->GetBinContent(hHitDur[0]->GetMaximumBin()));
+			l3->SetLineColor(3);
+			l3->Draw("same");
+
+			c1->cd(4);
+			gPad->SetLogz();
+			hHitCorrDur[irad]->GetXaxis()->SetRangeUser(0,hHitDur[irad]->GetBinCenter(hHitDur[irad]->FindLastBinAbove(3))+5);
+			//hHitCorrDur[irad]->GetYaxis()->SetRangeUser(run->timeOuMin-20,run->timeInMax+20);
+			hHitCorrDur[irad]->GetYaxis()->SetRangeUser(run->timeOuMin-20,run->timeOuMax+25);
+			hHitCorrDur[irad]->Draw("colz");
+			TLine *l4 = new TLine(0,tmin_rad,hHitDur[irad]->GetBinCenter(hHitDur[irad]->FindLastBinAbove(3))+5,tmin_rad);
+			l4->SetLineColor(3);
+			l4->Draw("same");
+			TLine *l5 = new TLine(0,tmax_rad,hHitDur[irad]->GetBinCenter(hHitDur[irad]->FindLastBinAbove(3))+5,tmax_rad);
+			l5->SetLineColor(3);
+			l5->Draw("same");
+			TLine *l6 = new TLine(dmin,run->timeOuMin-20,dmin,run->timeInMax+20);
+			l6->SetLineColor(3);
+			l6->Draw("same");
+
+			c1->cd(7);
+			//Time not calibrated VS Channel
+			hNotCalibVsCh[irad]->GetYaxis()->SetRangeUser(run->timeOuMin,run->timeInMax+5);
+			//hNotCalibVsCh[irad]->GetXaxis()->SetRangeUser(0,300);
+			hNotCalibVsCh[irad]->Draw("colz");
+			TProfile *tp0 = hNotCalibVsCh[irad]->ProfileX();
+			tp0->GetYaxis()->SetRangeUser(run->timeOuMin,run->timeInMax+5);
+			tp0->SetLineColor(kWhite);
+			//tp0->Draw("same");
+
+			c1->cd(8);
+			hCalibVsCh[irad]->GetYaxis()->SetRangeUser(run->timeOuMin,run->timeInMax+5);
+			//hCalibVsCh[irad]->GetXaxis()->SetRangeUser(0,300);
+			hCalibVsCh[irad]->Draw("colz");
+			TProfile *tp1 = hCalibVsCh[irad]->ProfileX();
+			tp1->GetYaxis()->SetRangeUser(run->timeOuMin,run->timeInMax+5);
+			tp1->SetLineColor(kWhite);
+			//tp1->Draw("same");
+
+			c1->Update();
+			c1->Print(out_pdf.c_str());
+
+			TCanvas *cT  = new TCanvas(Form("cT%d",irad),"c0",1600,900);
+			cT->Draw();
+			hNotCalibVsCh[irad]->Draw("colz");
+			cT->Update();
+			cT->Print(Form("hNotCalivVsCh_%d.root",irad));
+			hCalibVsCh[irad]->Draw("colz");
+			cT->Update();
+			cT->Print(Form("hCalivVsCh_%d.root",irad));
+			cT->Close();
 		}
-		double dmin = CUT_MIN_DUR;
-		//printf("Time ref (%7.2f:%7.2f) gas (%7.2f:%7.2f)   aerogel (%7.2f:%7.2f)",tmin,tmax,
-		//		run->timeInMin,run->timeInMax,run->timeOuMin,run->timeOuMax);
+		for (int j=1; j<=1024; j++){
+			TProfile *tp_gas = hNotCalibVsCh[1]->ProfileX();
+			TProfile *tp_aer = hNotCalibVsCh[2]->ProfileX();
+			double off_gas = tp_gas->GetBinContent(j);
+			double off_aer = tp_aer->GetBinContent(j);
+			double err_gas = tp_gas->GetBinError(j);
+			double err_aer = tp_aer->GetBinError(j);
+			double zero = 0.0;
+			/*printf(" jjj %3d %7.2f %7.2f %7.2f %7.2f ",j,off_gas,off_aer,err_gas,err_aer);
+			  if(off_gas!=0 && off_aer==0)printf(" prof %3d %7.2f \n",j,360-off_gas);
+			  if(off_gas==0 && off_aer!=0)printf(" prof %3d %7.2f \n",j,355-off_aer);
+			  if(off_gas!=0 && off_aer!=0){
+			  if(err_gas<=err_aer) printf(" prof %3d %7.2f \n",j,360-off_gas);
+			  if(err_gas>err_aer) printf(" prof %3d %7.2f \n",j,355-off_aer);
+			  }
+			  if(off_gas==0 && off_aer==0)printf(" prof %3d %7.2f \n",j,zero);*/
+		}
 
-		c1->cd(1);
-		//Hit start and end, showing coincidence window extremes
-		THStack *hsHitTime = new THStack("hsHitTime","Hit start and End - Duration > 35;[ns]");
-		hHitEnd[irad]->SetLineColor(2);
-		hsHitTime->Add(hHitStart[irad]);
-		hsHitTime->Add(hHitEnd[irad]);
-		hsHitTime->Draw("nostack");
-		hsHitTime->GetXaxis()->SetRangeUser(run->timeOuMin-0.1*run->timeOuMin,run->timeInMax+110);
-		//hsHitTime->GetXaxis()->SetRangeUser(300,600);
-		hsHitTime->Draw("nostack");
-		TLine *l1 = new TLine(tmin_rad,0,tmin_rad,hHitStart[0]->GetBinContent(hHitStart[0]->GetMaximumBin()));
-		l1->SetLineColor(3);
-		l1->Draw("same");
-		TLine *l2 = new TLine(tmax_rad,0,tmax_rad,hHitStart[0]->GetBinContent(hHitStart[0]->GetMaximumBin()));
-		l2->SetLineColor(3);
-		l2->Draw("same");
-		c1->Update();
 
-		c1->cd(5);
-		//Zoom on coincidence peak, fitted. Showing coincidence window extremes.
+
+		TCanvas *c2 = new TCanvas("c2","Radii canvas",1600,900);
+		c2->Divide(3,3);
+		c2->Draw();
+		c2->cd(1);
+		hBeamCh->SetMinimum(0);
+		hBeamCh->Draw();
+		//Cherenkov combination for pion 1
+		c2->cd(2);
+		//Cherenkov combination for pion 2
+		c2->cd(3);
+		//Cherenkov combination for pion+kaon
+
+		c2->cd(4);
 		gStyle->SetOptStat(0);
 		gStyle->SetOptFit(1);
-		hHitCoinc[irad]->Draw();
-		TF1 *fcoinc = new TF1("fcoinc","gaus(0)",200,400);
-		fcoinc->SetParameters(20000,355,2);
-		hHitCoinc[irad]->Fit(fcoinc,"Q","",run->timeOuMin,run->timeInMax);
-		l1->SetY2(hHitCoinc[irad]->GetBinContent(hHitCoinc[irad]->GetMaximumBin())/2);
-		l2->SetY2(hHitCoinc[irad]->GetBinContent(hHitCoinc[irad]->GetMaximumBin())/2);
-		l1->Draw("same");
-		l2->Draw("same");
-		c1->Update();
+		//Fitted GAS radius for SP.
+		vspRadius[4]->SetTitle("sp radius - gas");
+		TH1D *cp00 = (TH1D*)vspRadius[4]->Clone("hspRadius_fitIn");
+		TF1 *fspRadius_4=new TF1();
+		applyFit(cp00,fspRadius_4,"fspRadius_4",false);
+		cp00->Draw(); 
+		c2->cd(5);
+		//Fitted GAS radius for SPN.
+		vspnRadius[4]->SetTitle("Corrected sp radius - gas");
+		TH1D *cp01 = (TH1D*)vspnRadius[4]->Clone("hspnRadius_fitIn");
+		TF1 *fspnRadius_4=new TF1();
+		applyFit(cp01,fspnRadius_4,"fspnRadius_4",false);
+		cp01->Draw(); 
+		c2->cd(6);
+		//Fitted GAS radius for CUT.
+		vcutRadius[4]->SetTitle("RMS cut radius - gas");
+		TH1D *cp02 = (TH1D*)vcutRadius[4]->Clone("hcutRadius_fitIn");
+		TF1 *fcutRadius_4=new TF1();
+		applyFit(cp02,fcutRadius_4,"fcutRadius_4",false);
+		cp02->Draw(); 
+		c2->cd(7);
+		//Fitted AERO radius for SP.
+		vspRadius[9]->SetTitle("Sp radius - aerogel");
+		TH1D *cp10 = (TH1D*)vspRadius[9]->Clone("hspRadius_fitOut");
+		TF1 *fspRadius_9 = new TF1();
+		applyFit(cp10,fspRadius_9,"fspRadius_4",true);
+		cp10->Draw();
+		c2->cd(8);
+		//Fitted AERO radius for SPN.
+		vspnRadius[9]->SetTitle("Corrected sp radius - aerogel");
+		TH1D *cp11 = (TH1D*)vspnRadius[9]->Clone("hspnRadius_fitOut");
+		TF1 *fspnRadius_9 = new TF1();
+		applyFit(cp11,fspnRadius_9,"fspnRadius_4",true);
+		cp11->Draw();
+		c2->cd(9);
+		//Fitted AERO radius for CUT.
+		vcutRadius[9]->SetTitle("RMS cut radius - aerogel");
+		TH1D *cp12 = (TH1D*)vcutRadius[9]->Clone("hcutRadius_fitOut");
+		TF1 *fcutRadius_9 = new TF1();
+		applyFit(cp12,fcutRadius_9,"fcutRadius_4",true);
+		cp12->Draw();
+		c2->Update();
+		c2->Print(out_pdf.c_str());
 
-		c1->cd(2);
+
+		TCanvas *c3 = new TCanvas("c3","Time and photon for radius",1600,900);
+		c3->Divide(3,4);
+		c3->cd(1);
 		gStyle->SetOptStat(1);
 		gStyle->SetOptFit(0);
-		hx474->SetLineColor(2);
-		hx519->SetLineColor(3);
-		hx537->SetLineColor(4);
-		THStack *hsBeamCherenkov= new THStack("hsBeamCherenkov","Beam cherenkov;time [ns];counts [#]");
-	        gPad->SetLogy();	
-		hsBeamCherenkov->Add(hx474);
-		hsBeamCherenkov->Add(hx519);
-		hsBeamCherenkov->Add(hx537);
-		hsBeamCherenkov->Draw("nostack");
-		//hsBeamCherenkov->GetXaxis()->SetRangeUser(0,460);
-		hsBeamCherenkov->Draw("nostack");
-		gPad->BuildLegend(.3,.7,.7,.9);
+		vspTime[4]->SetTitle("Mean time of the event - gas - Single Particle");
+		vspTime[4]->Draw();
+		c3->cd(4);
+		vspPhoton[4]->SetTitle("# photons for particle - gas - Single Particle");
+		vspPhoton[4]->Draw();
+		c3->cd(7);
+		vspTime[9]->SetTitle("Mean time of the event - aerogel - Single Particle");
+		vspTime[9]->Draw();
+		c3->cd(10);
+		vspPhoton[9]->SetTitle("# photons for particle - aerogel - Single Particle");
+		vspPhoton[9]->GetXaxis()->SetRangeUser(0,25);
+		vspPhoton[9]->Draw();
+		c3->cd(2);
+		vspnTime[4]->SetTitle("Mean time of the event - gas - Corrected Single Particle");
+		vspnTime[4]->Draw();
+		c3->cd(5);
+		vspnPhoton[4]->SetTitle("# photons for particle - gas - Corrected Single Particle");
+		vspnPhoton[4]->Draw();
+		c3->cd(8);
+		vspnTime[9]->SetTitle("Mean time of the event - aerogel - Corrected Single Particle");
+		vspnTime[9]->Draw();
+		c3->cd(11);
+		vspnPhoton[9]->SetTitle("# photons for particle - aerogel - Corrected Single Particle");
+		vspnPhoton[9]->GetXaxis()->SetRangeUser(0,25);
+		vspnPhoton[9]->Draw();
+		c3->cd(3);
+		vcutTime[4]->SetTitle("Mean time of the event - gas - Cut on RMS");
+		vcutTime[4]->Draw();
+		c3->cd(6);
+		vcutPhoton[4]->SetTitle("# photons for particle - gas - Cut on RMS");
+		vcutPhoton[4]->Draw();
+		c3->cd(9);
+		vcutTime[9]->SetTitle("Mean time of the event - aerogel - Cut on RMS");
+		vcutTime[9]->Draw();
+		c3->cd(12);
+		vcutPhoton[9]->SetTitle("# photons for particle - aerogel - Cut on RMS");
+		vcutPhoton[9]->GetXaxis()->SetRangeUser(0,25);
+		vcutPhoton[9]->Draw();
+		c3->Update();
+		c3->Print(out_pdf.c_str());
 
-		c1->cd(6);
-		htrig->GetXaxis()->SetRangeUser(htrig->GetBinCenter(htrig->FindFirstBinAbove(1))-10,htrig->GetBinCenter(htrig->FindLastBinAbove(1))+10);
-		htrig->Draw();
 
-		c1->cd(3);
-		//Trigger time plot. If I can, start and end.
-		hHitDur[irad]->GetXaxis()->SetRangeUser(0,hHitDur[irad]->GetBinCenter(hHitDur[irad]->FindLastBinAbove(1))+5);
-		hHitDur[irad]->Draw();
-		TLine *l3 = new TLine(dmin,0,dmin,hHitDur[irad]->GetBinContent(hHitDur[0]->GetMaximumBin()));
-		l3->SetLineColor(3);
-		l3->Draw("same");
+		TCanvas *c4 = new TCanvas("c4","GEM canvas",1600,900);
+		c4->Divide(2,2);
+		c4->Draw();
+		c4->cd(1);
+		hUpGEM->GetXaxis()->SetRangeUser(-20,20);
+		hUpGEM->GetYaxis()->SetRangeUser(-20,20);
+		hUpGEM->Draw("colz");
+		c4->cd(2);
+		hDnGEM->GetXaxis()->SetRangeUser(-20,20);
+		hDnGEM->GetYaxis()->SetRangeUser(-20,20);
+		hDnGEM->Draw("colz");
+		c4->cd(3);
+		hBeam->GetXaxis()->SetRangeUser(-20,20);
+		hBeam->GetYaxis()->SetRangeUser(-20,20);
+		hBeam->Draw("colz");
+		c4->cd(4);
+		hBeamTheta->GetXaxis()->SetRangeUser(-0.005,0.005);
+		hBeamTheta->GetYaxis()->SetRangeUser(-0.005,0.005);
+		hBeamTheta->Draw("colz");
+		c4->Update();
+		c4->Print(out_pdf.c_str());
 
-		c1->cd(4);
-		gPad->SetLogz();
-		hHitCorrDur[irad]->GetXaxis()->SetRangeUser(0,hHitDur[irad]->GetBinCenter(hHitDur[irad]->FindLastBinAbove(3))+5);
-		hHitCorrDur[irad]->GetYaxis()->SetRangeUser(run->timeOuMin-20,run->timeInMax+20);
-		hHitCorrDur[irad]->Draw("colz");
-		TLine *l4 = new TLine(0,tmin_rad,hHitDur[irad]->GetBinCenter(hHitDur[irad]->FindLastBinAbove(3))+5,tmin_rad);
-		l4->SetLineColor(3);
-		l4->Draw("same");
-		TLine *l5 = new TLine(0,tmax_rad,hHitDur[irad]->GetBinCenter(hHitDur[irad]->FindLastBinAbove(3))+5,tmax_rad);
-		l5->SetLineColor(3);
-		l5->Draw("same");
-		TLine *l6 = new TLine(dmin,run->timeOuMin-20,dmin,run->timeInMax+20);
-		l6->SetLineColor(3);
-		l6->Draw("same");
-
-		c1->cd(7);
-		//Time not calibrated VS Channel
-		hNotCalibVsCh[irad]->Print(Form("hNotCalib_%d.root",irad));
-		TProfile *tp0 = hNotCalibVsCh[irad]->ProfileX();
-		tp0->GetYaxis()->SetRangeUser(run->timeOuMin,run->timeInMax+5);
-		tp0->Draw();
-
-		c1->cd(8);
-		hCalibVsCh[irad]->Print(Form("hCalib_%d.root",irad));
-		TProfile *tp1 = hCalibVsCh[irad]->ProfileX();
-		tp1->GetYaxis()->SetRangeUser(run->timeOuMin,run->timeInMax+5);
-		tp1->Draw();
-
-		c1->Update();
-		c1->Print(out_pdf.c_str());
-
-		TCanvas *cT  = new TCanvas(Form("cT%d",irad),"c0",1600,900);
-		cT->Draw();
-		hNotCalibVsCh[irad]->Draw("colz");
-		cT->Update();
-		cT->Print(Form("hNotCalivVsCh_%d.root",irad));
-		hCalibVsCh[irad]->Draw("colz");
-		cT->Update();
-		cT->Print(Form("hCalivVsCh_%d.root",irad));
-		cT->Close();
-	}
-	for (int j=1; j<=1024; j++){
-		TProfile *tp_gas = hNotCalibVsCh[1]->ProfileX();
-		TProfile *tp_aer = hNotCalibVsCh[2]->ProfileX();
-		double off_gas = tp_gas->GetBinContent(j);
-		double off_aer = tp_aer->GetBinContent(j);
-		double err_gas = tp_gas->GetBinError(j);
-		double err_aer = tp_aer->GetBinError(j);
-		double zero = 0.0;
-		/*printf(" jjj %3d %7.2f %7.2f %7.2f %7.2f ",j,off_gas,off_aer,err_gas,err_aer);
-		if(off_gas!=0 && off_aer==0)printf(" prof %3d %7.2f \n",j,360-off_gas);
-		if(off_gas==0 && off_aer!=0)printf(" prof %3d %7.2f \n",j,355-off_aer);
-		if(off_gas!=0 && off_aer!=0){
-			if(err_gas<=err_aer) printf(" prof %3d %7.2f \n",j,360-off_gas);
-			if(err_gas>err_aer) printf(" prof %3d %7.2f \n",j,355-off_aer);
+		//SIGMA vs Photon Number
+		for(int i = 1; i < maxPhoGas; i++){
+			if(vspSigPhoGas[i]->GetEntries()==0) continue;
+			TF1 *fspGas = getFun(vspSigPhoGas[i-1],false);
+			hspSigVsPhoGas->SetBinContent(i,fspGas->GetParameter(2));
+			hspSigVsPhoGas->SetBinError(i,fspGas->GetParError(2));
 		}
-		if(off_gas==0 && off_aer==0)printf(" prof %3d %7.2f \n",j,zero);*/
+		for(int i = 1; i < maxPhoGas; i++){
+			if(vspnSigPhoGas[i]->GetEntries()==0) continue;
+			TF1 *fspnGas = getFun(vspnSigPhoGas[i-1],false);
+			hspnSigVsPhoGas->SetBinContent(i,fspnGas->GetParameter(2));
+			hspnSigVsPhoGas->SetBinError(i,fspnGas->GetParError(2));
+		}
+		for(int i = 1; i < maxPhoGas; i++){
+			if(vcutSigPhoGas[i]->GetEntries()==0) continue;
+			TF1 *fcutGas = getFun(vcutSigPhoGas[i-1],false);
+			hcutSigVsPhoGas->SetBinContent(i,fcutGas->GetParameter(2));
+			hcutSigVsPhoGas->SetBinError(i,fcutGas->GetParError(2));
+		}
+		for(int i = 1; i < maxPhoAero; i++){
+			if(vspSigPhoAero[i]->GetEntries()==0) continue;
+			TF1 *fspAero = getFun(vspSigPhoAero[i-1],true);
+			hspSigVsPhoAero->SetBinContent(i,fspAero->GetParameter(2));
+			hspSigVsPhoAero->SetBinError(i,fspAero->GetParError(2));
+		}
+		for(int i = 1; i < maxPhoAero; i++){
+			if(vspnSigPhoAero[i]->GetEntries()==0) continue;
+			TF1 *fspnAero = getFun(vspnSigPhoAero[i-1],true);
+			hspnSigVsPhoAero->SetBinContent(i,fspnAero->GetParameter(2));
+			hspnSigVsPhoAero->SetBinError(i,fspnAero->GetParError(2));
+		}
+		for(int i = 1; i < maxPhoAero; i++){
+			if(vcutSigPhoAero[i]->GetEntries()==0) continue;
+			TF1 *fcutAero = getFun(vcutSigPhoAero[i-1],true);
+			hcutSigVsPhoAero->SetBinContent(i,fcutAero->GetParameter(2));
+			hcutSigVsPhoAero->SetBinError(i,fcutAero->GetParError(2));
+		}
+
+
+		TCanvas *c5 = new TCanvas("c5","Single photon",1600,900);
+		c5->Divide(4,2);
+		c5->cd(1);
+		gStyle->SetOptFit(1);
+		gStyle->SetOptStat(0);
+		vnRadius[1]->Scale(countEvent);
+		vnRadius[1]->Fit("gaus","Q","",20,50);
+		vnRadius[1]->Draw();
+		c5->cd(5);
+		//vnRadius[2]->Scale(1/(double)countEvent);
+		//if(run->runNum==186)vnRadius[2]->Scale(0.15/0.18);
+		vnRadius[2]->Fit("gaus","Q","",180,220);
+		//vnRadius[2]->SetMaximum(0.08);
+		vnRadius[2]->Draw(); 
+		c5->cd(2);
+		fitSigma(hspSigVsPhoGas,false);
+		hspSigVsPhoGas->GetXaxis()->SetRangeUser(0,25);
+		hspSigVsPhoGas->GetYaxis()->SetRangeUser(0,1.5);
+		hspSigVsPhoGas->Draw("E");
+		c5->cd(6);
+		fitSigma(hspSigVsPhoAero,true);
+		hspSigVsPhoAero->GetXaxis()->SetRangeUser(0,25);
+		hspSigVsPhoAero->GetYaxis()->SetRangeUser(0,4);
+		hspSigVsPhoAero->Draw("E");
+		c5->cd(3);
+		fitSigma(hspnSigVsPhoGas,false);
+		hspnSigVsPhoGas->GetXaxis()->SetRangeUser(0,25);
+		hspnSigVsPhoGas->GetYaxis()->SetRangeUser(0,1.5);
+		hspnSigVsPhoGas->Draw("E");
+		c5->cd(7);
+		fitSigma(hspnSigVsPhoAero,true);
+		hspnSigVsPhoAero->GetXaxis()->SetRangeUser(0,25);
+		hspnSigVsPhoAero->GetYaxis()->SetRangeUser(0,4);
+		hspnSigVsPhoAero->Draw("E");
+		c5->cd(4);
+		fitSigma(hcutSigVsPhoGas,false);
+		hcutSigVsPhoGas->GetXaxis()->SetRangeUser(0,25);
+		hcutSigVsPhoGas->GetYaxis()->SetRangeUser(0,1.5);
+		hcutSigVsPhoGas->Draw("E");
+		c5->cd(8);
+		fitSigma(hcutSigVsPhoAero,true);
+		hcutSigVsPhoAero->GetXaxis()->SetRangeUser(0,25);
+		hcutSigVsPhoAero->GetYaxis()->SetRangeUser(0,4);
+		hcutSigVsPhoAero->Draw("E");
+		c5->Update();
+		c5->Print(out_pdf.c_str());
+
+
+		TCanvas *c6 = new TCanvas("c6","Selected particle canvas",1600,900);
+		c6->Divide(3,3);
+		c6->cd(1);
+		gStyle->SetOptStat(0);
+		gStyle->SetOptFit(1);
+		vPiRadius[0]->Draw();
+		c6->cd(2);
+		vKRadius[0]->Draw();
+		c6->cd(3);
+		vPrRadius[0]->Draw();
+		c6->cd(4);
+		vPiRadius[1]->Fit("gaus","Q","",20,50);
+		vPiRadius[1]->Draw();
+		c6->cd(5);
+		vKRadius[1]->Fit("gaus","Q","",20,50);
+		vKRadius[1]->Draw();
+		c6->cd(6);
+		vPrRadius[1]->Fit("gaus","Q","",20,50);
+		vPrRadius[1]->Draw();
+		c6->cd(7);
+		//vPiRadius[2]->Scale(1./countEvent);
+		vPiRadius[2]->Fit("gaus","Q","",130,220);
+		vPiRadius[2]->Draw();
+		c6->cd(8);
+		vKRadius[2]->Fit("gaus","Q","",130,220);
+		vKRadius[2]->Draw();
+		c6->cd(9);
+		vPrRadius[2]->Fit("gaus","Q","",130,220);
+		vPrRadius[2]->Draw();
+		c6->Update();
+		c6->Print(out_pdf.c_str());
+
+		TCanvas *c8 = new TCanvas("c8","Selected particle THStack",1600,900);
+		c8->Draw();
+		c8->Divide(2);
+		c8->cd(1);
+		gPad->SetLogy();
+		THStack *hsCut1 = new THStack("hsCut1","Single particle radius - Gas;Radius [mRad];Counts [#]");
+		vSpnKRadius[1]->SetLineColor(2);
+		vSpnPrRadius[1]->SetLineColor(3);
+		hsCut1->Add(vSpnPiRadius[1]);
+		hsCut1->Add(vSpnKRadius[1]);
+		hsCut1->Add(vSpnPrRadius[1]);
+		hsCut1->Draw("nostack");
+		TLegend *lhsCut1 = new TLegend(0.7,0.7,0.9,0.9);
+		lhsCut1->AddEntry(vSpnPiRadius[1],"Pion","lp");
+		lhsCut1->AddEntry(vSpnKRadius[1],"Kaon","lp");
+		lhsCut1->AddEntry(vSpnPrRadius[1],"Proton","lp");
+		lhsCut1->Draw("same");
+		c8->cd(2);
+		gPad->SetLogy();
+		THStack *hsCut2 = new THStack("hsCut2","Single particle radius - Aerogel;Radius [mRad];Counts [#]");
+		vSpnKRadius[2]->SetLineColor(2);
+		vSpnPrRadius[2]->SetLineColor(3);
+		hsCut2->Add(vSpnPiRadius[2]);
+		hsCut2->Add(vSpnKRadius[2]);
+		hsCut2->Add(vSpnPrRadius[2]);
+		hsCut2->Draw("nostack");
+		TLegend *lhsCut2 = new TLegend(0.1,0.7,0.1,0.9);
+		lhsCut2->AddEntry(vSpnPiRadius[2],"Pion","lp");
+		lhsCut2->AddEntry(vSpnKRadius[2],"Kaon","lp");
+		lhsCut2->AddEntry(vSpnPrRadius[2],"Proton","lp");
+		lhsCut2->Draw("same");
+		c8->Update();
+		c8->Print(out_pdf.c_str());
+
+
+
+
+
+		TCanvas *c7 = new TCanvas("c7","Selected particle single radius",1600,900);
+		c7->Draw();
+		c7->Divide(3,3);
+		c7->cd(1);
+		gStyle->SetOptStat(0);
+		gStyle->SetOptFit(1);
+		vSpnPiRadius[0]->Draw();
+		c7->cd(2);
+		vSpnKRadius[0]->Draw();
+		c7->cd(3);
+		vSpnPrRadius[0]->Draw();
+		c7->cd(4);
+		TF1 *fSpnPiRadius1 = new TF1();
+		applyFit(vSpnPiRadius[1],fSpnPiRadius1,"fSpnPiRadius1",false);
+		vSpnPiRadius[1]->Draw();
+		c7->cd(5);
+		vSpnKRadius[1]->SetLineColor(4);;
+		TF1 *fSpnKRadius1 = new TF1();
+		applyFit(vSpnKRadius[1],fSpnKRadius1,"fSpnKRadius1",false);
+		vSpnKRadius[1]->Draw();
+		c7->cd(6);
+		vSpnPrRadius[1]->SetLineColor(4);;
+		TF1 *fSpnPrRadius1 = new TF1();
+		applyFit(vSpnPrRadius[1],fSpnKRadius1,"fSpnKRadius1",false);
+		vSpnPrRadius[1]->Draw();
+		c7->cd(7);
+		TF1 *fSpnPiRadius2 = new TF1();
+		applyFit(vSpnPiRadius[2],fSpnPiRadius2,"fSpnPiRadius2",true);
+		vSpnPiRadius[2]->Draw();
+		c7->cd(8);
+		vSpnKRadius[2]->SetLineColor(4);;
+		TF1 *fSpnKRadius2 = new TF1();
+		applyFit(vSpnKRadius[2],fSpnKRadius2,"fSpnKRadius2",true);
+		vSpnKRadius[2]->Draw();
+		c7->cd(9);
+		vSpnPrRadius[2]->SetLineColor(4);;
+		TF1 *fSpnPrRadius2 = new TF1();
+		applyFit(vSpnPrRadius[2],fSpnPrRadius2,"fSpnPrRadius2",true);
+		vSpnPrRadius[2]->Draw();
+		c7->Update();
+		c7->Print(out_pdf.c_str());
+
+
+		TCanvas *c9 = new TCanvas("c9","Selected particle maps",1600,900);
+		c9->Divide(3,3);
+		gStyle->SetOptFit(0);
+		gStyle->SetOptStat(1); 
+		c9->cd(1);
+		vPiMap[0]->SetTitle("Pions - Full map");
+		vPiMap[0]->Draw("colz");
+		c9->cd(2);
+		vKMap[0]->SetTitle("Kaons - Full map");
+		vKMap[0]->Draw("colz");
+		c9->cd(3);
+		vPrMap[0]->SetTitle("Protons - Full map");
+		vPrMap[0]->Draw("colz");
+
+		c9->cd(4);
+		vPiMap[1]->SetTitle("Pions - Gas");
+		vPiMap[1]->Draw("colz");
+		c9->cd(5);
+		vKMap[1]->SetTitle("Kaons - Gas");
+		vKMap[1]->Draw("colz");
+		c9->cd(6);
+		vPrMap[1]->SetTitle("Protons - Gas");
+		vPrMap[1]->Draw("colz");
+
+		c9->cd(7);
+		vPiMap[2]->SetTitle("Pions - Aerogel");
+		vPiMap[2]->Draw("colz");
+		c9->cd(8);
+		vKMap[2]->SetTitle("Kaons - Aerogel");
+		vKMap[2]->Draw("colz");
+		c9->cd(9);
+		vPrMap[2]->SetTitle("Protons - Aerogel");
+		vPrMap[2]->Draw("colz");
+		c9->Update();
+		c9->Print(out_pdf.c_str());
+
+
+		TCanvas *c10 = new TCanvas("c10","Map canvas",1600,900);
+		c10->Divide(2);
+		gStyle->SetOptFit(0);
+		gStyle->SetOptStat(1); 
+		c10->Draw();
+		c10->cd(1);
+		gPad->SetLogz();
+		hMap->SetMaximum(hnMap->GetMaximum());
+		hMap->Draw("colz");
+		TEllipse *geoCutRing = new TEllipse(0,0,run->geoCut);
+		geoCutRing->SetLineColor(2);
+		geoCutRing->SetFillStyle(0);
+		geoCutRing->Draw("same");
+		c10->cd(2);
+		gPad->SetLogz();
+		hnMap->Draw("colz");
+		c10->Update();
+		c10->Print(out_pdf.c_str());
+
+
+		TCanvas *c11 = new TCanvas("c11","PMT radius",1600,900);
+		c11->Divide(4,2);
+		c11->Draw();
+		c11->cd(1);
+		THStack *hsGasPMT0 = new THStack("hsGasPMT0","PMT north - GAS");
+		vGasRadPMT[0]->SetTitle("not corrected");
+		vGasRadPMT[0]->SetLineColor(3);
+		vGasnRadPMT[2]->SetLineColor(2);
+		vGasnRadPMT[0]->SetTitle("corrected");
+		hsGasPMT0->Add(vGasRadPMT[0]);
+		hsGasPMT0->Add(vGasnRadPMT[0]);
+		hsGasPMT0->Add(vGasnRadPMT[2]);
+		hsGasPMT0->Draw("nostack");
+		gPad->BuildLegend(.15,.7,.3,.9);
+		c11->cd(2);
+		THStack *hsGasPMT2 = new THStack("hsGasPMT2","PMT south - GAS");
+		vGasRadPMT[2]->SetLineColor(3);
+		hsGasPMT2->Add(vGasRadPMT[2]);
+		hsGasPMT2->Add(vGasnRadPMT[2]);
+		hsGasPMT2->Draw("nostack");
+		c11->cd(3);
+		THStack *hsGasPMT1 = new THStack("hsGasPMT1","PMT est - GAS");
+		vGasRadPMT[1]->SetLineColor(3);
+		vGasnRadPMT[3]->SetLineColor(2);
+		hsGasPMT1->Add(vGasRadPMT[1]);
+		hsGasPMT1->Add(vGasnRadPMT[1]);
+		hsGasPMT1->Add(vGasnRadPMT[3]);
+		hsGasPMT1->Draw("nostack");
+		c11->cd(4);
+		THStack *hsGasPMT3 = new THStack("hsGasPMT3","PMT west - GAS");
+		vGasRadPMT[3]->SetLineColor(3);
+		hsGasPMT3->Add(vGasRadPMT[3]);
+		hsGasPMT3->Add(vGasnRadPMT[3]);
+		hsGasPMT3->Draw("nostack");
+		c11->cd(5);
+		THStack *hsAeroPMT0 = new THStack("hsAeroPMT0","PMT north - AERO");
+		vAeroRadPMT[0]->SetLineColor(3);
+		vAeronRadPMT[2]->SetLineColor(2);
+		hsAeroPMT0->Add(vAeroRadPMT[0]);
+		hsAeroPMT0->Add(vAeronRadPMT[0]);
+		hsAeroPMT0->Add(vAeronRadPMT[2]);
+		hsAeroPMT0->Draw("nostack");
+		c11->cd(6);
+		THStack *hsAeroPMT2 = new THStack("hsAeroPMT2","PMT south - AERO");
+		vAeroRadPMT[2]->SetLineColor(3);
+		hsAeroPMT2->Add(vAeroRadPMT[2]);
+		hsAeroPMT2->Add(vAeronRadPMT[2]);
+		hsAeroPMT2->Draw("nostack");
+		c11->cd(7);
+		THStack *hsAeroPMT1 = new THStack("hsAeroPMT1","PMT est - AERO");
+		vAeroRadPMT[1]->SetLineColor(3);
+		vAeronRadPMT[3]->SetLineColor(2);
+		hsAeroPMT1->Add(vAeroRadPMT[1]);
+		hsAeroPMT1->Add(vAeronRadPMT[1]);
+		hsAeroPMT1->Add(vAeronRadPMT[3]);
+		hsAeroPMT1->Draw("nostack");
+		c11->cd(8);
+		THStack *hsAeroPMT3 = new THStack("hsAeroPMT3","PMT west - AERO");
+		vAeroRadPMT[3]->SetLineColor(3);
+		hsAeroPMT3->Add(vAeroRadPMT[3]);
+		hsAeroPMT3->Add(vAeronRadPMT[3]);
+		hsAeroPMT3->Draw("nostack");
+		c11->Update();
+		c11->Print(out_pdf.c_str());
+
+
+		TCanvas *c12 = new TCanvas("c12","Radius corrections",1600,900);
+		c12->Divide(3,2);
+		c12->cd(1);
+		hGasdXVsAngle->Draw("colz");
+		c12->cd(2);
+		hGasdYVsAngle->Draw("colz");
+		c12->cd(3);
+		hNewCenterGas->Draw("colz");
+		c12->cd(4);
+		hAerodXVsAngle->Draw("colz");
+		c12->cd(5);
+		hAerodYVsAngle->Draw("colz");
+		c12->cd(6);
+		hNewCenterAero->Draw("colz");;
+		c12->Update();
+		c12->Print(out_pdf.c_str());
+
+		TCanvas *c13 = new TCanvas("c13","Radius in mm",1600,900);
+		c13->Divide(3,2);
+		c13->cd(1);
+		vRadiusMM[0]->SetTitle("Radius");
+		vRadiusMM[0]->Draw();
+		c13->cd(2);
+		vRadiusMM[1]->GetXaxis()->SetRangeUser(25,60);
+		vRadiusMM[1]->SetTitle("Radius - Gas");
+		vRadiusMM[1]->Draw();
+		c13->cd(3);
+		vRadiusMM[2]->GetXaxis()->SetRangeUser(50,85);
+		vRadiusMM[2]->SetTitle("Radius - Aerogel");
+		vRadiusMM[2]->Draw();
+		c13->cd(4);
+		vnRadiusMM[0]->SetTitle("Corrected radius");
+		vnRadiusMM[0]->Draw();
+		c13->cd(5);
+		vnRadiusMM[1]->GetXaxis()->SetRangeUser(25,60);
+		vnRadiusMM[1]->SetTitle("Corrected radius - Gas");
+		vnRadiusMM[1]->Draw();
+		c13->cd(6);
+		gStyle->SetOptStat(0);
+		gStyle->SetOptFit(1);
+		vnRadiusMM[2]->GetXaxis()->SetRangeUser(50,85);
+		vnRadiusMM[2]->SetTitle("Corrected radius - Aerogel");
+		vnRadiusMM[2]->Fit("gaus","","",68,76);
+		vnRadiusMM[2]->Draw();
+		c13->Update();
+		c13->Print(out_pdf.c_str());
+
+
+		c1->Print(out_pdf1.c_str());
+		TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
+		save->Write();
+		fOut->Close();
+		cout <<Form("You can open the monitoring plots typing: evince %s\n",out_pdf.c_str());
 	}
 
 
-
-	TCanvas *c2 = new TCanvas("c2","Radii canvas",1600,900);
-	c2->Divide(3,3);
-	c2->Draw();
-	c2->cd(1);
-	hBeamCh->SetMinimum(0);
-	hBeamCh->Draw();
-	//Cherenkov combination for pion 1
-	c2->cd(2);
-	//Cherenkov combination for pion 2
-	c2->cd(3);
-	//Cherenkov combination for pion+kaon
-
-	c2->cd(4);
-	gStyle->SetOptStat(0);
-	gStyle->SetOptFit(1);
-	//Fitted GAS radius for SP.
-	vspRadius[4]->SetTitle("sp radius - gas");
-	TH1D *cp00 = (TH1D*)vspRadius[4]->Clone("hspRadius_fitIn");
-	TF1 *fspRadius_4=new TF1();
-	applyFit(cp00,fspRadius_4,"fspRadius_4",false);
-	cp00->Draw(); 
-	c2->cd(5);
-	//Fitted GAS radius for SPN.
-	vspnRadius[4]->SetTitle("Corrected sp radius - gas");
-	TH1D *cp01 = (TH1D*)vspnRadius[4]->Clone("hspnRadius_fitIn");
-	TF1 *fspnRadius_4=new TF1();
-	applyFit(cp01,fspnRadius_4,"fspnRadius_4",false);
-	cp01->Draw(); 
-	c2->cd(6);
-	//Fitted GAS radius for CUT.
-	vcutRadius[4]->SetTitle("RMS cut radius - gas");
-	TH1D *cp02 = (TH1D*)vcutRadius[4]->Clone("hcutRadius_fitIn");
-	TF1 *fcutRadius_4=new TF1();
-	applyFit(cp02,fcutRadius_4,"fcutRadius_4",false);
-	cp02->Draw(); 
-	c2->cd(7);
-	//Fitted AERO radius for SP.
-	vspRadius[9]->SetTitle("Sp radius - aerogel");
-	TH1D *cp10 = (TH1D*)vspRadius[9]->Clone("hspRadius_fitOut");
-	TF1 *fspRadius_9 = new TF1();
-	applyFit(cp10,fspRadius_9,"fspRadius_4",true);
-	cp10->Draw();
-	c2->cd(8);
-	//Fitted AERO radius for SPN.
-	vspnRadius[9]->SetTitle("Corrected sp radius - aerogel");
-	TH1D *cp11 = (TH1D*)vspnRadius[9]->Clone("hspnRadius_fitOut");
-	TF1 *fspnRadius_9 = new TF1();
-	applyFit(cp11,fspnRadius_9,"fspnRadius_4",true);
-	cp11->Draw();
-	c2->cd(9);
-	//Fitted AERO radius for CUT.
-	vcutRadius[9]->SetTitle("RMS cut radius - aerogel");
-	TH1D *cp12 = (TH1D*)vcutRadius[9]->Clone("hcutRadius_fitOut");
-	TF1 *fcutRadius_9 = new TF1();
-	applyFit(cp12,fcutRadius_9,"fcutRadius_4",true);
-	cp12->Draw();
-	c2->Update();
-	c2->Print(out_pdf.c_str());
-
-
-	TCanvas *c3 = new TCanvas("c3","Time and photon for radius",1600,900);
-	c3->Divide(3,4);
-	c3->cd(1);
-	gStyle->SetOptStat(1);
-	gStyle->SetOptFit(0);
-	vspTime[4]->SetTitle("Mean time of the event - gas - Single Particle");
-	vspTime[4]->Draw();
-	c3->cd(4);
-	vspPhoton[4]->SetTitle("# photons for particle - gas - Single Particle");
-	vspPhoton[4]->Draw();
-	c3->cd(7);
-	vspTime[9]->SetTitle("Mean time of the event - aerogel - Single Particle");
-	vspTime[9]->Draw();
-	c3->cd(10);
-	vspPhoton[9]->SetTitle("# photons for particle - aerogel - Single Particle");
-	vspPhoton[9]->GetXaxis()->SetRangeUser(0,25);
-	vspPhoton[9]->Draw();
-	c3->cd(2);
-	vspnTime[4]->SetTitle("Mean time of the event - gas - Corrected Single Particle");
-	vspnTime[4]->Draw();
-	c3->cd(5);
-	vspnPhoton[4]->SetTitle("# photons for particle - gas - Corrected Single Particle");
-	vspnPhoton[4]->Draw();
-	c3->cd(8);
-	vspnTime[9]->SetTitle("Mean time of the event - aerogel - Corrected Single Particle");
-	vspnTime[9]->Draw();
-	c3->cd(11);
-	vspnPhoton[9]->SetTitle("# photons for particle - aerogel - Corrected Single Particle");
-	vspnPhoton[9]->GetXaxis()->SetRangeUser(0,25);
-	vspnPhoton[9]->Draw();
-	c3->cd(3);
-	vcutTime[4]->SetTitle("Mean time of the event - gas - Cut on RMS");
-	vcutTime[4]->Draw();
-	c3->cd(6);
-	vcutPhoton[4]->SetTitle("# photons for particle - gas - Cut on RMS");
-	vcutPhoton[4]->Draw();
-	c3->cd(9);
-	vcutTime[9]->SetTitle("Mean time of the event - aerogel - Cut on RMS");
-	vcutTime[9]->Draw();
-	c3->cd(12);
-	vcutPhoton[9]->SetTitle("# photons for particle - aerogel - Cut on RMS");
-	vcutPhoton[9]->GetXaxis()->SetRangeUser(0,25);
-	vcutPhoton[9]->Draw();
-	c3->Update();
-	c3->Print(out_pdf.c_str());
-
-	
-	TCanvas *c4 = new TCanvas("c4","GEM canvas",1600,900);
-	c4->Divide(2,2);
-	c4->Draw();
-	c4->cd(1);
-	hUpGEM->GetXaxis()->SetRangeUser(-60,60);
-	hUpGEM->GetYaxis()->SetRangeUser(-60,60);
-	hUpGEM->Draw("colz");
-	c4->cd(2);
-	hDnGEM->GetXaxis()->SetRangeUser(-60,60);
-	hDnGEM->GetYaxis()->SetRangeUser(-60,60);
-	hDnGEM->Draw("colz");
-	c4->cd(3);
-	hBeam->Draw("colz");
-	c4->cd(4);
-	hBeamTheta->Draw("colz");
-	c4->Update();
-	c4->Print(out_pdf.c_str());
-
-	//SIGMA vs Photon Number
-	for(int i = 1; i < maxPhoGas; i++){
-		if(vspSigPhoGas[i]->GetEntries()==0) continue;
-		TF1 *fspGas = getFun(vspSigPhoGas[i-1],false);
-		hspSigVsPhoGas->SetBinContent(i,fspGas->GetParameter(2));
-		hspSigVsPhoGas->SetBinError(i,fspGas->GetParError(2));
-	}
-	for(int i = 1; i < maxPhoGas; i++){
-		if(vspnSigPhoGas[i]->GetEntries()==0) continue;
-		TF1 *fspnGas = getFun(vspnSigPhoGas[i-1],false);
-		hspnSigVsPhoGas->SetBinContent(i,fspnGas->GetParameter(2));
-		hspnSigVsPhoGas->SetBinError(i,fspnGas->GetParError(2));
-	}
-	for(int i = 1; i < maxPhoGas; i++){
-		if(vcutSigPhoGas[i]->GetEntries()==0) continue;
-		TF1 *fcutGas = getFun(vcutSigPhoGas[i-1],false);
-		hcutSigVsPhoGas->SetBinContent(i,fcutGas->GetParameter(2));
-		hcutSigVsPhoGas->SetBinError(i,fcutGas->GetParError(2));
-	}
-	for(int i = 1; i < maxPhoAero; i++){
-		if(vspSigPhoAero[i]->GetEntries()==0) continue;
-		TF1 *fspAero = getFun(vspSigPhoAero[i-1],true);
-		hspSigVsPhoAero->SetBinContent(i,fspAero->GetParameter(2));
-		hspSigVsPhoAero->SetBinError(i,fspAero->GetParError(2));
-	}
-	for(int i = 1; i < maxPhoAero; i++){
-		if(vspnSigPhoAero[i]->GetEntries()==0) continue;
-		TF1 *fspnAero = getFun(vspnSigPhoAero[i-1],true);
-		hspnSigVsPhoAero->SetBinContent(i,fspnAero->GetParameter(2));
-		hspnSigVsPhoAero->SetBinError(i,fspnAero->GetParError(2));
-	}
-	for(int i = 1; i < maxPhoAero; i++){
-		if(vcutSigPhoAero[i]->GetEntries()==0) continue;
-		TF1 *fcutAero = getFun(vcutSigPhoAero[i-1],true);
-		hcutSigVsPhoAero->SetBinContent(i,fcutAero->GetParameter(2));
-		hcutSigVsPhoAero->SetBinError(i,fcutAero->GetParError(2));
-	}
-
-
-	TCanvas *c5 = new TCanvas("c5","Single photon",1600,900);
-	c5->Divide(4,2);
-	c5->cd(1);
-	gStyle->SetOptFit(1);
-	gStyle->SetOptStat(0); 
-	vnRadius[1]->Fit("gaus","Q","",30,50);
-	vnRadius[1]->Draw();
-	c5->cd(5);
-	vnRadius[2]->Fit("gaus","Q","",150,170);
-	vnRadius[2]->Draw(); 
-	c5->cd(2);
-	fitSigma(hspSigVsPhoGas,false);
-	hspSigVsPhoGas->GetXaxis()->SetRangeUser(0,25);
-	hspSigVsPhoGas->GetYaxis()->SetRangeUser(0,1.5);
-	hspSigVsPhoGas->Draw("E");
-	c5->cd(6);
-	fitSigma(hspSigVsPhoAero,true);
-	hspSigVsPhoAero->GetXaxis()->SetRangeUser(0,25);
-	hspSigVsPhoAero->GetYaxis()->SetRangeUser(0,4);
-	hspSigVsPhoAero->Draw("E");
-	c5->cd(3);
-	fitSigma(hspnSigVsPhoGas,false);
-	hspnSigVsPhoGas->GetXaxis()->SetRangeUser(0,25);
-	hspnSigVsPhoGas->GetYaxis()->SetRangeUser(0,1.5);
-	hspnSigVsPhoGas->Draw("E");
-	c5->cd(7);
-	fitSigma(hspnSigVsPhoAero,true);
-	hspnSigVsPhoAero->GetXaxis()->SetRangeUser(0,25);
-	hspnSigVsPhoAero->GetYaxis()->SetRangeUser(0,4);
-	hspnSigVsPhoAero->Draw("E");
-	c5->cd(4);
-	fitSigma(hcutSigVsPhoGas,false);
-	hcutSigVsPhoGas->GetXaxis()->SetRangeUser(0,25);
-	hcutSigVsPhoGas->GetYaxis()->SetRangeUser(0,1.5);
-	hcutSigVsPhoGas->Draw("E");
-	c5->cd(8);
-	fitSigma(hcutSigVsPhoAero,true);
-	hcutSigVsPhoAero->GetXaxis()->SetRangeUser(0,25);
-	hcutSigVsPhoAero->GetYaxis()->SetRangeUser(0,4);
-	hcutSigVsPhoAero->Draw("E");
-	c5->Update();
-	c5->Print(out_pdf.c_str());
-
-
-	TCanvas *c6 = new TCanvas("c7","Selected particle canvas",1600,900);
-	c6->Divide(3,3);
-	c6->cd(1);
-	gStyle->SetOptStat(0);
-	gStyle->SetOptFit(1);
-	vPiRadius[0]->Draw();
-	c6->cd(2);
-	vKRadius[0]->Draw();
-	c6->cd(3);
-	vPrRadius[0]->Draw();
-	c6->cd(4);
-	vPiRadius[1]->Fit("gaus","Q","",25,50);
-	vPiRadius[1]->Draw();
-	c6->cd(5);
-	vKRadius[1]->Fit("gaus","Q","",25,50);
-	vKRadius[1]->Draw();
-	c6->cd(6);
-	vPrRadius[1]->Fit("gaus","Q","",25,50);
-	vPrRadius[1]->Draw();
-	c6->cd(7);
-	vPiRadius[2]->Fit("gaus","Q","",150,170);
-	vPiRadius[2]->Draw();
-	c6->cd(8);
-	vKRadius[2]->Fit("gaus","Q","",150,170);
-	vKRadius[2]->Draw();
-	c6->cd(9);
-	vPrRadius[2]->Fit("gaus","Q","",150,170);
-	vPrRadius[2]->Draw();
-	c6->Update();
-	c6->Print(out_pdf.c_str());
-
-	TCanvas *c8 = new TCanvas("c8","Selected particle THStack",1600,900);
-	c8->Draw();
-	c8->Divide(2);
-	c8->cd(1);
-	gPad->SetLogy();
-	THStack *hsCut1 = new THStack("hsCut1","Single particle radius - Gas;Radius [mRad];Counts [#]");
-	vCutKRadius[1]->SetLineColor(2);
-	vCutPrRadius[1]->SetLineColor(3);
-	hsCut1->Add(vCutPiRadius[1]);
-	hsCut1->Add(vCutKRadius[1]);
-	hsCut1->Add(vCutPrRadius[1]);
-	hsCut1->Draw("nostack");
-	TLegend *lhsCut1 = new TLegend(0.7,0.7,0.9,0.9);
-	lhsCut1->AddEntry(vCutPiRadius[1],"Pion","lp");
-	lhsCut1->AddEntry(vCutKRadius[1],"Kaon","lp");
-	lhsCut1->AddEntry(vCutPrRadius[1],"Proton","lp");
-	lhsCut1->Draw("same");
-	c8->cd(2);
-	gPad->SetLogy();
-	THStack *hsCut2 = new THStack("hsCut2","Single particle radius - Aerogel;Radius [mRad];Counts [#]");
-	vCutKRadius[2]->SetLineColor(2);
-	vCutPrRadius[2]->SetLineColor(3);
-	hsCut2->Add(vCutPiRadius[2]);
-	hsCut2->Add(vCutKRadius[2]);
-	hsCut2->Add(vCutPrRadius[2]);
-	hsCut2->Draw("nostack");
-	TLegend *lhsCut2 = new TLegend(0.1,0.7,0.1,0.9);
-	lhsCut2->AddEntry(vCutPiRadius[2],"Pion","lp");
-	lhsCut2->AddEntry(vCutKRadius[2],"Kaon","lp");
-	lhsCut2->AddEntry(vCutPrRadius[2],"Proton","lp");
-	lhsCut2->Draw("same");
-	c8->Update();
-	c8->Print(out_pdf.c_str());
-
-
-
-
-
-	TCanvas *c7 = new TCanvas("c7","Selected particle single radius",1600,900);
-	c7->Draw();
-	c7->Divide(3,3);
-	c7->cd(1);
-	gStyle->SetOptStat(0);
-	gStyle->SetOptFit(1);
-	vCutPiRadius[0]->Draw();
-	c7->cd(2);
-	vCutKRadius[0]->Draw();
-	c7->cd(3);
-	vCutPrRadius[0]->Draw();
-	c7->cd(4);
-	vCutPiRadius[1]->Fit("gaus","Q","",25,50);
-	vCutPiRadius[1]->Draw();
-	c7->cd(5);
-	vCutKRadius[1]->SetLineColor(4);;
-	vCutKRadius[1]->Fit("gaus","Q","",25,50);
-	vCutKRadius[1]->Draw();
-	c7->cd(6);
-	vCutPrRadius[1]->SetLineColor(4);;
-	vCutPrRadius[1]->Fit("gaus","Q","",25,50);
-	vCutPrRadius[1]->Draw();
-	c7->cd(7);
-	vCutPiRadius[2]->Fit("gaus","Q","",150,170);
-	vCutPiRadius[2]->Draw();
-	c7->cd(8);
-	vCutKRadius[2]->SetLineColor(4);;
-	vCutKRadius[2]->Fit("gaus","Q","",150,170);
-	vCutKRadius[2]->Draw();
-	c7->cd(9);
-	vCutPrRadius[2]->SetLineColor(4);;
-	vCutPrRadius[2]->Fit("gaus","Q","",150,170);
-	vCutPrRadius[2]->Draw();
-	c7->Update();
-	c7->Print(out_pdf.c_str());
-
-
-	TCanvas *c9 = new TCanvas("c9","Selected particle maps",1600,900);
-	c9->Divide(3,3);
-	gStyle->SetOptFit(0);
-	gStyle->SetOptStat(1); 
-	c9->cd(1);
-	vPiMap[0]->SetTitle("Pions - Full map");
-	vPiMap[0]->Draw("colz");
-	c9->cd(2);
-	vKMap[0]->SetTitle("Kaons - Full map");
-	vKMap[0]->Draw("colz");
-	c9->cd(3);
-	vPrMap[0]->SetTitle("Protons - Full map");
-	vPrMap[0]->Draw("colz");
-	
-	c9->cd(4);
-	vPiMap[1]->SetTitle("Pions - Gas");
-	vPiMap[1]->Draw("colz");
-	c9->cd(5);
-	vKMap[1]->SetTitle("Kaons - Gas");
-	vKMap[1]->Draw("colz");
-	c9->cd(6);
-	vPrMap[1]->SetTitle("Protons - Gas");
-	vPrMap[1]->Draw("colz");
-	
-	c9->cd(7);
-	vPiMap[2]->SetTitle("Pions - Aerogel");
-	vPiMap[2]->Draw("colz");
-	c9->cd(8);
-	vKMap[2]->SetTitle("Kaons - Aerogel");
-	vKMap[2]->Draw("colz");
-	c9->cd(9);
-	vPrMap[2]->SetTitle("Protons - Aerogel");
-	vPrMap[2]->Draw("colz");
-	c9->Update();
-	c9->Print(out_pdf.c_str());
-		
-
-	TCanvas *c10 = new TCanvas("c10","Map canvas",1600,900);
-	c10->Divide(2);
-	gStyle->SetOptFit(0);
-	gStyle->SetOptStat(1); 
-	c10->Draw();
-	c10->cd(1);
-  gPad->SetLogz();
-	hMap->Draw("colz");
-  TEllipse *geoCutRing = new TEllipse(0,0,run->geoCut);
-  geoCutRing->SetLineColor(2);
-  geoCutRing->SetFillStyle(0);
-  geoCutRing->Draw("same");
-	c10->cd(2);
-	hnMap->Draw("colz");
-	c10->Update();
-	c10->Print(out_pdf.c_str());
-
-  
-  TCanvas *c11 = new TCanvas("c11","PMT radius",1600,900);
-  c11->Divide(4,2);
-  c11->Draw();
-  c11->cd(1);
-  vGasRadPMT[0]->SetTitle("PMT north - Gas");
-  vGasRadPMT[0]->Draw();
-  c11->cd(2);
-  vGasRadPMT[2]->SetTitle("PMT est - Gas");
-  vGasRadPMT[2]->Draw();
-  c11->cd(3);
-  vGasRadPMT[1]->SetTitle("PMT south - Gas");
-  vGasRadPMT[1]->Draw();
-  c11->cd(4);
-  vGasRadPMT[3]->SetTitle("PMT west - Gas");
-  vGasRadPMT[3]->Draw();
-  c11->cd(5);
-  vAeroRadPMT[0]->SetTitle("PMT north - Aero");
-  vAeroRadPMT[0]->Draw();
-  c11->cd(6);
-  vAeroRadPMT[2]->SetTitle("PMT est - Aero");
-  vAeroRadPMT[2]->Draw();
-  c11->cd(7);
-  vAeroRadPMT[1]->SetTitle("PMT south - Aero");
-  vAeroRadPMT[1]->Draw();
-  c11->cd(8);
-  vAeroRadPMT[3]->SetTitle("PMT west - Aero");
-  vAeroRadPMT[3]->Draw();
-  c11->Update();
-  c11->Print(out_pdf.c_str());
-
-
-
-
-	c1->Print(out_pdf1.c_str());
-	TFile *fOut = new TFile(out_root.c_str(),"RECREATE");
-	save->Write();
-	fOut->Close();
-
-	cout <<Form("You can open the monitoring plots typing: evince %s\n",out_pdf.c_str());
-}
-
-
-/*
-   void displayMonitor2(THeader *run){
-   gErrorIgnoreLevel=kWarning;
+	/*
+	   void displayMonitor2(THeader *run){
+	   gErrorIgnoreLevel=kWarning;
 //Time distibution and coincidence peak zoom, rings before and after correction
 string out_pdf0 = Form("%s/output/plot/%s/displayMonitor2.pdf[",run->suite.c_str(),run->outputDir.c_str());
 string out_pdf = Form("%s/output/plot/%s/displayMonitor2.pdf",run->suite.c_str(),run->outputDir.c_str());
@@ -1723,188 +1924,212 @@ void inizializePlot(THeader *run){
 		TH2D *hCal = new TH2D(Form("hCalibVsCh_%d",i),Form("#Delta time calibrated - trigger time Vs Channel - %d",i),1026,-0.5,1025.5,run->timeInMax-run->timeOuMin+60,run->timeOuMin-30,run->timeInMax+30);
 		TH2D *hNoCal = new TH2D(Form("hNotCalibVsCh_%d",i),Form("#Delta time not calibrated - trigger time Vs Channel - %d",i),1026,-0.5,1025.5,run->timeInMax-run->timeOuMin+60,run->timeOuMin-30,run->timeInMax+30);
 		hCalibVsCh.push_back(hCal);
-    hNotCalibVsCh.push_back(hNoCal);
-  }
+		hNotCalibVsCh.push_back(hNoCal);
+	}
 
-  hHitCorr = new TH2D("hHitCorr","Hit correlation; Start [ns]; End[ns]",1000,0,1000,1000,0,1000); 
-  hHitReco = new TH1D("hHitReco","Number of reconstructed hit for event",151,-0.5,150.5);
-  hEdge = new TH1D("hEdge","Number of edge for event",151,-0.5,150.5);
+	hHitCorr = new TH2D("hHitCorr","Hit correlation; Start [ns]; End[ns]",1000,0,1000,1000,0,1000); 
+	hHitReco = new TH1D("hHitReco","Number of reconstructed hit for event",151,-0.5,150.5);
+	hEdge = new TH1D("hEdge","Number of edge for event",151,-0.5,150.5);
 
-  for(int i = 0; i < 4; i++){
-    TH1D *hGasRadPMT = new TH1D(Form("hGasRadPMT%d",i),"hGasRadPMT;r [mRad]",160,20,60);
-    vGasRadPMT.push_back(hGasRadPMT);
-    TH1D *hAeroRadPMT = new TH1D(Form("hAeroRadPMT%d",i),"hAeroRadPMT,r [mRad]",320,120,200);
-    vAeroRadPMT.push_back(hAeroRadPMT);
-  }
-
-
-  if(run->sensor=="MPPC") hMap = new TH2D("hMap","Hit position MPPC;x [mm];y [mm]",sizeof(xBinMPPC)/sizeof(*xBinMPPC)-1,xBinMPPC,sizeof(yBinMPPC)/sizeof(*yBinMPPC)-1,yBinMPPC);
-  else if(run->sensor=="MAPMT") hMap = new TH2D("hMap",Form("Hit position MAPMT - run %d;x [mm];y [mm]",run->runNum),sizeof(xBinMAPMT)/sizeof(*xBinMAPMT)-1,xBinMAPMT,sizeof(yBinMAPMT)/sizeof(*yBinMAPMT)-1,yBinMAPMT);
-  else hMap = new TH2D("hMap","Hit position Other;x [mm];y [mm]",180,-90,90,180,-90,90);
-
-  for(int i = 0; i < 3; i++){
-    TH2D *hPiMap = (TH2D*) hMap->Clone(Form("hPiMap%d",i));
-    TH2D *hKMap = (TH2D*) hMap->Clone(Form("hKMap%d",i));
-    TH2D *hPrMap = (TH2D*) hMap->Clone(Form("hPrMap%d",i));
-    vPiMap.push_back(hPiMap);
-    vKMap.push_back(hKMap);
-    vPrMap.push_back(hPrMap);
-  }
-
-  if(run->sensor=="MPPC") hMapNC = new TH2D("hMapNC","All hit position MPPC;x [mm];y [mm]",sizeof(xBinMPPC)/sizeof(*xBinMPPC)-1,xBinMPPC,sizeof(yBinMPPC)/sizeof(*yBinMPPC)-1,yBinMPPC);
-  else if(run->sensor=="MAPMT") hMapNC = new TH2D("hMapNC","All hit position MAPMT;x [mm];y [mm]",sizeof(xBinMAPMT)/sizeof(*xBinMAPMT)-1,xBinMAPMT,sizeof(yBinMAPMT)/sizeof(*yBinMAPMT)-1,yBinMAPMT);
-  else hMapNC = new TH2D("hMapNC","All hit position Other;x [mm];y [mm]",180,-90,90,180,-90,90);
-
-  hnMap = new TH2D("hnMap","Corrected positions of hit;x [mm];y [mm]",180,-90,90,180,-90,90);
-
-  //STD GEM HISTO
-  /*hUpGEM = new TH2D("hUpGEM","Upstream GEM; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
-    hDnGEM = new TH2D("hDnGEM","Dnstream GEM; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
-    hBeam = new TH2D("hBeam","Beam profile at aerogel; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
-    hBeamTheta = new TH2D("hBeamTheta","Beam divergence; x_0[mm];y_0[mm]",100,-.002,.002,100,-.002,.002);*/
-  hUpGEM = new TH2D("hUpGEM","Upstream GEM; x_0[mm];y_0[mm]",3000,-600,600,3000,-600,600);
-  hDnGEM = new TH2D("hDnGEM","Dnstream GEM; x_0[mm];y_0[mm]",3000,-600,600,3000,-600,600);
-  hBeam = new TH2D("hBeam","Beam profile at aerogel; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
-  hBeamTheta = new TH2D("hBeamTheta","Beam divergence; x_0[mm];y_0[mm]",100,-.002,.002,100,-.002,.002);
+	for(int i = 0; i < 4; i++){
+		TH1D *hGasRadPMT = new TH1D(Form("hGasRadPMT%d",i),"hGasRadPMT;r [mRad]",160,20,60);
+		vGasRadPMT.push_back(hGasRadPMT);
+		TH1D *hAeroRadPMT = new TH1D(Form("hAeroRadPMT%d",i),"hAeroRadPMT,r [mRad]",320,140,220);
+		vAeroRadPMT.push_back(hAeroRadPMT);
+		TH1D *hGasnRadPMT = new TH1D(Form("hGasnRadPMT%d",i),"hGasnRadPMT;r [mRad]",160,20,60);
+		vGasnRadPMT.push_back(hGasnRadPMT);
+		TH1D *hAeronRadPMT = new TH1D(Form("hAeronRadPMT%d",i),"hAeronRadPMT,r [mRad]",320,140,220);
+		vAeronRadPMT.push_back(hAeronRadPMT);
+	}
 
 
-  hRadius = new TH1D("hRadius","Single photon radius - before corrections;r [mRad]",400,0,200);
-  //	hnRadius = new TH1D("hnRadius","Single photon radius - after corrections;r [mRad]",400,0,200);
-  TH1D *hnRadius0 = new TH1D("hnRadius0","Single photon radius - after corrections;r [mRad]",400,0,200);
-  TH1D *hnRadius1 = new TH1D("hnRadius1","Single photon radius - Gas;r [mRad]",400,0,100);
-  TH1D *hnRadius2 = new TH1D("hnRadius2","Single photon radius - Aerogel;r [mRad]",400,100,200);
-  vnRadius.push_back(hnRadius0);
-  vnRadius.push_back(hnRadius1);
-  vnRadius.push_back(hnRadius2);
-  TH1D *hPiRadius0 = new TH1D("hPiRadius0","Pi - Single photon radius - after corrections;r [mRad]",400,0,200);
-  TH1D *hPiRadius1 = new TH1D("hPiRadius1","Pi - Single photon radius - Gas;r [mRad]",400,0,100);
-  TH1D *hPiRadius2 = new TH1D("hPiRadius2","Pi - Single photon radius - Aerogel;r [mRad]",400,100,200);
-  vPiRadius.push_back(hPiRadius0);
-  vPiRadius.push_back(hPiRadius1);
-  vPiRadius.push_back(hPiRadius2);
-  TH1D *hKRadius0 = new TH1D("hKRadius0","K - Single photon radius - after corrections;r [mRad]",400,0,200);
-  TH1D *hKRadius1 = new TH1D("hKRadius1","K - Single photon radius - Gas;r [mRad]",400,0,100);
-  TH1D *hKRadius2 = new TH1D("hKRadius2","K - Single photon radius - Aerogel;r [mRad]",400,100,200);
-  vKRadius.push_back(hKRadius0);
-  vKRadius.push_back(hKRadius1);
-  vKRadius.push_back(hKRadius2);
-  TH1D *hPrRadius0 = new TH1D("hPrRadius0","Pr - Single photon radius - after corrections;r [mRad]",400,0,200);
-  TH1D *hPrRadius1 = new TH1D("hPrRadius1","Pr - Single photon radius - Gas;r [mRad]",400,0,100);
-  TH1D *hPrRadius2 = new TH1D("hPrRadius2","Pr - Single photon radius - Aerogel;r [mRad]",400,100,200);
-  vPrRadius.push_back(hPrRadius0);
-  vPrRadius.push_back(hPrRadius1);
-  vPrRadius.push_back(hPrRadius2);
+	if(run->sensor=="MPPC") hMap = new TH2D("hMap","Hit position MPPC;x [mm];y [mm]",sizeof(xBinMPPC)/sizeof(*xBinMPPC)-1,xBinMPPC,sizeof(yBinMPPC)/sizeof(*yBinMPPC)-1,yBinMPPC);
+	else if(run->sensor=="MAPMT") hMap = new TH2D("hMap",Form("Hit position MAPMT - run %d;x [mm];y [mm]",run->runNum),sizeof(xBinMAPMT)/sizeof(*xBinMAPMT)-1,xBinMAPMT,sizeof(yBinMAPMT)/sizeof(*yBinMAPMT)-1,yBinMAPMT);
+	else hMap = new TH2D("hMap","Hit position Other;x [mm];y [mm]",180,-90,90,180,-90,90);
+
+	for(int i = 0; i < 3; i++){
+		TH2D *hPiMap = (TH2D*) hMap->Clone(Form("hPiMap%d",i));
+		TH2D *hKMap = (TH2D*) hMap->Clone(Form("hKMap%d",i));
+		TH2D *hPrMap = (TH2D*) hMap->Clone(Form("hPrMap%d",i));
+		vPiMap.push_back(hPiMap);
+		vKMap.push_back(hKMap);
+		vPrMap.push_back(hPrMap);
+	}
+
+	if(run->sensor=="MPPC") hMapNC = new TH2D("hMapNC","All hit position MPPC;x [mm];y [mm]",sizeof(xBinMPPC)/sizeof(*xBinMPPC)-1,xBinMPPC,sizeof(yBinMPPC)/sizeof(*yBinMPPC)-1,yBinMPPC);
+	else if(run->sensor=="MAPMT") hMapNC = new TH2D("hMapNC","All hit position MAPMT;x [mm];y [mm]",sizeof(xBinMAPMT)/sizeof(*xBinMAPMT)-1,xBinMAPMT,sizeof(yBinMAPMT)/sizeof(*yBinMAPMT)-1,yBinMAPMT);
+	else hMapNC = new TH2D("hMapNC","All hit position Other;x [mm];y [mm]",180,-90,90,180,-90,90);
+
+	//hnMap = new TH2D("hnMap","Corrected positions of hit;x [mm];y [mm]",180,-90,90,180,-90,90);
+	hnMap = new TH2D("hnMap","Corrected position MAPMT;x [mm];y [mm]",sizeof(xBinMAPMT)/sizeof(*xBinMAPMT)-1,xBinMAPMT,sizeof(yBinMAPMT)/sizeof(*yBinMAPMT)-1,yBinMAPMT);
+
+	//STD GEM HISTO
+	/*hUpGEM = new TH2D("hUpGEM","Upstream GEM; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
+	  hDnGEM = new TH2D("hDnGEM","Downstream GEM; x_0[mm];y_0[mm]",60,-60,60,60,-60,60);
+	  hBeam = new TH2D("hBeam","Beam profile at aerogel; x_0[mm];y_0[mm]",300,-60,60,300,-60,60);
+	  hBeamTheta = new TH2D("hBeamTheta","Beam divergence; x_0[mm];y_0[mm]",100,-.002,.002,100,-.002,.002);*/
+	hUpGEM = new TH2D("hUpGEM","Upstream GEM; x_0[mm];y_0[mm]",240,-100,100,240,-100,100);
+	hDnGEM = new TH2D("hDnGEM","Downstream GEM; x_0[mm];y_0[mm]",240,-100,100,240,-100,100);
+	hBeam = new TH2D("hBeam","Beam profile at aerogel; x_0[mm];y_0[mm]",240,-100,100,240,-100,100);
+	hBeamTheta = new TH2D("hBeamTheta","Beam divergence; x_0[mm];y_0[mm]",400,-.02,.02,400,-.02,.02);
 
 
-  TH1D *hCutPiRadius0 = new TH1D("hCutPiRadius0","Pi - Single particle radius - after corrections;r [mRad]",400,0,200);
-  TH1D *hCutPiRadius1 = new TH1D("hCutPiRadius1","Pi - Single particle radius - Gas;r [mRad]",100,25,50);
-  TH1D *hCutPiRadius2 = new TH1D("hCutPiRadius2","Pi - Single particle radius - Aerogel;r [mRad]",220,120,180);
-  vCutPiRadius.push_back(hCutPiRadius0);
-  vCutPiRadius.push_back(hCutPiRadius1);
-  vCutPiRadius.push_back(hCutPiRadius2);
-  TH1D *hCutKRadius0 = new TH1D("hCutKRadius0","K - Single particle radius - after corrections;r [mRad]",400,0,200);
-  TH1D *hCutKRadius1 = new TH1D("hCutKRadius1","K - Single particle radius - Gas;r [mRad]",100,25,50);
-  TH1D *hCutKRadius2 = new TH1D("hCutKRadius2","K - Single particle radius - Aerogel;r [mRad]",220,120,180);
-  vCutKRadius.push_back(hCutKRadius0);
-  vCutKRadius.push_back(hCutKRadius1);
-  vCutKRadius.push_back(hCutKRadius2);
-  TH1D *hCutPrRadius0 = new TH1D("hCutPrRadius0","Pr - Single particle radius - after corrections;r [mRad]",400,0,200);
-  TH1D *hCutPrRadius1 = new TH1D("hCutPrRadius1","Pr - Single particle radius - Gas;r [mRad]",100,25,50);
-  TH1D *hCutPrRadius2 = new TH1D("hCutPrRadius2","Pr - Single particle radius - Aerogel;r [mRad]",220,120,180);
-  vCutPrRadius.push_back(hCutPrRadius0);
-  vCutPrRadius.push_back(hCutPrRadius1);
-  vCutPrRadius.push_back(hCutPrRadius2);
-
-  for(int i = 0; i < 10; i++){
-    TH1D *hspRadius = new TH1D(Form("hspRadius_%d",i),Form("Single particle radius - %d - before corrections;radius [mRad]",i),800,0,200);
-    vspRadius.push_back(hspRadius);
-    TH1D *hspTime = new TH1D(Form("hspTime_%d",i),Form("Single particle radius - %d - before corrections;time [ns]",i),5*(int)(run->timeInMax-run->timeOuMin),run->timeOuMin,run->timeInMax);
-    vspTime.push_back(hspTime);
-    TH1D *hspPhoton = new TH1D(Form("hspPhoton_%d",i),Form("Single particle radius - %d - before corrections;photon [#]",i),50,0,50);
-    vspPhoton.push_back(hspPhoton);
-
-    TH1D *hspnRadius = new TH1D(Form("hspnRadius_%d",i),Form("Single particle radius - %d - after corrections;radius [mRad]",i),800,0,200);
-    vspnRadius.push_back(hspnRadius);
-    TH1D *hspnTime = new TH1D(Form("hspnTime_%d",i),Form("Single particle radius - %d - after corrections;time [ns]",i),5*(int)(run->timeInMax-run->timeOuMin),run->timeOuMin,run->timeInMax);
-    vspnTime.push_back(hspnTime);
-    TH1D *hspnPhoton = new TH1D(Form("hspnPhoton_%d",i),Form("Single particle radius - %d - after corrections;photon [#]",i),50,0,50);
-    vspnPhoton.push_back(hspnPhoton);
-
-    TH1D *hcutRadius = new TH1D(Form("hcutRadius_%d",i),Form("Single particle radius - %d - after rms cuts;radius [mRad]",i),800,0,200);
-    vcutRadius.push_back(hcutRadius);
-    TH1D *hcutTime = new TH1D(Form("hcutTime_%d",i),Form("Single particle radius - %d - after rms cuts;time [ns]",i),5*(int)(run->timeInMax-run->timeOuMin),run->timeOuMin,run->timeInMax);
-    vcutTime.push_back(hcutTime);
-    TH1D *hcutPhoton = new TH1D(Form("hcutPhoton_%d",i),Form("Single particle radius - %d - after rms cuts;photon [#]",i),50,0,50);
-    vcutPhoton.push_back(hcutPhoton);
-  }
-
-  for(int i = 0; i < 2; i++){
-    TH1D *hrsdRadius = new TH1D(Form("hrsdRadius_%d",i),Form("Radius residui - %d;rsd_r [mRad];counts [#]",i),120,0,12);
-    vrsdRadius.push_back(hrsdRadius);
-    TH1D *hrsdTime = new TH1D(Form("hrsdTime_%d",i),Form("Time residui - %d;rsd_t [ns];counts [#]",i),120,0,12);
-    vrsdTime.push_back(hrsdTime);
-  }
-
-  for(int i = 0; i < maxPhoGas; i++){
-    TH1D *hspSigPhoGas= new TH1D(Form("hspSigPhoGas_%02d",i),Form("hspSigPhoGas_%02d",i),400,0,200);
-    vspSigPhoGas.push_back(hspSigPhoGas);
-    TH1D *hspnSigPhoGas= new TH1D(Form("hspnSigPhoGas_%02d",i),Form("hspnSigPhoGas_%02d",i),400,0,200);
-    vspnSigPhoGas.push_back(hspnSigPhoGas);
-    TH1D *hcutSigPhoGas= new TH1D(Form("hcutSigPhoGas_%02d",i),Form("hcutSigPhoGas_%02d",i),400,0,200);
-    vcutSigPhoGas.push_back(hcutSigPhoGas);
-  }
-  for(int i = 0; i < maxPhoAero; i++){
-    TH1D *hspSigPhoAero= new TH1D(Form("hspSigPhoAero_%02d",i),Form("hspSigPhoAero_%02d",i),400,0,200);
-    vspSigPhoAero.push_back(hspSigPhoAero);
-    TH1D *hspnSigPhoAero= new TH1D(Form("hspnSigPhoAero_%02d",i),Form("hspnSigPhoAero_%02d",i),400,0,200);
-    vspnSigPhoAero.push_back(hspnSigPhoAero);
-    TH1D *hcutSigPhoAero= new TH1D(Form("hcutSigPhoAero_%02d",i),Form("hcutSigPhoAero_%02d",i),400,0,200);
-    vcutSigPhoAero.push_back(hcutSigPhoAero);
-  }
-  hspSigVsPhoGas = new TH1D("hspSigVsPhoGas","#sigma_{r} vs photon per particle - Gas;Photon/particle [#];#sigma_{r} [mRad]",maxPhoGas+1,-0.5,maxPhoGas+0.5);
-  hspnSigVsPhoGas= new TH1D("hsnpSigVsPhoGas","#sigma_{r} vs photon per particle - Gas;Photon/particle [#];#sigma_{r} [mRad]",maxPhoGas+1,-0.5,maxPhoGas+0.5);
-  hcutSigVsPhoGas = new TH1D("hcutSigVsPhoGas","#sigma_{r} vs photon per particle - Gas;Photon/particle [#];#sigma_{r} [mRad]",maxPhoGas+1,-0.5,maxPhoGas+0.5);
-  hspSigVsPhoAero = new TH1D("hspSigVsPhoAero","#sigma_{r} vs photon per particle - Aerogel;Photon/particle [#];#sigma_{r} [mRad]",maxPhoAero+1,-0.5,maxPhoAero+0.5);
-  hspnSigVsPhoAero= new TH1D("hsnpSigVsPhoAero","#sigma_{r} vs photon per particle - Aerogel;Photon/particle [#];#sigma_{r} [mRad]",maxPhoAero+1,-0.5,maxPhoAero+0.5);
-  hcutSigVsPhoAero = new TH1D("hcutSigVsPhoAero","#sigma_{r} vs photon per particle - Aerogel;Photon/particle [#];#sigma_{r} [mRad]",maxPhoAero+1,-0.5,maxPhoAero+0.5);
+	hRadius = new TH1D("hRadius","Single photon radius - before corrections;r [mRad]",440,0,220);
+	//	hnRadius = new TH1D("hnRadius","Single photon radius - after corrections;r [mRad]",400,0,200);
+	TH1D *hnRadius0 = new TH1D("hnRadius0","Single photon radius - after corrections;r [mRad]",440,0,220);
+	TH1D *hnRadius1 = new TH1D("hnRadius1","Single photon radius - Gas;r [mRad]",400,0,100);
+	TH1D *hnRadius2 = new TH1D("hnRadius2","Single photon radius - Aerogel;r [mRad]",400,120,220);
+	vnRadius.push_back(hnRadius0);
+	vnRadius.push_back(hnRadius1);
+	vnRadius.push_back(hnRadius2);
 
 
+	for(int i = 0; i < 3; i++){
+		TH1D *hRadiusMM = new TH1D(Form("hRadiusMM_%d",i),"Radius in mm;r[mm]",400,0,100);
+		TH1D *hnRadiusMM = new TH1D(Form("hnRadiusMM_%d",i),"Corrected radius in mm;r[mm]",400,0,100);
+		vRadiusMM.push_back(hRadiusMM);
+		vnRadiusMM.push_back(hnRadiusMM);
+	}
 
-  //hCoinc = new TH1D("hCoinc","Coincidence peak",5*(int)(run->timeOuMax-run->timeInMin)+10,run->timeInMin-5,run->timeOuMax+5);
-
-  ////// MONITORING PLOT DEFINITION
-  //hCalibVsTime = new TH2D("hCalibVsTime","Calibrated time vs acquired time",(int)(run->timeOuMax-run->timeInMin)+11,run->timeInMin-5.5,run->timeOuMax+5.5,(int)(run->timeOuMax-run->timeInMin)+11,run->timeInMin-5.5,run->timeOuMax+5.5);
-  //hTimeWalkVsTime = new TH2D("hTimeWalkVsTime","TimeWalk corrected time vs acquired time",(int)(run->timeOuMax-run->timeInMin)+11,run->timeInMin-5.5,run->timeOuMax+5.5,5*(int)(run->timeOuMax-run->timeInMin)+50,run->timeInMin-5,run->timeOuMax+5);
-  hCalibVsTime = new TH2D("hCalibVsTime","Calibrated time vs acquired time",51,349.5,400.1,(int)(run->timeInMax-run->timeOuMin)+11,run->timeOuMin-5.5,run->timeInMax+5.5);
-  hTimeVsCh = new TH2D("hTimeVsCh","#Delta time not calibrated - trigger time Vs Channel",1026,-0.5,1025.5,70,330,400);
-  hTimeWalkVsTime = new TH2D("hTimeWalkVsTime","TimeWalk corrected time vs acquired time",51,349.5,401.5,5*(int)(run->timeInMax-run->timeOuMin)+50,run->timeOuMin-5,run->timeInMax+5);
-  //hDur = new TH1D("hDur","Hit duration",101,-.50,100.5);
-  hStartVsDur = new TH2D("hStartVsDur","DuratioVsStart; Start [ns]; Duration[ns]",(int)(run->timeInMax-run->timeOuMin)+11,run->timeOuMin-5.5,run->timeInMax+5.5,101,-.5,100.5); 
-  hSingPhotRad = new TH1D("hSingPhotRad","Single photon radius; Radius [mRad]",400,0,200);
-
-  for(int i = 0; i < 32; i++){
-    vector<TH1D*> tmpNot;
-    vector<TH1D*> tmpCal;
-    for(int j = 0; j < 1025; j++){
-      TH1D* hNot = new TH1D(Form("hNot_%d_%d",i+4,j),"Time not calibrated",1001,-.5,1000.5);
-      tmpNot.push_back(hNot);
-      TH1D* hCal = new TH1D(Form("hCal_%d_%d",i+4,j),"Time calibrated",1001,-.5,1000.5);
-      tmpCal.push_back(hCal);
-    }
-    vNotTime.push_back(tmpNot);
-    vCalTime.push_back(tmpCal);
-  } 
-  hx474=new TH1D("hx474","Cherenkov x474",2000,0,2000);
-  hx519=new TH1D("hx519","Cherenkov x519",2000,0,2000);
-  hx537=new TH1D("hx537","Cherenkov x537",2000,0,2000);
-  htrig=new TH1D("htrig","Trigger;time [ns]",2000,0,2000);
+	TH1D *hPiRadius0 = new TH1D("hPiRadius0","Pi - Single photon radius - after corrections;r [mRad]",440,0,220);
+	TH1D *hPiRadius1 = new TH1D("hPiRadius1","Pi - Single photon radius - Gas;r [mRad]",400,0,100);
+	TH1D *hPiRadius2 = new TH1D("hPiRadius2","Pi - Single photon radius - Aerogel;r [mRad]",400,120,220);
+	vPiRadius.push_back(hPiRadius0);
+	vPiRadius.push_back(hPiRadius1);
+	vPiRadius.push_back(hPiRadius2);
+	TH1D *hKRadius0 = new TH1D("hKRadius0","K - Single photon radius - after corrections;r [mRad]",440,0,220);
+	TH1D *hKRadius1 = new TH1D("hKRadius1","K - Single photon radius - Gas;r [mRad]",400,0,100);
+	TH1D *hKRadius2 = new TH1D("hKRadius2","K - Single photon radius - Aerogel;r [mRad]",400,120,220);
+	vKRadius.push_back(hKRadius0);
+	vKRadius.push_back(hKRadius1);
+	vKRadius.push_back(hKRadius2);
+	TH1D *hPrRadius0 = new TH1D("hPrRadius0","Pr - Single photon radius - after corrections;r [mRad]",440,0,220);
+	TH1D *hPrRadius1 = new TH1D("hPrRadius1","Pr - Single photon radius - Gas;r [mRad]",400,0,100);
+	TH1D *hPrRadius2 = new TH1D("hPrRadius2","Pr - Single photon radius - Aerogel;r [mRad]",400,120,220);
+	vPrRadius.push_back(hPrRadius0);
+	vPrRadius.push_back(hPrRadius1);
+	vPrRadius.push_back(hPrRadius2);
 
 
-  hPiRad = new TH1D("hPiRad","#pi radius - gas; radius [mRad]",200,0,100);
-  hKRad = new TH1D("hKRad","K radius - gas; radius [mRad]",200,0,100);
-  hPrRad = new TH1D("hPrRad","p radius - gas; radius [mRad]",200,0,100);
+	TH1D *hSpnPiRadius0 = new TH1D("hSpnPiRadius0","Pi - Single particle radius - after corrections;r [mRad]",440,0,220);
+	TH1D *hSpnPiRadius1 = new TH1D("hSpnPiRadius1","Pi - Single particle radius - Gas;r [mRad]",400,0,100);
+	TH1D *hSpnPiRadius2 = new TH1D("hSpnPiRadius2","Pi - Single particle radius - Aerogel;r [mRad]",400,120,220);
+	vSpnPiRadius.push_back(hSpnPiRadius0);
+	vSpnPiRadius.push_back(hSpnPiRadius1);
+	vSpnPiRadius.push_back(hSpnPiRadius2);
+	TH1D *hSpnKRadius0 = new TH1D("hSpnKRadius0","K - Single particle radius - after corrections;r [mRad]",440,0,220);
+	TH1D *hSpnKRadius1 = new TH1D("hSpnKRadius1","K - Single particle radius - Gas;r [mRad]",400,0,100);
+	TH1D *hSpnKRadius2 = new TH1D("hSpnKRadius2","K - Single particle radius - Aerogel;r [mRad]",400,120,220);
+	vSpnKRadius.push_back(hSpnKRadius0);
+	vSpnKRadius.push_back(hSpnKRadius1);
+	vSpnKRadius.push_back(hSpnKRadius2);
+	TH1D *hSpnPrRadius0 = new TH1D("hSpnPrRadius0","Pr - Single particle radius - after corrections;r [mRad]",440,0,220);
+	TH1D *hSpnPrRadius1 = new TH1D("hSpnPrRadius1","Pr - Single particle radius - Gas;r [mRad]",400,0,100);
+	TH1D *hSpnPrRadius2 = new TH1D("hSpnPrRadius2","Pr - Single particle radius - Aerogel;r [mRad]",220,120,220);
+	vSpnPrRadius.push_back(hSpnPrRadius0);
+	vSpnPrRadius.push_back(hSpnPrRadius1);
+	vSpnPrRadius.push_back(hSpnPrRadius2);
 
-  hBeamCh = new TH1D("hBeamCh","Beam Cherenkov",3,-.5,2.5);
+	for(int i = 0; i < 10; i++){
+		TH1D *hspRadius = new TH1D(Form("hspRadius_%d",i),Form("Single particle radius - %d - before corrections;radius [mRad]",i),880,0,220);
+		vspRadius.push_back(hspRadius);
+		TH1D *hspTime = new TH1D(Form("hspTime_%d",i),Form("Single particle radius - %d - before corrections;time [ns]",i),5*(int)(run->timeInMax-run->timeOuMin),run->timeOuMin,run->timeInMax);
+		vspTime.push_back(hspTime);
+		TH1D *hspPhoton = new TH1D(Form("hspPhoton_%d",i),Form("Single particle radius - %d - before corrections;photon [#]",i),50,0,50);
+		vspPhoton.push_back(hspPhoton);
+
+		TH1D *hspnRadius = new TH1D(Form("hspnRadius_%d",i),Form("Single particle radius - %d - after corrections;radius [mRad]",i),880,0,220);
+		vspnRadius.push_back(hspnRadius);
+		TH1D *hspnTime = new TH1D(Form("hspnTime_%d",i),Form("Single particle radius - %d - after corrections;time [ns]",i),5*(int)(run->timeInMax-run->timeOuMin),run->timeOuMin,run->timeInMax);
+		vspnTime.push_back(hspnTime);
+		TH1D *hspnPhoton = new TH1D(Form("hspnPhoton_%d",i),Form("Single particle radius - %d - after corrections;photon [#]",i),50,0,50);
+		vspnPhoton.push_back(hspnPhoton);
+
+		TH1D *hcutRadius = new TH1D(Form("hcutRadius_%d",i),Form("Single particle radius - %d - after rms cuts;radius [mRad]",i),880,0,220);
+		vcutRadius.push_back(hcutRadius);
+		TH1D *hcutTime = new TH1D(Form("hcutTime_%d",i),Form("Single particle radius - %d - after rms cuts;time [ns]",i),5*(int)(run->timeInMax-run->timeOuMin),run->timeOuMin,run->timeInMax);
+		vcutTime.push_back(hcutTime);
+		TH1D *hcutPhoton = new TH1D(Form("hcutPhoton_%d",i),Form("Single particle radius - %d - after rms cuts;photon [#]",i),50,0,50);
+		vcutPhoton.push_back(hcutPhoton);
+	}
+
+	for(int i = 0; i < 2; i++){
+		TH1D *hrsdRadius = new TH1D(Form("hrsdRadius_%d",i),Form("Radius residui - %d;rsd_r [mRad];counts [#]",i),120,0,12);
+		vrsdRadius.push_back(hrsdRadius);
+		TH1D *hrsdTime = new TH1D(Form("hrsdTime_%d",i),Form("Time residui - %d;rsd_t [ns];counts [#]",i),120,0,12);
+		vrsdTime.push_back(hrsdTime);
+	}
+
+	for(int i = 0; i < maxPhoGas; i++){
+		TH1D *hspSigPhoGas= new TH1D(Form("hspSigPhoGas_%02d",i),Form("hspSigPhoGas_%02d",i),440,0,220);
+		vspSigPhoGas.push_back(hspSigPhoGas);
+		TH1D *hspnSigPhoGas= new TH1D(Form("hspnSigPhoGas_%02d",i),Form("hspnSigPhoGas_%02d",i),440,0,220);
+		vspnSigPhoGas.push_back(hspnSigPhoGas);
+		TH1D *hcutSigPhoGas= new TH1D(Form("hcutSigPhoGas_%02d",i),Form("hcutSigPhoGas_%02d",i),440,0,220);
+		vcutSigPhoGas.push_back(hcutSigPhoGas);
+	}
+	for(int i = 0; i < maxPhoAero; i++){
+		TH1D *hspSigPhoAero= new TH1D(Form("hspSigPhoAero_%02d",i),Form("hspSigPhoAero_%02d",i),440,0,220);
+		vspSigPhoAero.push_back(hspSigPhoAero);
+		TH1D *hspnSigPhoAero= new TH1D(Form("hspnSigPhoAero_%02d",i),Form("hspnSigPhoAero_%02d",i),440,0,220);
+		vspnSigPhoAero.push_back(hspnSigPhoAero);
+		TH1D *hcutSigPhoAero= new TH1D(Form("hcutSigPhoAero_%02d",i),Form("hcutSigPhoAero_%02d",i),440,0,220);
+		vcutSigPhoAero.push_back(hcutSigPhoAero);
+	}
+	hspSigVsPhoGas = new TH1D("hspSigVsPhoGas","#sigma_{r} vs photon per particle - Gas;Photon/particle [#];#sigma_{r} [mRad]",maxPhoGas+1,-0.5,maxPhoGas+0.5);
+	hspnSigVsPhoGas= new TH1D("hsnpSigVsPhoGas","#sigma_{r} vs photon per particle - Gas;Photon/particle [#];#sigma_{r} [mRad]",maxPhoGas+1,-0.5,maxPhoGas+0.5);
+	hcutSigVsPhoGas = new TH1D("hcutSigVsPhoGas","#sigma_{r} vs photon per particle - Gas;Photon/particle [#];#sigma_{r} [mRad]",maxPhoGas+1,-0.5,maxPhoGas+0.5);
+	hspSigVsPhoAero = new TH1D("hspSigVsPhoAero","#sigma_{r} vs photon per particle - Aerogel;Photon/particle [#];#sigma_{r} [mRad]",maxPhoAero+1,-0.5,maxPhoAero+0.5);
+	hspnSigVsPhoAero= new TH1D("hsnpSigVsPhoAero","#sigma_{r} vs photon per particle - Aerogel;Photon/particle [#];#sigma_{r} [mRad]",maxPhoAero+1,-0.5,maxPhoAero+0.5);
+	hcutSigVsPhoAero = new TH1D("hcutSigVsPhoAero","#sigma_{r} vs photon per particle - Aerogel;Photon/particle [#];#sigma_{r} [mRad]",maxPhoAero+1,-0.5,maxPhoAero+0.5);
+
+
+
+	//hCoinc = new TH1D("hCoinc","Coincidence peak",5*(int)(run->timeOuMax-run->timeInMin)+10,run->timeInMin-5,run->timeOuMax+5);
+
+	////// MONITORING PLOT DEFINITION
+	//hCalibVsTime = new TH2D("hCalibVsTime","Calibrated time vs acquired time",(int)(run->timeOuMax-run->timeInMin)+11,run->timeInMin-5.5,run->timeOuMax+5.5,(int)(run->timeOuMax-run->timeInMin)+11,run->timeInMin-5.5,run->timeOuMax+5.5);
+	//hTimeWalkVsTime = new TH2D("hTimeWalkVsTime","TimeWalk corrected time vs acquired time",(int)(run->timeOuMax-run->timeInMin)+11,run->timeInMin-5.5,run->timeOuMax+5.5,5*(int)(run->timeOuMax-run->timeInMin)+50,run->timeInMin-5,run->timeOuMax+5);
+	hCalibVsTime = new TH2D("hCalibVsTime","Calibrated time vs acquired time",51,349.5,400.1,(int)(run->timeInMax-run->timeOuMin)+11,run->timeOuMin-5.5,run->timeInMax+5.5);
+	hTimeVsCh = new TH2D("hTimeVsCh","#Delta time not calibrated - trigger time Vs Channel",1026,-0.5,1025.5,70,330,400);
+	hTimeWalkVsTime = new TH2D("hTimeWalkVsTime","TimeWalk corrected time vs acquired time",51,349.5,401.5,5*(int)(run->timeInMax-run->timeOuMin)+50,run->timeOuMin-5,run->timeInMax+5);
+	//hDur = new TH1D("hDur","Hit duration",101,-.50,100.5);
+	hStartVsDur = new TH2D("hStartVsDur","DuratioVsStart; Start [ns]; Duration[ns]",(int)(run->timeInMax-run->timeOuMin)+11,run->timeOuMin-5.5,run->timeInMax+5.5,101,-.5,100.5); 
+	hSingPhotRad = new TH1D("hSingPhotRad","Single photon radius; Radius [mRad]",400,0,200);
+
+	for(int i = 0; i < 32; i++){
+		vector<TH1D*> tmpNot;
+		vector<TH1D*> tmpCal;
+		for(int j = 0; j < 1025; j++){
+			TH1D* hNot = new TH1D(Form("hNot_%d_%d",i+4,j),"Time not calibrated",1001,-.5,1000.5);
+			tmpNot.push_back(hNot);
+			TH1D* hCal = new TH1D(Form("hCal_%d_%d",i+4,j),"Time calibrated",1001,-.5,1000.5);
+			tmpCal.push_back(hCal);
+		}
+		vNotTime.push_back(tmpNot);
+		vCalTime.push_back(tmpCal);
+	} 
+	hx474=new TH1D("hx474","Cherenkov x474",2000,0,2000);
+	hx519=new TH1D("hx519","Cherenkov x519",2000,0,2000);
+	hx537=new TH1D("hx537","Cherenkov x537",2000,0,2000);
+	htrig=new TH1D("htrig","Trigger;time [ns]",2000,0,2000);
+
+
+	hPiRad = new TH1D("hPiRad","#pi radius - gas; radius [mRad]",200,0,100);
+	hKRad = new TH1D("hKRad","K radius - gas; radius [mRad]",200,0,100);
+	hPrRad = new TH1D("hPrRad","p radius - gas; radius [mRad]",200,0,100);
+
+	hBeamCh = new TH1D("hBeamCh","Beam Cherenkov",3,-.5,2.5);
+
+	hNewCenterGas = new TH2D("hNewCenterGas","Map of new center of the event - Gas;x [mm];y [mm]",100,-5,5,100,-5,5);
+	hNewCenterAero = new TH2D("hNewCenterAero","Map of new center of the event - Aerogel;x [mm];y [mm]",100,-5,5,100,-5,5);
+	hNewCenterAero;
+	hGasdXVsAngle = new TH2D("hGasdXVsAngle","Gas - X mean semidifference Vs Angle; #theta_{x} [Rad];(#delta x)/3 [mm]",50,-0.005,0.005,50,-8,8);
+	hGasdYVsAngle = new TH2D("hGasdYVsAngle","Gas - Y mean semidifference Vs Angle; #theta_{y} [Rad];(#delta y)/2 [mm]",50,-0.005,0.005,50,-8,8);
+	hAerodXVsAngle = new TH2D("hAerodXVsAngle","Aero - X mean semidifference Vs Angle; #theta{x} [Rad];(#delta x)/2 [mm]",50,-0.005,0.005,40,-8,8);
+	hAerodYVsAngle = new TH2D("hAerodYVsAngle","Aero - Y mean semidifference Vs Angle; #theta_{y} [Rad];(#delta y)/2 [mm]",50,-0.005,0.005,40,-8,8);
+	//hAerodYVsAngle = new TH2D("hAerodYVsAngle","Aero - Y mean semidifference Vs Angle; #theta_{y} [Rad];(#delta y)/2 [mm]",50,-0,0.012,40,0,16);
+
 }
 
 

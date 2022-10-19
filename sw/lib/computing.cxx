@@ -86,11 +86,10 @@ TF1* getFun(TH1D *h, bool out){
   TF1 *f;
   if(out == false){
     h->GetXaxis()->SetRangeUser(25,50);
-    f = new TF1("f","gaus(0)",25,50);
   }else{
-    h->GetXaxis()->SetRangeUser(130,190);
-    f = new TF1("f","gaus(0)",130,190);
+    h->GetXaxis()->SetRangeUser(130,220);
   }
+  f = new TF1("f","gaus(0)",0,250);
   double p1= h->GetBinCenter(h->GetMaximumBin());
   f->SetParameters(5000,p1,2);
   h->Fit(f->GetName(),"Q","",p1-2,p1+3);
@@ -101,28 +100,30 @@ TF1* getFun(TH1D *h, bool out){
 
 double getSigma(TH1D *h, TF1 *f,string fname, bool out){
   if(out == false){
-    h->GetXaxis()->SetRangeUser(25,50);
-    f = new TF1(fname.c_str(),"gaus(0)",25,50);
+    h->GetXaxis()->SetRangeUser(10,60);
   }else{
-    h->GetXaxis()->SetRangeUser(130,190);
-    f = new TF1(fname.c_str(),"gaus(0)",130,190);
+    h->GetXaxis()->SetRangeUser(150,220);
   }
+  f = new TF1(fname.c_str(),"gaus(0)",0,250);
   double p1= h->GetBinCenter(h->GetMaximumBin());
   f->SetParameters(5000,p1,2);
   //h->Fit(f->GetName(),"Q","",p1-1,p1+1.5);
-  h->Fit(f->GetName(),"Q","",p1-2,p1+3);
+  h->Fit(f->GetName(),"Q","",p1-2,p1+4);
   return  f->GetParameter(2);
 }
 
 
 void applyFit(TH1D *h, TF1 *f,string fname, bool out){
+  //double fitCenter, fitMin, fitMax;
   if(out == false){
-    h->GetXaxis()->SetRangeUser(25,50);
-    f = new TF1(fname.c_str(),"gaus(0)",25,50);
+    double min = h->GetBinCenter(h->GetMaximumBin())-4;
+    double max = h->GetBinCenter(h->GetMaximumBin())+4;
+    h->GetXaxis()->SetRangeUser(min,max);
+    //h->GetXaxis()->SetRangeUser(10,55);
   }else{
-    h->GetXaxis()->SetRangeUser(130,200);
-    f = new TF1(fname.c_str(),"gaus(0)",130,200);
+    h->GetXaxis()->SetRangeUser(150,220);
   }
+  f = new TF1(fname.c_str(),"gaus(0)",0,220);
   double p1= h->GetBinCenter(h->GetMaximumBin());
   f->SetParameters(5000,p1,2);
   //h->Fit(f->GetName(),"Q","",p1-1,p1+1.5);
@@ -220,7 +221,7 @@ void computeRMS(THeader *run, int recompute=-1)
 		}
                 for(int k = 0; k < nedge; k++){
                     if(k==j)continue;
-                    if(goodPhoton[k]==true && externalPhoton[k]==false){//I'M USING THE SINGLE PARTICLE QUANTITIES, NOT CORRECTED
+                    if(goodPhoton[k]==true && externalPhoton[k]==false){
                         tmpRMSrIn+=pow(nr[k]-rMeanIn,2);
                         tmpRMStIn+=pow(nttw[k]-tMeanIn,2);
                         tmpCountIn++;

@@ -22,6 +22,9 @@ double max1MPPC=81.6;
 double min2MPPC=25.6;
 double passoMPPC = 3.2;
 
+//double Losanga = 54.25;
+double Losanga = 0;
+
 
 
 //---------------------------------------------------
@@ -36,7 +39,7 @@ void MAPMTposition(int channel, int place, double *x, double *y, double *r){
 
   if(place == 0){//NORD
     //double iX=-halfMAPMT+0.5*firstMAPMT, iY=minRMAPMT+frameMAPMT+0.5*firstMAPMT;
-    double iX=-halfMAPMT+0.5*firstMAPMT, iY=minRMAPMT+0.5*firstMAPMT;
+    double iX=-halfMAPMT-Losanga+0.5*firstMAPMT, iY=minRMAPMT+0.5*firstMAPMT;
     if(row == 0) *x = iX;
     else if(row == 15) *x=iX+2*step0+(row-2)*step;
     else *x = iX+step0+(row-1)*step;
@@ -50,7 +53,7 @@ void MAPMTposition(int channel, int place, double *x, double *y, double *r){
     //double iX=minRMAPMT+frameMAPMT+0.5*firstMAPMT, iY=halfMAPMT-0.5*firstMAPMT;
     //*x=iX+col*step;
     //*y=iY-row*step;
-    double iX=minRMAPMT+0.5*firstMAPMT, iY=halfMAPMT-0.5*firstMAPMT;
+    double iX=minRMAPMT+0.5*firstMAPMT, iY=halfMAPMT+Losanga-0.5*firstMAPMT;
     if(col==0)*x=iX;
     else if(col==15)*x=iX+2*step0+(col-2)*step;
     else *x = iX+step0+(col-1)*step;
@@ -62,7 +65,7 @@ void MAPMTposition(int channel, int place, double *x, double *y, double *r){
     //double iX=halfMAPMT-0.5*firstMAPMT, iY=-minRMAPMT-frameMAPMT-0.5*firstMAPMT;
     //*x=iX-row*step;
     //*y=iY-col*step;
-    double iX=halfMAPMT-0.5*firstMAPMT, iY=-minRMAPMT-0.5*firstMAPMT;
+    double iX=halfMAPMT+Losanga-0.5*firstMAPMT, iY=-minRMAPMT-0.5*firstMAPMT;
     if(row==0)*x=iX;
     else if(row==15)*x=iX-2*step0-(row-2)*step;
     else *x=iX-step0-(row-1)*step;
@@ -74,7 +77,7 @@ void MAPMTposition(int channel, int place, double *x, double *y, double *r){
     //double iX=-minRMAPMT-frameMAPMT-0.5*firstMAPMT, iY=-halfMAPMT+0.5*firstMAPMT;
     //*x=iX-col*step;
     //*y=iY+row*step;
-    double iX=-minRMAPMT-0.5*firstMAPMT, iY=-halfMAPMT+0.5*firstMAPMT;
+    double iX=-minRMAPMT-0.5*firstMAPMT, iY=-halfMAPMT-Losanga+0.5*firstMAPMT;
     if(col==0)*x=iX;
     else if(col==15)*x=iX-2*step0-(col-2)*step;
     else *x=iX-step0-(col-1)*step;

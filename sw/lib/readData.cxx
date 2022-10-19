@@ -21,6 +21,7 @@
 void getMAPMT(THeader *runHead) {
 //---------------------------------------------------	
 
+    int pri = 0;
     if(runHead->sensor!="MAPMT"){
       cout <<"[ERROR] Inconsistency between the selected data type and logbook [SENSOR]\n";
       exit(EXIT_FAILURE);
@@ -102,6 +103,7 @@ void getMAPMT(THeader *runHead) {
     cout <<"Taking the dRICH prototype data\n";
     for(int i = 0; i < t->GetEntries(); i++){
         if(SHOW_PROGRESS==true && i%100==0)printProgress((double)i/t->GetEntries());
+	//if(i==2802)continue;
         t->GetEntry(i);
        
         int upEdge=0;
@@ -113,6 +115,7 @@ void getMAPMT(THeader *runHead) {
             for(int j = 0; j < nedge; j++)
 	        printf("e     %4d  %3d (%3d %3d %d) %6d \n",j,pol[j],slot[j],fiber[j],chM[j],time[j] );
         }*/
+	if(pri==1)printf(" Event %d ",i);
         for(int j = 0; j < nedge; j++){
             for(int k = 0; k < nedge; k++){
                 if(j == k)continue;
@@ -141,6 +144,7 @@ void getMAPMT(THeader *runHead) {
 	        printf("e     %4d  %3d (%3d %3d %d) %6d \n",j,pol[j],slot[j],fiber[j],chM[j],time[j] );
         }*/
 
+	if(pri==1)printf(" Cherenkov %d ",evtDRICH);
         evt=(int)evtDRICH;
         bool wrongEvent=false;
         int ntrig=0;
@@ -173,8 +177,10 @@ void getMAPMT(THeader *runHead) {
                 if(i<10)printf("Found     XCET_537 %3d time %6d \n",j,time[j]);
             }
         }
-        if(ntrig!=1 || nX474>1 || nX519>1 || nX537>1){if(i<10)printf("Rejected event %3d (%2d %2d %2d %2d ) \n",i,ntrig,nX474,nX519,nX537);continue;}
+        if(ntrig!=1 || nX474>1 || nX519>1 || nX537>1){if(i<10)printf("Rejected event %3d (%2d %2d %2d %2d ) \n",i,ntrig,nX474,nX519,nX537);printf("\n"); continue;}
 
+        
+	if(pri==1)printf(" edge %d ",nedge);
 	int sedge = 0;
         for(uint j = 0; j < nedge; j++){
             tPol[sedge]=pol[j];
@@ -202,8 +208,9 @@ void getMAPMT(THeader *runHead) {
 	    sedge++;
         }
         tNedge=sedge;
-        if(wrongEvent==true)continue;
+        if(wrongEvent==true){printf("\n"); continue;}
         tout->Fill();
+	if(pri==1)printf(" fill \n ");
 
         if(i<10){
             printf("NEW tree event %3d %3d nedge %5d trigger %7.2f Cher %7.2f %7.2f %7.2f \n",i,evt,tNedge,tTrigTime,tX474Time,tX519Time,tX537Time);
