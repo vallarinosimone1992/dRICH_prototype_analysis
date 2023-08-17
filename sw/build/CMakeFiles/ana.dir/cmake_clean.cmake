@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/ana.dir/plugin/analysis.cxx.o"
+  "CMakeFiles/ana.dir/plugin/analysis.cxx.o.d"
   "ana"
   "ana.pdb"
 )

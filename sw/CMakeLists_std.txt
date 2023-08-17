@@ -83,4 +83,16 @@ target_link_libraries(event
       ${ROOT_EXE_LINKER_FLAGS}
 )
 
+add_executable(sim
+     plugin/simulation_reco.cxx
+)
+
+target_link_libraries(sim
+      PRIVATE
+      dRICH_lib
+      PUBLIC
+      ${ROOT_LIBRARIES}
+      ${ROOT_EXE_LINKER_FLAGS}
+)
+
 

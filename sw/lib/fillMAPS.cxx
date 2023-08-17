@@ -26,7 +26,6 @@ void getRunNumbers(map<int,int> *map_GEM_run, map<int,double> *map_AeroMirrorPos
 }
 
 
-
 void getMapMAPMT(map<string,int> *map_MAPMT1, map<string,int> *map_MAPMT2){
   FILE *file;
   file=fopen("../map/MAPMT_mapping_data.map","r");
@@ -91,6 +90,7 @@ void getTimeCalibrationDataMPPC(map<int,double> *map_time_MPPC){
 }
 
 void readHeaders(int run, THeader *runHeader){
+  rnd.SetSeed();
   const char  *tmp = getenv("DRICH_SUITE");
   string env_var(tmp ? tmp : "");
   if(env_var.empty()){
@@ -105,6 +105,7 @@ void readHeaders(int run, THeader *runHeader){
     exit(EXIT_FAILURE);
   }
   file=fopen(headerName.c_str(),"r");
+  if(debug)cout <<"Logbook open\n";
   char line0[10000];
   char line[10000];
   int tRunNum=-1, tEnergyGeV, tExpEvents, tPowerHV, tRunNumGEM, tPedestalGEM, tlookbackDAQ, tbeamChLogic;
@@ -147,13 +148,20 @@ void readHeaders(int run, THeader *runHeader){
     }
   }
   fclose(file);
+  if(debug)cout <<"Logbook read\n";
+  
 
   if(headerFound==false){
     cout <<"[ERROR] Run number not found in the logbook\n";
     exit(EXIT_FAILURE);
   }
-
+  
+  if(debug)cout <<Form("Setup file: %s/dRICH_prototype_analysis/sw/map/%s.map\n",runHeader->suite.c_str(),runHeader->setupFile.c_str());
   file=fopen(Form("%s/dRICH_prototype_analysis/sw/map/%s.map",runHeader->suite.c_str(),runHeader->setupFile.c_str()),"r");
+  if(file==NULL){
+    cout <<"Setup file not found!\n";
+    exit(EXIT_FAILURE);
+  }
   for(int i = 0; i < 8; i++){
     if(fgets(line,10000,file)!=NULL){
       int tmp1, tmp2;
@@ -222,5 +230,6 @@ void readHeaders(int run, THeader *runHeader){
     auto prz = sscanf(line,"%lf",&tmp1);
     runHeader->radCut=tmp1;
   }
+  //if(runHeader->beam=="pi+") runHeader->beamLUND=211;
   cout <<"Header and setup file read\n";
 }

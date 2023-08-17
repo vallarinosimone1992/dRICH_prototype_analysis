@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/event.dir/plugin/event.cxx.o"
+  "CMakeFiles/event.dir/plugin/event.cxx.o.d"
   "event"
   "event.pdb"
 )

@@ -66,9 +66,9 @@ void positionCorrection(THeader *run){
     for(int i = 0; i < t->GetEntries(); i++){
         if(SHOW_PROGRESS==true && i%100==0)printProgress((double)i/t->GetEntries());
         t->GetEntry(i);
-        xNCin = -gxtheta*(run->secondPath-run->secondMirrorPosition)+run->innerCorrectionX;
+        xNCin = gxtheta*(run->secondPath-run->secondMirrorPosition)+run->innerCorrectionX;
         yNCin = gytheta*(run->secondPath-run->secondMirrorPosition)+run->innerCorrectionY;
-        xNCout = -gxtheta*(run->firstPath+run->firstMirrorPosition)+run->outerCorrectionX;
+        xNCout = gxtheta*(run->firstPath+run->firstMirrorPosition)+run->outerCorrectionX;
         yNCout = gytheta*(run->firstPath+run->firstMirrorPosition)+run->outerCorrectionY;
         /*xNCin = run->innerCorrectionX;
         yNCin = run->innerCorrectionY;
@@ -133,8 +133,10 @@ void opticalCenterX(THeader *run)
 
     TH1D *hOut = new TH1D("hOut","hOut",100,-20,20); 
     TH1D *hIn = new TH1D("hIn","hIn",100,-20,20); 
-    t->Draw("(spRadiusmm[1]-spRadiusmm[3])/2>>hIn","spPhoton[1]>0 && spPhoton[3]>0 && gxtheta<0.001 && gytheta < 0.001","goff");
-    t->Draw("(spRadiusmm[6]-spRadiusmm[8])/2>>hOut","spPhoton[6]>0 && spPhoton[8]>0 && gxtheta<0.001 && gytheta < 0.001","goff");
+    t->Draw("(spRadiusmm[1]-spRadiusmm[3])/2>>hIn","spPhoton[1]>0 && spPhoton[3]>0 && gxtheta<0.01 && gytheta < 0.01","goff");
+    t->Draw("(spRadiusmm[6]-spRadiusmm[8])/2>>hOut","spPhoton[6]>0 && spPhoton[8]>0 && gxtheta<0.01 && gytheta < 0.01","goff");
+    //t->Draw("(spRadiusmm[1]-spRadiusmm[3])/2>>hIn","spPhoton[1]>0 && spPhoton[3]>0 && gxtheta<0.001 && gytheta < 0.001","goff");
+    //t->Draw("(spRadiusmm[6]-spRadiusmm[8])/2>>hOut","spPhoton[6]>0 && spPhoton[8]>0 && gxtheta<0.001 && gytheta < 0.001","goff");
     if(1>0){
         TCanvas *c0 = new TCanvas("c0","c0",1600,900);
         c0->Draw();
@@ -144,7 +146,7 @@ void opticalCenterX(THeader *run)
         c0->cd(2);
         hOut->Draw();
         c0->Update();
-        c0->Print("cX.root");
+        //c0->Print("cX.root");
         c0->Close();
     }
 
@@ -159,7 +161,7 @@ void opticalCenterX(THeader *run)
     t->Draw("spRadiusmm[6]>>h6","spPhoton[6] > 0","goff");
 
     cout <<"Computing the x corrections\n";
-    if(run->sensor == "MAPMT"){
+    if(run->sensor == "MAPMT" || run->sensor=="SIMULATION"){
         if(run->innerCorrectionX == 0){
             if(correctionFit == true && correctionMax == false){
                 TF1 *f = new TF1("f","gaus(0)",-20,20);
@@ -263,8 +265,10 @@ void opticalCenterY(THeader *run)
     TH1D *hOut = new TH1D("hOut","hOut",80,-20,20); 
     TH1D *hIn = new TH1D("hIn","hIn",80,-20,20); 
 
-    t->Draw("(spRadiusmm[0]-spRadiusmm[2])/2>>hIn","spPhoton[0]>0 && spPhoton[2]>0 && gxtheta<0.001 && gytheta < 0.001","goff");
-    t->Draw("(spRadiusmm[5]-spRadiusmm[7])/2>>hOut","spPhoton[5]>0 && spPhoton[7]>0 && gxtheta<0.001 && gytheta < 0.001","goff");
+    t->Draw("(spRadiusmm[0]-spRadiusmm[2])/2>>hIn","spPhoton[0]>0 && spPhoton[2]>0 && gxtheta<0.01 && gytheta < 0.01","goff");
+    t->Draw("(spRadiusmm[5]-spRadiusmm[7])/2>>hOut","spPhoton[5]>0 && spPhoton[7]>0 && gxtheta<0.01 && gytheta < 0.01","goff");
+    //t->Draw("(spRadiusmm[0]-spRadiusmm[2])/2>>hIn","spPhoton[0]>0 && spPhoton[2]>0 && gxtheta<0.01 && gytheta < 0.01","goff");
+    //t->Draw("(spRadiusmm[5]-spRadiusmm[7])/2>>hOut","spPhoton[5]>0 && spPhoton[7]>0 && gxtheta<0.01 && gytheta < 0.01","goff");
 
     cout <<"Computing the y corrections\n";
     if(run->innerCorrectionY == 0){
@@ -300,7 +304,7 @@ void opticalCenterY(THeader *run)
         c0->cd(2);
         hOut->Draw();
         c0->Update();
-        c0->Print("cY.root");
+        //c0->Print("cY.root");
         c0->Close();
     }
     printf(" CENTER Y: %7.2f %7.2f \n",run->innerCorrectionY,run->outerCorrectionY);

@@ -46,8 +46,8 @@
 using namespace std;
 
 int main(int argc, char *argv[]){
-  //TApplication theApp("App",&argc,argv);
-  gROOT->SetBatch(kTRUE);
+  TApplication theApp("App",&argc,argv);
+  //gROOT->SetBatch(kTRUE);
   gStyle->SetPalette(55);
   vector<THeader> header;
   
@@ -92,6 +92,6 @@ int main(int argc, char *argv[]){
 
   cout <<Form("The output files are in %soutput/plot/%s\n",header[0].suite.c_str(),header[0].outputDir.c_str());
 
-  exit(EXIT_SUCCESS);
-  //theApp.Run();
+  //exit(EXIT_SUCCESS);
+  theApp.Run();
 }

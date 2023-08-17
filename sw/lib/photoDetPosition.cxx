@@ -7,6 +7,7 @@
 
 #include <TSystem.h>
 
+#include "definition.h"
 #include "photoDetPosition.h"
 
 using namespace std;
@@ -141,3 +142,34 @@ void MPPCposition(int CHANNEL, int place,  double *x, double *y, double *r){
   *r = sqrt((*x)*(*x)+(*y)*(*y));
 }
 
+
+bool simulationPixel(double x, double y, int *pmt, double *px, double *py, double *r){
+  bool flag = false;
+  if(abs(x) < halfMAPMT && y > minRMAPMT)*pmt=0;//NORTH
+  else if(x > minRMAPMT && abs(y) < halfMAPMT )*pmt=1;//EST
+  else if(abs(x)< halfMAPMT && y < -minRMAPMT)*pmt=2;//SOUTH
+  else if(x < -minRMAPMT && abs(y) < halfMAPMT)*pmt=3;//WEST
+  else return flag;
+  flag = true;
+
+  if(APPLY_PIXELATION==true){
+    int i=0;
+    for(i=0; i < (sizeof(xBinMAPMT)/sizeof(xBinMAPMT[0]))-1; i++){
+      if(xBinMAPMT[i]<x && x<=xBinMAPMT[i+1]){
+        *px = (xBinMAPMT[i]+xBinMAPMT[i+1])/2;
+        break;
+      }
+    }
+    for(i=0; i < (sizeof(yBinMAPMT)/sizeof(yBinMAPMT[0]))-1; i++){
+      if(yBinMAPMT[i]<y && y<=yBinMAPMT[i+1]){
+        *py = (yBinMAPMT[i]+yBinMAPMT[i+1])/2;
+        break;
+      }
+    }
+  }else{
+    *px = x;
+    *py = y;
+  }
+  *r = sqrt((*px)*(*px)+(*py)*(*py));
+  return flag;
+}

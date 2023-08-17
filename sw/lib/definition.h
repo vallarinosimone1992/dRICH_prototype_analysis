@@ -3,7 +3,15 @@
 
 #include <string>
 #include <TString.h>
+#include <TRandom3.h>
 using namespace std;
+
+static const bool debug=false;
+static const bool APPLY_QUANTUM_EFFICIENCY=true;
+static const bool APPLY_GEM_CUT=true;
+static const bool APPLY_PIXELATION=true;
+static const bool APPLY_SIMULATION_TRACKING_ERROR=false;
+static TRandom3 rnd;
 
 struct THeader{
   int runNum;
@@ -53,7 +61,7 @@ struct THeader{
   double timeInMax;
   double timeOuMin;
   double timeOuMax;
-  double durMin=35;
+  double durMin=30;
   string outputDir;
 
   double px474=1.0;
@@ -64,7 +72,11 @@ struct THeader{
 
   double MaxHitLength=100;
   double GlobalTimeOff = 2400-lookbackDAQ;
+
+  int beamLUND=211;
 };
+
+static const bool DATA_2021 = false;
 
 static const bool SHOW_PROGRESS = false; 
 static const int  CUT_MIN_DUR = 30; 
@@ -76,9 +88,9 @@ static const double RMS_TIME_GAS    = 3.0;  // min RMS iin time to exclude bad p
 static const double RMS_ANGLE_AER   = 6.0;  // min RMS in angle to exclude bad photons 
 static const double RMS_TIME_AER    = 3.0;  // min RMS iin time to exclude bad photons 
 
-static const double GEM_CUT_X=5; //Maximum X for GEM
-static const double GEM_CUT_Y=5; //Maximum Y for GEM
-static const double GEM_CUT_R=.001; //Maximum theta for GEM
+static const double GEM_CUT_X=10; //Maximum X for GEM [mm]
+static const double GEM_CUT_Y=10; //Maximum Y for GEM [mm]
+static const double GEM_CUT_R=.0005; //Maximum theta for GEM [Rad]
 
 static const double mPi = 0.1396;
 static const double mK = 0.49368; 
@@ -86,6 +98,31 @@ static const double mPr = 0.93827;
 
 static const double nCO2 = 1.000410;
 static const double nN2 = 1.000282;
+
+static const double SIMULATION_DETECTOR_Z=-16; //Std position: -16
+
+static const double SIMULATION_AERO_MIRROR_RADIUS=700;
+static const double SIMULATION_AERO_MIRROR_CENTER=-380;
+static const double SIMULATION_GAS_MIRROR_RADIUS=2420;
+static const double SIMULATION_GAS_MIRROR_CENTER=-380;
+
+static const double SIMULATION_FILTER_WIDTH=0;
+static const double SIMULATION_AEROGEL_WIDTH=0;
+static const double SIMULATION_AEROGEL_EXIT_Z=61;
+static const double SIMULATION_MIRROR_Z=317;
+static const double SIMULATION_MIRROR_HOLE_RADIUS=57.5;
+//static const double SIMULATION_AERO_PATH=sqrt(pow(SIMULATION_MIRROR_HOLE_RADIUS,2)+pow(SIMULATION_MIRROR_Z,2))+SIMULATION_AEROGEL_EXIT_Z+SIMULATION_FILTER_WIDTH+SIMULATION_AEROGEL_WIDTH;
+static const double SIMULATION_AERO_PATH=368;//Std position: 368
+static const double SIMULATION_GAS_PATH=1130;//Std position 1130
+
+static const double SIMULATION_GAS_PHOTON_EXPECTED_TIME=2.7;
+static const double SIMULATION_AEROGEL_PHOTON_EXPECTED_TIME=8.5;
+
+static const double UPSTREAM_GEM_TIME_SIM = 0;
+static const double UPSTREAM_GEM_Z_SIM = -150;
+static const double DOWNSTREAM_GEM_TIME_SIM = 6.7;
+static const double DOWNSTREAM_GEM_Z_SIM = +1850;
+
 
 //MAPMT
 static const double xBinMAPMT[] = {-90,-77.75,-74.5,-71.5,-68.5,-65.5,-62.5,-59.5,-56.5,-53.5,-50.5,-47.5,-44.5,-41.5,-38.5,-35.5,-32.5,-29.25,-24.25,-21,-18,-15,-12,-9,-6,-3,0,3,6,9,12,15,18,21,24.25,29.25,32.5,35.5,38.5,41.5,44.5,47.5,50.5,53.5,56.5,59.5,62.5,65.5,68.5,71.5,74.5,77.75,90};

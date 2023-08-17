@@ -1,5 +1,6 @@
 file(REMOVE_RECURSE
   "CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.o"
+  "CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.o.d"
   "reco"
   "reco.pdb"
 )

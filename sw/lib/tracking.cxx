@@ -19,7 +19,7 @@ double GEM_getBeamlineOffset(TH1D *h, int pri){
   h->Fit("f","","",-40,40);
   TCanvas *c1 = new TCanvas("c1","c1",800,800);
   h->Draw();
-  if(pri)c1->Print("gy1.pdf");
+  //if(pri)c1->Print("gy1.pdf");
   return f->GetParameter(1);
 }
 

@@ -352,8 +352,8 @@ void TTreeIntegration(THeader *run){
   cGEM->cd(4);
   hY1->Draw();
   cGEM->Update();
-  cGEM->Print("cGEM.pdf");
-  cGEM->Print("cGEM.root");
+  //cGEM->Print("cGEM.pdf");
+  //cGEM->Print("cGEM.root");
   cGEM->Close();
   /*run->UpGEMxRunOff=0;
   run->UpGEMyRunOff=0;

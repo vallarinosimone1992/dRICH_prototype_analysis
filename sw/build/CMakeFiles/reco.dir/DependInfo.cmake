@@ -1,22 +1,19 @@
+
+# Consider dependencies only in project.
+set(CMAKE_DEPENDS_IN_PROJECT_ONLY OFF)
+
 # The set of languages for which implicit dependencies are needed:
 set(CMAKE_DEPENDS_LANGUAGES
-  "CXX"
   )
-# The set of files for implicit dependencies of each language:
-set(CMAKE_DEPENDS_CHECK_CXX
-  "/data01/lab/dRICH_ana/dRICH_prototype_analysis/sw/plugin/dRICH_reco.cxx" "/data01/lab/dRICH_ana/dRICH_prototype_analysis/sw/build/CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.o"
-  )
-set(CMAKE_CXX_COMPILER_ID "GNU")
 
-# The include file search paths:
-set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "/opt/root-cern_v6.24.06/include"
-  "../lib"
+# The set of dependency files which are needed:
+set(CMAKE_DEPENDS_DEPENDENCY_FILES
+  "/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/plugin/dRICH_reco.cxx" "CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.o" "gcc" "CMakeFiles/reco.dir/plugin/dRICH_reco.cxx.o.d"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/data01/lab/dRICH_ana/dRICH_prototype_analysis/sw/build/CMakeFiles/dRICH_lib.dir/DependInfo.cmake"
+  "/home/simone/Work/EIC/dRICH/prototype/testBeam/dRICH_prototype_analysis/sw/build/CMakeFiles/dRICH_lib.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

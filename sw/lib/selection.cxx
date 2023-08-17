@@ -217,8 +217,10 @@ void selectGoodPhotons(THeader *run)
         coincPhoton[j]=true;
         if(dur[j] > run->durMin) goodPhoton[j]=true;
       }
-      if(i<10 && pol[j]==0)printf(" sele pho %3d  time %7.2f (%7.2f : %7.2f) dur %7.2f  r %7.2f  %3d --> %3d %3d \n",
-          j,nttw[j],timeMin,timeMax,dur[j],r[j],externalPhoton[j],coincPhoton[j],goodPhoton[j]);
+      if(debug && pol[j]==0){
+        printf(" sele pho %3d  time %7.2f (%7.2f : %7.2f) dur %7.2f  r %7.2f  %3d --> %3d %3d \n",j,nttw[j],timeMin,timeMax,dur[j],r[j],externalPhoton[j],coincPhoton[j],goodPhoton[j]);
+        //cin.get();
+        }
     }
     tCoincPhoton->Fill();
     tGoodPhoton->Fill();
@@ -332,7 +334,14 @@ void findTimeCoincidence(THeader *run)
   hint->Draw();
   run->timeInMin=fint->GetParameter(1)-CUT_NSIGMA_TIME*fint->GetParameter(2); 
   run->timeInMax=fint->GetParameter(1)+CUT_NSIGMA_TIME*fint->GetParameter(2);
-  c0->Print("cIn.root");
+  if(run->sensor=="SIMULATION"){
+    if(fint->GetParameter(0) > 1.1*hint->GetMaximum()){
+      run->timeInMin=hint->GetBinCenter(hint->GetMaximumBin())-1.; 
+      run->timeInMax=hint->GetBinCenter(hint->GetMaximumBin())+1.; 
+    }
+  }
+
+  //c0->Print("cIn.root");
 
   TF1 *fout0 = new TF1("fout0","pol0",0,2000);
   hout->Fit(fout0,"Q","",1800,2000);
@@ -346,11 +355,15 @@ void findTimeCoincidence(THeader *run)
   hout->Draw();
   run->timeOuMin=fout->GetParameter(1)-CUT_NSIGMA_TIME*fout->GetParameter(2); 
   run->timeOuMax=fout->GetParameter(1)+CUT_NSIGMA_TIME*fout->GetParameter(2);
-  c0->Print("cOut.root");
+  if(run->sensor=="SIMULATION"){
+    if(fout->GetParameter(0) > 1.1*hout->GetMaximum()){
+      run->timeOuMin=hout->GetBinCenter(hout->GetMaximumBin())-1.5; 
+      run->timeOuMax=hout->GetBinCenter(hout->GetMaximumBin())+1.5; 
+    }
+  }
+  //c0->Print("cOut.root");
 
-  printf(" Event Time window In: %7.2f %7.2f  Ou: %7.2f %7.2f \n",
-      run->timeInMin,run->timeInMax,run->timeOuMin,run->timeOuMax);
-
+  printf(" Event Time window In: %7.2f %7.2f  Ou: %7.2f %7.2f \n",run->timeInMin,run->timeInMax,run->timeOuMin,run->timeOuMax);
   fIn->Close();
 
 }

@@ -38,11 +38,11 @@ void printUsageReco(){
   exit(EXIT_FAILURE);
 }
 void printUsageAna(){
-  cout <<"\n\n#### USAGE ####\nTo analyze a single run: ./ana run_number \n\nTo analyze N different runs: ./ana output_name run_number_1 ... run_number_N\n\n[WARNING] DO NOT PERFORM ANALYSIS IN VME! You should do launch it in OPTINO\n\n";
+  cout <<"\n\n#### USAGE ####\nTo analyze a single run: ./ana run_number \n\nTo analyze N different runs: ./ana output_name run_number_1 ... run_number_N\n\n[WARNING] DO NOT PERFORM ANALYSIS IN VME! You should do launch it in CENTRINO\n\n";
   exit(EXIT_FAILURE);
 }
 void printUsageMon(){
-  cout <<"\n\n#### USAGE ####\nTo show the monitor: ./mon run_number \n\nTo analyze N different runs: ./ana output_name run_number_1 ... run_number_N\n\n[WARNING] DO NOT PERFORM MONITOR IN VME! You should do launch it in OPTINO\n\n";
+  cout <<"\n\n#### USAGE ####\nTo show the monitor: ./mon run_number \n\nTo analyze N different runs: ./mon output_name run_number_1 ... run_number_N\n\n[WARNING] DO NOT PERFORM MONITOR IN VME! You should do launch it in CENTRINO\n\n";
   exit(EXIT_FAILURE);
 }
 
