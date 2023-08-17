@@ -7,8 +7,8 @@ Repository which includes all the corrections and analysis for the dRICH prototy
 1. Set the environment variable $DRICH_SUITE
 2. Clone this repository inside $DRICH_SUITE
 3. Run the setenv.sh script
-4. In $DRICH_SUITE/DATA, create a software link (ln -s) between dRICH_DATA and the path to the directory which contain the prototype data.
-5. In $DRICH_SUITE/DATA, create a software link (ln -s) between GEM_DATA and the path to the directory which contain the tracking data.
+4. In $DRICH_SUITE/DATA, create a software link (ln -s) between dRICH_DATA and the path to the directory which contain the prototype data. (Or simply, put directly the dRICH_DATA directory inside the $DRICH_SUITE/DATA);
+5. In $DRICH_SUITE/DATA, create a software link (ln -s) between GEM_DATA and the path to the directory which contain the tracking data. (Again as point 4)
 6. Then you are ready to compile the software.
 
 * * *
