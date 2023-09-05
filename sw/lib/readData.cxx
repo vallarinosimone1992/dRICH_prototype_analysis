@@ -158,12 +158,14 @@ void getMAPMT(THeader *runHead) {
         tTrigTime=time[j];
         if(i<10)printf("Found     trigger  %3d time %6d \n",j,time[j]);
       }
-      if(fiber[j]==11 && chM[j]==4 && pol[j]==0){
+    }
+    for(int j = 0; j < nedge; j++){
+      if(fiber[j]==11 && chM[j]==4 && pol[j]==0 && abs(time[j]-tTrigTime + 33) < 10){
         nX474++;
         tX474Time=time[j];
         if(i<10)printf("Found     XCET_474 %3d time %6d \n",j,time[j]);
       }
-      if(fiber[j]==11 && chM[j]==2 && pol[j]==0){
+      if(fiber[j]==11 && chM[j]==2 && pol[j]==0 && abs(time[j]-tTrigTime + 20) < 8){
         nX519++;
         tX519Time=time[j];
         if(i<10)printf("Found     XCET_519 %3d time %6d \n",j,time[j]);

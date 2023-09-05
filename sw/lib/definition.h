@@ -8,9 +8,11 @@ using namespace std;
 
 static const bool debug=false;
 static const bool APPLY_QUANTUM_EFFICIENCY=true;
-static const bool APPLY_GEM_CUT=true;
+static const bool APPLY_GEM_CUT=false;
 static const bool APPLY_PIXELATION=true;
 static const bool APPLY_SIMULATION_TRACKING_ERROR=false;
+static const bool SWAP_UPSTREAM_DOWNSTREAM_GEM=true;
+static const bool ANALYSIS_2022=true;
 static TRandom3 rnd;
 
 struct THeader{
@@ -19,7 +21,7 @@ struct THeader{
   string startTime;
   string endTime;
   string beam;
-  int energyGeV;
+  double energyGeV;
   int expEvents;
   string sensor;
   float firstMirrorPosition;
@@ -30,6 +32,8 @@ struct THeader{
   string runType;
   int runNumGEM;
   int pedestalGEM;
+  int mergedRunCross=-1;
+  int mergedRunCorner=-1;
   string setupFile;
   string note;
   string suite;
@@ -48,6 +52,7 @@ struct THeader{
   double cutTimeInRMS=4;// 2.04;
   double cutRadiusOutRMS=4;// 2.56;
   double cutTimeOutRMS=4;// 2.59;
+  double aerogelRefractiveIndex=-1;
   
   double innerCorrectionX=0;
   double innerCorrectionY=0;

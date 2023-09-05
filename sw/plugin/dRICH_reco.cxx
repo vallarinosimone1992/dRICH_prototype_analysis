@@ -52,7 +52,7 @@ int main(int argc, char *argv[]){
   if(argc == 2)run = atoi(argv[1]);
   else printUsageReco();
   cout <<Form("Analysis of the dRICH run: %04d\n",run);
-  
+
   THeader header;//It is defined in ../lib/definition.h
   readHeaders(run,&header); //fillMaps.cxx
   checkFileExistance(&header);
@@ -61,20 +61,27 @@ int main(int argc, char *argv[]){
   cout <<Form("There was a %s beam of %d GeV\n",(header.beam).c_str(),header.energyGeV);
   cout <<Form("Sensors were %s\n",(header.sensor).c_str());
   cout <<Form("The paths are %lf %lf \n", header.firstPath, header.secondPath); 
-  cout <<Form("DRICH_SUITE = %s", header.suite.c_str());
+  cout <<Form("DRICH_SUITE = %s", header.suite.c_str()) <<endl;
+  
   //return 0;
 
-  //Convert dRICH raw data in position and calibrated time for MAPMT and MPPC
-  if(header.sensor=="MAPMT")getMAPMT(&header); //readData.cxx
-  else if(header.sensor=="MPPC")getMPPC(&header); //readData.cxx
-  else{
-    cout <<"[ERROR] sensor not recognized\n";
-    exit(EXIT_FAILURE);
-  }
+  if(header.runType!="MERGED"){
+    //Convert dRICH raw data in position and calibrated time for MAPMT and MPPC
+    if(header.sensor=="MAPMT")getMAPMT(&header); //readData.cxx
+    else if(header.sensor=="MPPC")getMPPC(&header); //readData.cxx
+    else{
+      cout <<"[ERROR] sensor not recognized\n";
+      exit(EXIT_FAILURE);
+    }
 
-  //Integration betweed dRICH data and tracking data.
-  if(header.runNumGEM!=0)TTreeIntegration(&header);//integration.cxx
-  else noGEM_Integration(&header);
+
+    //Integration betweed dRICH data and tracking data.
+    if(header.runNumGEM!=0)TTreeIntegration(&header);//integration.cxx
+    else noGEM_Integration(&header);
+  }else{
+    cout <<"Merged run\nWaiting the integration function\n";
+    prepareMergedRun(&header);
+  }
 
   //Hit reconstruction.
   recoHit(&header); //selection.cxx
@@ -86,7 +93,7 @@ int main(int argc, char *argv[]){
   //selectInTimePhotons(&header); //selection.cxx
   //Apply duration and distinguish between inner and outer (waiting a better way to do this, based also on time).
   selectGoodPhotons(&header); //selection.cxx
-
+  
   //Add radiant branch.
   //convertToRadiant(&header); //computing.cxx
 
@@ -104,10 +111,10 @@ int main(int argc, char *argv[]){
 
   //Select inner and outer photon
   selectRingsPhotons(&header);
-  
+
   //Compute the mean quantities for the single particle after the position correction
   newSingleParticle(&header); //computing.cxx
-  
+
   //Calculate the time and radius rms, and the residue for each photon.
   computeRMS(&header,-1); //computing.cxx
 
@@ -118,5 +125,8 @@ int main(int argc, char *argv[]){
   computeCutSingleParticle(&header); //computing.cxx
 
   writeHeaderShort(&header);
+
+  cout <<"Reconstruction completed\n";
+
   exit(EXIT_SUCCESS);
 }

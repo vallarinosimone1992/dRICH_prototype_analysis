@@ -47,28 +47,30 @@ void printUsageMon(){
 }
 
 void checkFileExistance(THeader *run){
+  if(run->runType!="MERGED"){
     if(gSystem->AccessPathName(Form("%s/DATA/dRICH_DATA/run_%04d.root",&run->suite[0],run->runNum))){
-    cout <<"[ERROR] dRICH run not found\n";
-    exit(EXIT_FAILURE);
-  }
+      cout <<"[ERROR] dRICH run not found\n";
+      exit(EXIT_FAILURE);
+    }
 
-  TFile *fdRICH = new TFile(Form("%s/DATA/dRICH_DATA/run_%04d.root",&run->suite[0],run->runNum),"READ");
-  if(fdRICH->IsZombie()){
-    cout <<"[ERROR] fdRICH is zombie! Something was wrong\n";
-    exit(EXIT_FAILURE);
-  }
-  fdRICH->Close();
-  if(run->runNumGEM != 0){
-    if(gSystem->AccessPathName(Form("%s/DATA/GEM_DATA/run_%04d_gem.root",&run->suite[0],run->runNumGEM))){
-      cout <<"[ERROR] GEM run not found\n";
+    TFile *fdRICH = new TFile(Form("%s/DATA/dRICH_DATA/run_%04d.root",&run->suite[0],run->runNum),"READ");
+    if(fdRICH->IsZombie()){
+      cout <<"[ERROR] fdRICH is zombie! Something was wrong\n";
       exit(EXIT_FAILURE);
     }
-    TFile *fGEM = new TFile(Form("%s/DATA/GEM_DATA/run_%04d_gem.root",&run->suite[0],run->runNumGEM),"READ");
-    if(fGEM->IsZombie()){
-      cout <<"[ERROR] fGEM is zombie! Something was wrong\n";
-      exit(EXIT_FAILURE);
+    fdRICH->Close();
+    if(run->runNumGEM != 0){
+      if(gSystem->AccessPathName(Form("%s/DATA/GEM_DATA/run_%04d_gem.root",&run->suite[0],run->runNumGEM))){
+        cout <<"[ERROR] GEM run not found\n";
+        exit(EXIT_FAILURE);
+      }
+      TFile *fGEM = new TFile(Form("%s/DATA/GEM_DATA/run_%04d_gem.root",&run->suite[0],run->runNumGEM),"READ");
+      if(fGEM->IsZombie()){
+        cout <<"[ERROR] fGEM is zombie! Something was wrong\n";
+        exit(EXIT_FAILURE);
+      }
+      fGEM->Close();
     }
-    fGEM->Close();
   }
 }
 

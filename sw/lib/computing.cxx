@@ -104,8 +104,8 @@ void fitSigma(TH1D *h, bool out, bool Simulation){
       min=10;//2;
       max=45;//10;
     }else{
-      min=3;
-      max=12;
+      min=4;
+      max=15;
     }
   }
   if(debug)cout <<"Bool simulation and external: "<<out <<" " <<Simulation <<"\nMin and max are: " <<min <<" " <<max <<endl;
@@ -117,7 +117,7 @@ TF1* getFun(TH1D *h, bool out){
   if(out == false){
     h->GetXaxis()->SetRangeUser(25,50);
   }else{
-    h->GetXaxis()->SetRangeUser(130,220);
+    h->GetXaxis()->SetRangeUser(130,250);
   }
   f = new TF1("f","gaus(0)",0,250);
   double p1= h->GetBinCenter(h->GetMaximumBin());
@@ -145,18 +145,18 @@ double getSigma(TH1D *h, TF1 *f,string fname, bool out){
 TF1* applyFit(TH1D *h, TF1 *f,string fname, bool out, int stoconte){
   //double fitCenter, fitMin, fitMax;
   if(out == false){
-    double min = h->GetBinCenter(h->GetMaximumBin())-4;
-    double max = h->GetBinCenter(h->GetMaximumBin())+4;
+    double min = h->GetBinCenter(h->GetMaximumBin())-8;
+    double max = h->GetBinCenter(h->GetMaximumBin())+8;
     h->GetXaxis()->SetRangeUser(min,max);
     //h->GetXaxis()->SetRangeUser(10,55);
   }else{
-    h->GetXaxis()->SetRangeUser(150,220);
+    h->GetXaxis()->SetRangeUser(150,250);
   }
-  f = new TF1(fname.c_str(),"gaus(0)",0,220);
+  f = new TF1(fname.c_str(),"gaus(0)",0,250);
   double p1= h->GetBinCenter(h->GetMaximumBin());
   f->SetParameters(5000,p1,2);
-  //h->Fit(f->GetName(),"Q","",p1-1,p1+1.5);
-  h->Fit(f->GetName(),"Q","",p1-2,p1+4);
+  if(out)h->Fit(f->GetName(),"Q","",p1-6,p1+6);
+  else h->Fit(f->GetName(),"Q","",p1-1,p1+1);
   h->Draw();
   return f;
 }
@@ -170,13 +170,14 @@ void applyFit(TH1D *h, TF1 *f,string fname, bool out){
     h->GetXaxis()->SetRangeUser(min,max);
     //h->GetXaxis()->SetRangeUser(10,55);
   }else{
-    h->GetXaxis()->SetRangeUser(150,220);
+    h->GetXaxis()->SetRangeUser(150,250);
   }
-  f = new TF1(fname.c_str(),"gaus(0)",0,220);
+  f = new TF1(fname.c_str(),"gaus(0)",0,250);
   double p1= h->GetBinCenter(h->GetMaximumBin());
   f->SetParameters(5000,p1,2);
-  //h->Fit(f->GetName(),"Q","",p1-1,p1+1.5);
-  h->Fit(f->GetName(),"Q","",p1-2,p1+4);
+  if(out)h->Fit(f->GetName(),"Q","",p1-6,p1+6);
+  else h->Fit(f->GetName(),"Q","",p1-1,p1+1);
+  //h->Fit(f->GetName(),"Q","",p1-8,p1+4);
   h->Draw();
 }
 

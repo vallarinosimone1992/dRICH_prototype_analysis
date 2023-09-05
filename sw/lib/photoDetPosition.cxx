@@ -23,8 +23,8 @@ double max1MPPC=81.6;
 double min2MPPC=25.6;
 double passoMPPC = 3.2;
 
-//double Losanga = 54.25;
-double Losanga = 0;
+double Losanga = 54.25;
+//double Losanga = 0;
 
 
 

@@ -108,14 +108,14 @@ void readHeaders(int run, THeader *runHeader){
   if(debug)cout <<"Logbook open\n";
   char line0[10000];
   char line[10000];
-  int tRunNum=-1, tEnergyGeV, tExpEvents, tPowerHV, tRunNumGEM, tPedestalGEM, tlookbackDAQ, tbeamChLogic;
+  int tRunNum=-1, tExpEvents, tPowerHV, tRunNumGEM, tPedestalGEM, tlookbackDAQ, tbeamChLogic;
   char tDay[200], tStartTime[200],tEndTime[200],tBeam[200], tSensor[200], tTrigger[200],tRunType[200], tSetupFile[2000],tNote[2000];
   float tFirstMirrorPosition, tSecondMirrorPosition, tTemperature;
   auto n =fgets(line0,10000,file);
   bool headerFound=false;
-  double tpx474, tpx519, tpx537;
+  double tEnergyGeV, tpx474, tpx519, tpx537, taerogelRefractiveIndex;
   while(fgets(line,10000,file)!=NULL){  
-    sscanf(line,"%d %s %s %s %s %d %d %s %f %f %f %d %s %s %d %d %s %lf %lf %lf %d %d %s",&tRunNum,tDay,tStartTime,tEndTime,tBeam,&tEnergyGeV,&tExpEvents,tSensor,&tFirstMirrorPosition,&tSecondMirrorPosition,&tTemperature,&tPowerHV,tTrigger,tRunType,&tRunNumGEM,&tPedestalGEM,tSetupFile,&tpx474,&tpx519,&tpx537,&tbeamChLogic,&tlookbackDAQ,tNote);
+    sscanf(line,"%d %s %s %s %s %lf %d %s %f %f %f %d %s %s %d %d %s %lf %lf %lf %d %d %lf %s",&tRunNum,tDay,tStartTime,tEndTime,tBeam,&tEnergyGeV,&tExpEvents,tSensor,&tFirstMirrorPosition,&tSecondMirrorPosition,&tTemperature,&tPowerHV,tTrigger,tRunType,&tRunNumGEM,&tPedestalGEM,tSetupFile,&tpx474,&tpx519,&tpx537,&tbeamChLogic,&tlookbackDAQ,&taerogelRefractiveIndex,tNote);
     if(run == tRunNum){
       runHeader->runNum = tRunNum;
       runHeader->day=tDay;
@@ -140,8 +140,14 @@ void readHeaders(int run, THeader *runHeader){
       runHeader->px537=tpx537;
       runHeader->beamChLogic=tbeamChLogic;
       runHeader->lookbackDAQ=tlookbackDAQ;
+      runHeader->aerogelRefractiveIndex=taerogelRefractiveIndex;
       runHeader->note=tNote;
       runHeader->GlobalTimeOff = 2945-tlookbackDAQ;
+
+      if(tRunType=="MERGED"){
+        runHeader->mergedRunCross=tRunNumGEM;
+        runHeader->mergedRunCorner=tPedestalGEM;
+      }
 
       headerFound=true;
       break;

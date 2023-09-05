@@ -75,7 +75,7 @@ void recoHit(THeader *run)
         if(nt[j] - nt[j] > run->MaxHitLength) continue;
         //cout <<"X " <<x[j] <<" " <<x[k] <<endl;
         //cout <<"Y " <<y[j] <<" " <<y[k] <<endl;
-        if(x[j]==x[k] && y[j]==y[k]){
+        if(abs(x[j]-x[k]) < 0.001 && abs(y[j]-y[k])<0.001){
           goodHit[j]=true;
           goodHit[k]=true;
           dur[j] = nt[k]-nt[j];

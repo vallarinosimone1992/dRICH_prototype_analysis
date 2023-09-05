@@ -2823,15 +2823,7 @@ CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o: ../lib/integrate.cxx \
   /usr/include/root/Buttons.h \
   /usr/include/root/TAttBBox2D.h \
   /usr/include/root/TAttCanvas.h \
-  ../lib/integrate.h \
-  ../lib/definition.h \
-  /usr/include/root/TString.h \
-  /usr/include/root/TRandom3.h \
-  /usr/include/root/TRandom.h \
-  /usr/include/root/Math/TRandomEngine.h \
-  ../lib/utility.h \
-  ../lib/tracking.h \
-  /usr/include/root/TH1D.h \
+  /usr/include/root/TH2.h \
   /usr/include/root/TH1.h \
   /usr/include/root/TAxis.h \
   /usr/include/root/TArrayC.h \
@@ -2843,10 +2835,36 @@ CMakeFiles/dRICH_lib.dir/lib/integrate.cxx.o: ../lib/integrate.cxx \
   /usr/include/root/TVectorDfwd.h \
   /usr/include/root/TFitResultPtr.h \
   /usr/include/c++/12/cfloat \
+  /usr/include/root/TMatrixFBasefwd.h \
+  /usr/include/root/TMatrixDBasefwd.h \
+  /usr/include/root/TF2.h \
+  /usr/include/root/TF1.h \
+  /usr/include/root/RConfigure.h \
+  /usr/include/root/TFormula.h \
+  /usr/include/c++/12/list \
+  /usr/include/c++/12/bits/stl_list.h \
+  /usr/include/c++/12/bits/list.tcc \
+  /usr/include/root/Math/Types.h \
+  /usr/include/root/RtypesCore.h \
+  /usr/include/root/TMethodCall.h \
+  /usr/include/root/TF1AbsComposition.h \
+  /usr/include/root/TMath.h \
+  /usr/include/root/Math/Types.h \
+  /usr/include/root/Math/ParamFunctor.h \
+  ../lib/integrate.h \
+  ../lib/definition.h \
+  /usr/include/root/TString.h \
+  /usr/include/root/TRandom3.h \
+  /usr/include/root/TRandom.h \
+  /usr/include/root/Math/TRandomEngine.h \
+  ../lib/utility.h \
+  ../lib/tracking.h \
+  /usr/include/root/TH1D.h \
   ../lib/getChannel.h \
   ../lib/photoDetPosition.h \
   ../lib/fillMAPS.h \
-  ../lib/computing.h
+  ../lib/computing.h \
+  ../lib/writeHeaderText.h
 
 CMakeFiles/dRICH_lib.dir/lib/photoDetPosition.cxx.o: ../lib/photoDetPosition.cxx \
   /usr/include/stdc-predef.h \
@@ -5941,6 +5959,8 @@ CMakeFiles/dRICH_lib.dir/lib/writeHeaderText.cxx.o: ../lib/writeHeaderText.cxx \
 /usr/include/root/RtypesCore.h:
 
 /usr/include/root/DllImport.h:
+
+/usr/include/root/TF2.h:
 
 /usr/include/linux/falloc.h:
 

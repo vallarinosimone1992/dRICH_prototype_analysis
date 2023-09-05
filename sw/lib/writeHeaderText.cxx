@@ -48,7 +48,7 @@ void readHeaderShort(THeader *run){
     run->endTime=tmp;}
   if(fgets(line,MAXLINEA,f)){sscanf(line,"%s",tmp);
     run->beam=tmp;}
-  if(fgets(line,MAXLINEA,f))sscanf(line,"%d",&(run->energyGeV));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->energyGeV));
   if(fgets(line,MAXLINEA,f))sscanf(line,"%d",&(run->expEvents));
   if(fgets(line,MAXLINEA,f)){sscanf(line,"%s",tmp);
     run->sensor=tmp;}
@@ -113,6 +113,7 @@ void readHeaderShort(THeader *run){
   if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->px537));
   if(fgets(line,MAXLINEA,f))sscanf(line,"%d",&(run->beamChLogic));
   if(fgets(line,MAXLINEA,f))sscanf(line,"%d",&(run->lookbackDAQ));
+  if(fgets(line,MAXLINEA,f))sscanf(line,"%d",&(run->aerogelRefractiveIndex));
   if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->MaxHitLength));
   if(fgets(line,MAXLINEA,f))sscanf(line,"%lf",&(run->GlobalTimeOff));
   
@@ -132,7 +133,7 @@ void writeHeaderShort(THeader *run){
   fprintf(f,"%s\n",run->startTime.c_str());
   fprintf(f,"%s\n",run->endTime.c_str());
   fprintf(f,"%s\n",run->beam.c_str());
-  fprintf(f,"%d\n",(run->energyGeV));
+  fprintf(f,"%lf\n",(run->energyGeV));
   fprintf(f,"%d\n",(run->expEvents));
   fprintf(f,"%s\n",run->sensor.c_str());
   fprintf(f,"%f\n",(run->firstMirrorPosition));
@@ -192,6 +193,7 @@ void writeHeaderShort(THeader *run){
   fprintf(f,"%lf\n",(run->px537));
   fprintf(f,"%d\n",(run->beamChLogic));
   fprintf(f,"%d\n",(run->lookbackDAQ));
+  fprintf(f,"%d\n",(run->aerogelRefractiveIndex));
   
   fprintf(f,"%lf\n",(run->MaxHitLength));
   fprintf(f,"%lf\n",(run->GlobalTimeOff));
@@ -202,74 +204,6 @@ void writeHeaderShort(THeader *run){
 
 
 
-/*void writeHeaderShort(THeader *run){
-  ofstream fout;
-  string fname=Form("%s/output/header/run%04d_header_data.txt",run->suite.c_str(),run->runNum);
-  fout.open(fname.c_str(),std::ios::trunc);
-
-  fout <<run->runNum<<endl;
-  fout <<run->day.c_str()<<endl;
-  fout <<run->startTime.c_str()<<endl;
-  fout <<run->endTime.c_str()<<endl;
-  fout <<run->beam<<endl;
-  fout <<run->energyGeV<<endl;
-  fout <<run->expEvents<<endl;
-  fout <<run->sensor<<endl;
-  fout <<run->firstMirrorPosition<<endl;
-  fout <<run->secondMirrorPosition<<endl;
-  fout <<run->temperature<<endl;
-  fout <<run->powerHV<<endl;
-  fout <<run->trigger<<endl;
-  fout <<run->runType<<endl;
-  fout <<run->runNumGEM<<endl;
-  fout <<run->pedestalGEM<<endl;
-  fout <<run->setupFile<<endl;
-  fout <<run->note<<endl;
-  fout <<run->suite<<endl;
-  fout <<run->fiberRef[0]<<endl;
-  fout <<run->fiberRef[1]<<endl;
-  fout <<run->fiberRef[2]<<endl;
-  fout <<run->fiberRef[3]<<endl;
-  fout <<run->fiberRef[4]<<endl;
-  fout <<run->fiberRef[5]<<endl;
-  fout <<run->fiberRef[6]<<endl;
-  fout <<run->fiberRef[7]<<endl;
-  fout <<run->marocBoard[0]<<endl;
-  fout <<run->marocBoard[1]<<endl;
-  fout <<run->marocBoard[2]<<endl;
-  fout <<run->marocBoard[3]<<endl;
-  fout <<run->marocBoard[4]<<endl;
-  fout <<run->marocBoard[5]<<endl;
-  fout <<run->marocBoard[6]<<endl;
-  fout <<run->marocBoard[7]<<endl;
-  fout <<run->upstreamBoard<<endl;
-  fout <<run->firstPath<<endl;
-  fout <<run->secondPath<<endl;
-  fout <<run->UpGEMz<<endl;
-  fout <<run->DnGEMz<<endl;
-  fout <<run->zAerogel<<endl;
-  fout <<run->geoCut<<endl;
-  fout <<run->cutRadiusInRMS<<endl;
-  fout <<run->cutTimeInRMS<<endl;
-  fout <<run->cutRadiusOutRMS<<endl;
-  fout <<run->cutTimeOutRMS<<endl;
-  fout <<run->innerCorrectionX<<endl;
-  fout <<run->innerCorrectionY<<endl;
-  fout <<run->outerCorrectionX<<endl;
-  fout <<run->outerCorrectionY<<endl;
-  fout <<run->UpGEMxRunOff<<endl;
-  fout <<run->UpGEMyRunOff<<endl;
-  fout <<run->DnGEMxRunOff<<endl;
-  fout <<run->DnGEMyRunOff<<endl;
-  fout <<run->timeInMin<<endl;
-  fout <<run->timeInMax<<endl;
-  fout <<run->timeOuMin<<endl;
-  fout <<run->timeOuMax<<endl;
-  fout.close();
-  cout <<"Header recap wrote\n";
-}*/
-
-
 
 void writeHeaderExtended(THeader *run){
   FILE *f;
@@ -278,7 +212,7 @@ void writeHeaderExtended(THeader *run){
   fprintf(f,"dRICH run number %d\n",run->runNum);
   fprintf(f,"GEM run number %d\n",run->runNumGEM);
   fprintf(f,"Date info: day %s, start time %s, end time %s\n",run->day.c_str(),run->startTime.c_str(),run->endTime.c_str());
-  fprintf(f,"There was a beam of %s with energy %d GeV\n",run->beam.c_str(),run->energyGeV);
+  fprintf(f,"There was a beam of %s with energy %lf GeV\n",run->beam.c_str(),run->energyGeV);
   fprintf(f,"The aerogel mirror was in z=%f, the gas mirror was in z=%f\n",run->firstMirrorPosition,run->secondMirrorPosition);
   fprintf(f,"Data were acquired using the %ss\n",run->sensor.c_str());
   fprintf(f,"The trigger was %s\n",run->trigger.c_str());
